@@ -1,36 +1,54 @@
+/******************************************************************
+*                                                                 *
+* OpenFlexure Microscope: Microscope body                         *
+*                                                                 *
+* This is the chassis of the OpenFlexure microscope, an open      *
+* microscope and 3-axis translation stage.  It gets really good   *
+* precision over a ~10mm range, by using plastic flexure          *
+* mechanisms.                                                     *
+*                                                                 *
+* (c) Richard Bowman, January 2016                                *
+* Released under the CERN Open Hardware License                   *
+*                                                                 *
+******************************************************************/
+
 use <utilities.scad>;
-use <./nut_seat_with_flex_6a.scad>;
-use <./picam_push_fit.scad>;
+use <./nut_seat_with_flex.scad>;
+use <./logo.scad>;
 
 d = 0.05;
 $fn=32;
 
-sample_z = 40; //height of the top of the stage
+version_string = "5.13e";
+
+big_stage = true;
+motor_lugs = true;
+
+sample_z = big_stage?70:40; //height of the top of the stage
 stage_t=5; //thickness of the stage (at thickest point, most is 1mm less)
-leg_r = 25; //radius of innermost part of legs
-hole_r = 10; //size of hole in the stage
-xy_lever_ratio = 1; //mechanical advantage of actuator over stage
-z_lever_ratio = 2.6; //as above, for Z axis (must be >1)
+leg_r = big_stage?30:25; //radius of innermost part of legs
+hole_r = big_stage?15:10; //size of hole in the stage
+xy_lever_ratio = big_stage?4.0/7.0:1.0; //mechanical advantage of actuator over stage
+z_lever_ratio = big_stage?2.4:2.6; //as above, for Z axis (must be >1)
 
 stage_flex_w = 4; //width of XY axis flexures
 zflex_l = 1.5;    //length and height of flexures
 zflex_t = 0.75;
 flex_z1 = 0;      //height of lower flexures
 flex_z2 = sample_z-stage_t; //height of upper flexures
-z_strut_l = 15; //length of struts supporting Z carriage
+z_strut_l = big_stage?20:15; //length of struts supporting Z carriage
 z_strut_t = 6;  //thickness of above
 z_flex_w = 4;   //width of above
 leg = [4,stage_flex_w,flex_z2+zflex_t];
 leg_middle_w = 12; //width of the middle part of each leg
-motor_lugs=false;
-objective_clip_y = 6;
+objective_clip_y = big_stage?12:6;
 objective_clip_w = 10;
 
 nut_seat_r = 8.5;
 actuator_pillar_r = nut_seat_r+1.5+2.5;
 nut_seat_h = 14;
 leg_outer_w = leg_middle_w + 2*zflex_l + 2*leg[0];
-actuator = [6,flex_z2 - flex_z1,6];
+actuator = [6,(flex_z2 - flex_z1)*xy_lever_ratio,6];
 actuating_nut_r = (flex_z2 - flex_z1)*xy_lever_ratio;
 xy_actuator_travel = actuating_nut_r*0.15;
 xy_actuator_travel_top = nut_seat_h+xy_actuator_travel;
@@ -44,7 +62,8 @@ z_actuator_travel_top = nut_seat_h+z_actuator_travel;
 z_carriage_y = z_strut_l+2*zflex_l;
 z_link_w = 4;
 bridge_dz = 10;
-base_t=6;
+base_t=1;
+wall_h=15;
 xy_foot = [1,1,0]*(leg_r+actuating_nut_r)/sqrt(2)-[15,0,0];
 z_foot = [0,-(leg_r+leg_outer_w/2)/sqrt(2)+5,0];
 
@@ -195,30 +214,33 @@ module z_actuator(){
 	}
 }
 module objective_clip_3(){
-	assign(arm_length=10)
-	assign(clip_h=z_flexure_spacing-z_strut_t-3,arm_w=2)
-	assign(clip_outer_w=objective_clip_w+2*arm_w)
-	assign(base_y=z_carriage_y-6)
+	arm_length=10;
+	clip_h=z_flexure_spacing-z_strut_t-3;
+    arm_w=2;
+	clip_outer_w=objective_clip_w+2*arm_w;
+    inner_w = clip_outer_w - 2*arm_w;
+	base_y=z_carriage_y-6;
 	difference(){
 		intersection(){
 			union(){
-				assign(w1=z_carriage[0]*2,w2=clip_outer_w,dy=z_carriage_y-objective_clip_y) translate([0,objective_clip_y,0]) sequential_hull(){
+				w1=z_carriage[0]*2;
+                w2=clip_outer_w;
+                dy=z_carriage_y-objective_clip_y;
+                translate([0,objective_clip_y,0]) sequential_hull(){
 					translate([-w1/2,dy,0]) cube([w1,z_carriage[1],2]);
-					hull(){
-						translate([-w2/2,0,0]) cube([w2,arm_length+arm_w,z_strut_t]);
-						translate([-2/2,0,0]) cube([2,dy,z_strut_t]);
-					}
-					translate([-w2/2,0,z_carriage[2]/2]) cube([w2,dy,d]);
-					translate([-w2/2,0,z_carriage[2]-z_carriage[1]]) cube([w2,dy+z_carriage[1],z_carriage[1]]);
+					translate([-w2/2,dy,0]) cube([w2,d,10]);
+					translate([-w2/2,0,0]) cube([w2,arm_length+arm_w,z_strut_t]);
+					translate([-w2/2,dy-4,z_carriage[2]/2]) cube([w2,4,d]);
+					translate([-w1/2,dy,z_carriage[2]-z_carriage[1]]) cube([w1,z_carriage[1],z_carriage[1]]);
 				}
-				translate([-clip_outer_w/2,objective_clip_y,0]) cube([clip_outer_w,arm_length,z_flexure_spacing+z_strut_t]);
+				translate([-clip_outer_w/2,objective_clip_y,0]) cube([clip_outer_w,dy-d,z_flexure_spacing+z_strut_t]);
 			}
 			rotate(45) cube([1,1,999]*z_flexure_x*sqrt(2),center=true);
 		}
 		//opening for clip (forms the arms from the block)
-		hull() reflect([1,0,0]) translate([0,objective_clip_y,1]){
-			translate([-clip_outer_w/2+arm_w+2,arm_length-2,0]) cylinder(r=2,h=999);
-			translate([-clip_outer_w/2+arm_w,1.5,0]) rotate(-45) cube([3,d,999]);
+		hull() reflect([1,0,0]) translate([0,objective_clip_y,0.5]){
+			translate([-inner_w/2+2,arm_length-2,0]) cylinder(r=2,h=999);
+			translate([-inner_w/2,1.5,0]) rotate(-45) cube([3,d,999]);
 		}
 		//clearance for top linker bar between flexure arms
 		translate([-999,z_carriage_y-zflex_l-z_link_w-1.5,z_flexure_spacing-2]) cube([999*2,zflex_l+z_link_w+1.5,999]);
@@ -232,8 +254,12 @@ module objective_clip_3(){
 		//cut-outs for flexures
 		reflect([1,0,0]) hull() translate([-z_flexure_x-d,0,0]) shear_x()
 			translate([-d,0,-d]) cube([z_flex_w+1.5,z_carriage_y,z_strut_t+1.5]);
-		//cut-out for stage (camera mount)
-		hull() reflect([0,0,1]) translate([0,0,4]) rotate([45,0,0]) cube([999,1,1]*sqrt(2)*11,center=true);
+		//sloped bottom to improve quality of the dovetail clip and
+        //allow insertion of the optics from the bottom
+        translate([0,objective_clip_y,0]){
+            rotate([45,0,0]) cube([999,1,1]*sqrt(2)*2.5,center=true); //slope up arms
+            hull() reflect([0,0,1]) translate([0,0,2.5]) rotate([0,45,0]) cube([inner_w/sqrt(2),8,inner_w/sqrt(2)],center=true);
+        }
 	}
 }
 module dovetail_clip_cutout(size,dt=1.5,t=2,h=999){
@@ -247,6 +273,13 @@ module dovetail_clip(size,dt=1.5,t=2){
 		translate([-size[0]/2,0,0]) cube(size);
 		dovetail_clip_cutout(size,dt=dt,t=t,h=999);
 	}
+}
+
+module add_hull_base(h=1){
+    union(){
+        linear_extrude(h) hull() projection() children();
+        children();
+    }
 }
 
 ///////////////////// MAIN STRUCTURE STARTS HERE ///////////////
@@ -285,21 +318,34 @@ union(){
 
 	//base
 	assign(h=base_t) difference(){
-		union(){
+		add_hull_base(h) union(){
 			hull(){ //make it big enough to support legs and actuators
 				each_leg() translate([-leg_outer_w/2,-zflex_l-d,0]) cube([leg_outer_w,d,h]);
 				each_actuator() translate([0,actuating_nut_r,0]) screw_seat_outline(h=h);
 			}
 			
-			//reinforcement for Z axis (and eventually illumination)
-			reflect([1,0,0]) translate([0,0,base_t-d]) sequential_hull(){
-				rotate(-45) translate([12-2,actuating_nut_r+leg_r,0]) cube([2,d,8]);
+			//reinforcement "walls"
+            //first, round the outside from the XY actuators to the illumination
+			reflect([1,0,0]) translate([0,0,-d]) sequential_hull(){
+				rotate(-45) translate([12-2,actuating_nut_r+leg_r,0]) cube([2,d,wall_h]);
 				union(){
 					translate([z_flexure_x+1-2,-3,0]) cylinder(r=1,h=z_flexure_spacing-base_t);
-					leg_frame(-135) translate([-leg_outer_w/2,-zflex_l-2,0]) cube([d,2,d]);
+					leg_frame(-135) translate([-leg_outer_w/2,-zflex_l-2,0]) cube([d,2,d]);translate([(leg_r-zflex_l-1)*sqrt(2)-2,2,0.5]) rotate([-6,-6,45]) cylinder(r=1,h=wall_h,$fn=8);
 				}
 				leg_frame(-135) translate([leg_outer_w/2+1.5,-zflex_l-2,0]) rotate([6,6,0]) cube([d,2,12]);
 			}
+            //next, from the XY actuators to the Z actuator
+            reflect([1,0,0]) hull(){
+                leg_frame(45) translate([12-1,actuating_nut_r,-d]) cylinder(r=1,h=wall_h,$fn=8);
+                translate([0,z_nut_y+10-1,-d]) cylinder(r=1,h=wall_h,$fn=8);
+            }
+            //and from the Z flexure anchors to the Z actuator
+            reflect([1,0,0]) sequential_hull(){
+                translate([(leg_r-zflex_l-1)*sqrt(2)-2,2,-d]) rotate([-6,-6,45]) cylinder(r=1,h=wall_h,$fn=8);
+                translate([5+1,(leg_r-zflex_l-1)*sqrt(2)-5-1,-d]) rotate([0,-6,45])cylinder(r=1,h=max(wall_h, z_flexure_x*0.15 + z_strut_t+4+4),$fn=8);
+                translate([5+1,z_nut_y,-d]) cylinder(r=1,h=wall_h,$fn=8);
+                //SEE ALSO the bridge
+            } 
 		}
 		each_actuator(){//cut-outs for actuators (XY)
 			linear_extrude(2*xy_actuator_travel_top,center=true) minkowski(){ 
@@ -308,6 +354,9 @@ union(){
 			}
 			translate([0,actuating_nut_r,0]) screw_seat_outline(h=999,adjustment=-d,center=true);
 		}
+        //prevent things sticking out the bottom
+        mirror([0,0,1]) cylinder(r=999,h=999,$fn=8);
+        
 		//Z actuator cut-out
 		translate([0,z_nut_y,0]) screw_seat_outline(h=999,adjustment=-d,center=true);
 		translate([-7/2,z_carriage_y,-d]) cube([7,z_nut_y-z_carriage_y,999]); //z actuating arm
@@ -315,13 +364,22 @@ union(){
 		//objective/stuff cut-out
 		sequential_hull(){
 			translate([0,z_flexure_x+1.5-d,0]) cube([2*d,2*d,999],center=true);
-			translate([0,0,0]) cube([2*(z_flexure_x+1.5-d),2*d,999],center=true);
+			translate([0,0,0]) cube([2*(z_flexure_x+0.5),2,999],center=true);
 			translate([0,0,0]) cube([2*(z_flexure_x-z_flex_w-d),2*d,999],center=true);
 			translate([0,8-(z_flexure_x-z_flex_w-d),0]) cube([16,2*d,999],center=true);
 		}
 
 		//post mounting holes
 		reflect([1,0,0]) translate([20,z_nut_y+2,0]) cylinder(r=4/2*1.1,h=999,center=true);
+        
+        //logo
+        x_shift = 3.1;
+        size = big_stage?0.28:0.25;
+        translate([z_flexure_x+x_shift,0,10]) rotate([90,0,atan(((leg_r+actuating_nut_r-12)/sqrt(2))/((leg_r+actuating_nut_r+12)/sqrt(2)-z_flexure_x-x_shift))]){
+            rotate([-4,0,0]) translate([3,2,0.0]) scale([size,size,1]) logo_and_name();
+            translate([leg_r+actuating_nut_r-26,-5,0]) linear_extrude(1) text(str("v",version_string, big_stage?"-LS":"", motor_lugs?"-M":""), size=3, font="Calibri",halign="right");
+        }
+            
 	}
 	//Actuator housings (screw seats and motor mounts)
 	each_actuator() translate([0,actuating_nut_r,0])
@@ -329,25 +387,29 @@ union(){
 	translate([0,z_nut_y,0]) 
         screw_seat(travel=z_actuator_travel, motor_lugs=motor_lugs);
     
-	//camera mount
-	translate([0,-7,0]) mirror([0,1,0]) dovetail_clip([14,7,10]);
-	hull(){
-		translate([-7,8-(z_flexure_x-z_flex_w-d)-3,0]) cube([14,d,base_t]);
-		translate([-7,-7-7,0]) cube([14,d,10]);
-	}
-
-	//illumination mount
+    //bridge over the Z actuator (for strength)
+    //SEE ALSO the reinforcement "walls" above
+    difference(){
+        hull() reflect([1,0,0]){
+            translate([5+1,(leg_r-zflex_l-1)*sqrt(2)-5-1,0.5]) rotate([0,-6,45]) translate([0,0,max(wall_h, z_flexure_x*0.15 + z_strut_t+4+4)-1]) cylinder(r=1,h=2,$fn=8);
+            translate([5+1,z_nut_y,wall_h-1+0.5]) cylinder(r=1,1,$fn=8);
+        }
+        //Z actuator cut-out
+		translate([0,z_nut_y,0]) screw_seat_outline(h=999,adjustment=-d,center=true);
+    }
+	////////////// illumination mount ///////////////////
 	difference(){
 		sequential_hull(){ //leg structure (oval tube)
 			hull() reflect([1,0,0]) leg_frame(-135) translate([leg_outer_w/2,-zflex_l-2,0]){
 				translate([0,0,base_t-d]) rotate([6,6,0]) cube([d,2,12]);
 				cube([d,2,base_t]);
 			}
-			translate([0,-leg_r-8,0]) scale([0.8,1.1,1]) cylinder(r=8,h=12+base_t);
+			translate([0,-leg_r-8,0]) scale([0.8,1.2,1]) cylinder(r=8,h=12+base_t);
 			translate([0,-leg_r-10,sample_z]) scale([1,1.1,1]) cylinder(r=6,h=d);
 			translate([-6,-leg_r-12,sample_z+4]) cube([12,10,15]);
 		}
 		//hole in the bottom for foot
+		translate([0,-leg_r-8,-d]) scale([0.8,1.1,1]) cylinder(r1=6+0.75,r2=6,h=2); //chamfered bottom
 		sequential_hull(){
 			//make the tube hollow
 			translate([0,-leg_r-8,-d]) scale([0.8,1.1,1]) cylinder(r=6,h=12+base_t); 
