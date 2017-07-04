@@ -21,7 +21,6 @@ sample=[0,19/2,12.4-1.5-9]; //position of clamping point relative to bolt
 $fn=32;
 
 
-//rotate([0,90,0]) 
 module sample_clip(sample,t=2.5,w=6,roc=-1,slope=30){
     roc = roc>0 ? roc : sample[2]/2 + sample[1]*sin(slope) - t/2; //radius of curvature
     a = sqrt(pow(sample[1], 2) + pow(sample[2] - roc - t/2, 2));
@@ -35,7 +34,7 @@ module sample_clip(sample,t=2.5,w=6,roc=-1,slope=30){
     difference(){
         union(){
             //anchor to stage
-            hull() repeat([sample[0],0,0],2) cylinder(r=w/2,h=t);
+            cylinder(r=w/2,h=t);
             
             translate([0,0,roc+t]) rotate([0,90,0]) difference(){
                 cylinder(r=roc+t,h=w,center=true);
@@ -59,6 +58,7 @@ module sample_clip(sample,t=2.5,w=6,roc=-1,slope=30){
 //sample_clip([0,19/2+3,12.4-1.5],slope=7.5); //mini culture dish
 
 //for a standard microscope slide, use [0,20,0] to clamp from both holes next to one leg
+for(a=[0,180]) rotate([0,-90,a]) translate([7/2,-10,-7+1])
 sample_clip([0,20,-1], w=7, roc=7); //microscope slide
 /*
 translate([10,0,0]) sample_clip([0,20,0]);
