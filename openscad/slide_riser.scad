@@ -110,7 +110,7 @@ module simple_riser(h=10){
 	}
 }
 //simple_riser();
-//slide_riser();
-rotate([180,0,0]) slide_clip();
+slide_riser();
+translate([-25,10,h+2]) translate(clip_pivot) rotate([180,0,22]) translate(-clip_pivot) slide_clip();
 //rotate([180,0,0]) 
 //slide_clip();
