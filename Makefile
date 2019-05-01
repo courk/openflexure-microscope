@@ -6,7 +6,7 @@ SOURCE = openscad
 OUTPUT = builds
 
 body_versions = LS65 LS65-M LS75 LS75-M
-optics_versions = picamera_2_pilens_LS65 logitech_c270_c270_lens_LS65 picamera_2_rms_f40d16_LS65 picamera_2_rms_f50d13_LS65 logitech_c270_rms_f40d16_LS65 logitech_c270_rms_f50d13_LS65 m12_rms_f40d16_LS65 m12_rms_f50d13_LS65 m12_m12_lens_LS65
+optics_versions = picamera_2_pilens_LS65 logitech_c270_c270_lens_LS65 picamera_2_rms_f40d16_LS65 picamera_2_rms_f50d13_LS65 picamera_2_rms_infinity_f50d13_LS65 logitech_c270_rms_f40d16_LS65 logitech_c270_rms_f50d13_LS65 logitech_c270_rms_infinity_f50d13_LS65 m12_rms_f40d16_LS65 m12_rms_f50d13_LS65 m12_rms_infinity_f50d13_LS65 m12_m12_lens_LS65
 sample_riser_versions = LS10
 slide_riser_versions = LS10
 
@@ -86,17 +86,26 @@ $(OUTPUT)/optics_picamera_2_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_
 $(OUTPUT)/optics_picamera_2_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
 	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
 
+$(OUTPUT)/optics_picamera_2_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
 $(OUTPUT)/optics_logitech_c270_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
 	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
 
 $(OUTPUT)/optics_logitech_c270_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
 	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
 
+$(OUTPUT)/optics_logitech_c270_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
 $(OUTPUT)/optics_m12_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
 	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
 
 $(OUTPUT)/optics_m12_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
 	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_m12_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
 
 $(OUTPUT)/optics_m12_m12_lens_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
 	openscad -o $@ -D 'optics="m12_lens"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<

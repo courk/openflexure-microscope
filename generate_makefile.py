@@ -13,7 +13,7 @@ the repository and is versioned, so most people never need to run this script.
 body_versions = ["LS65", "LS65-M", "LS75", "LS75-M"]
 
 cameras = ["picamera_2", "logitech_c270", "m12"]
-lenses = ["pilens", "c270_lens", "m12_lens", "rms_f40d16", "rms_f50d13"]
+lenses = ["pilens", "c270_lens", "m12_lens", "rms_f40d16", "rms_f50d13", "rms_infinity_f50d13"]
 optics_versions_LS65 = ["picamera_2_pilens", "logitech_c270_c270_lens"]
 optics_versions_LS65 += [cam + "_" + lens for cam in cameras for lens in lenses if "rms" in lens] + ["m12_m12_lens"]
 optics_versions = [v + "_LS65" for v in optics_versions_LS65]
