@@ -1,6 +1,5 @@
-# Don't take stl files from the openscad folder
-openscad/*.stl
-# Do allow them in the stl folder though
+# Don't take stl files
+*.stl
 
 # Ignore gcode files
 *.g
@@ -11,6 +10,8 @@ openscad/*.stl
 
 # Ignore zip files in the documentation dir
 docs/*.zip
-builds/*.zip
+
+# Ignore automatically built files
+builds/
 
 .DS_Store
