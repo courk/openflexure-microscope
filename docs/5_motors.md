@@ -8,11 +8,11 @@ You will need the parts shown in the picture below:
 
 ## Parts
 *   1 Microscope, with actuators already assembled
-*   3 Small printed gears
-*   3 28BYJ-48 micro geared stepper motors
-*   6 M4x6mm button head screws
-*   1 Motor board case
-*   1 Motor driver board
+*   [Small printed gears](./parts/printed/small_gears.md)
+*   3 [28BYJ-48 micro geared stepper motors](./parts/electronics/stepper_motors.md)
+*   6 [M4x6mm button head screws](./parts/fixings/m4x6mm_buttonhead_screw.md)
+*   1 [Motor board case](./parts/printed/motor_driver_case.md)
+*   1 [Motor driver board](./parts/electronics/motor_driver.md)
 *   1 Short mini USB lead
 *   2 Small cable ties
 

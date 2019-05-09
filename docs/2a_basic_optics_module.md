@@ -7,18 +7,19 @@ You will need the parts shown in the picture below:
 ![Parts required for this step](./images/basic_optics_module_parts.jpg)
 
 ## Parts
-*   1 [Camera platform](./parts/camera_platform)
-*   1 [Lens extension tube](./parts/lens_spacer)
-*   1 Raspberry Pi camera module (ideally v2, though v1 should also work) - you could substitute a 6-LED webcam for an even lower-cost solution.
-*   1 [M3 steel nut](./parts/m3_nut)
-*   1 [M3x10mm cap head screw](./parts/m3x10mm_cap_head)
-*   4 [M2x6mm cap head screws](./parts/m2x6mm_cap_head)
+*   1 [Camera platform](./parts/printed/camera_platform.md)
+*   1 [Lens extension tube](./parts/printed/lens_spacer.md)
+*   1 [Raspberry Pi camera module](./parts/electronics/raspberry_pi_camera.md) (ideally v2, though v1 should also work) - you could substitute a 6-LED webcam for an even lower-cost solution.
+*   1 [M3 steel nut](./parts/fixings/m3_steel_nut.md)
+*   1 [M3x10mm cap head screw](./parts/fixings/m3x8mm_caphead_screw.md)
+*   2 [M2x6mm cap head screws](./parts/fixings/m2x6mm_caphead_screw.md)
 
 ## Tools
 *   1 2.5mm hex key
 *   1 1.5mm hex key
 *   1 scalpel or craft knife (optional)
-*   1 [Tool for removing the lens](./parts/camera_lens_removal_tools)
+*   1 lens removal tool (supplied with the camera)
+*   1 printed [board gripper](./parts/printed_tools/picamera_2_tools.md)
 
 # Assembly Instructions
 ## Step 1

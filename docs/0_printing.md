@@ -1,5 +1,5 @@
 # Printing the plastic parts
-First, you will need to print or obtain the 3D printed parts.  These have been designed with some care to print reliably on most RepRap-style printers, without support material.  It's important to read through the notes before, as there are multiple versions of the STL files to choose from, so it's not a good idea just to pick all the parts in the folder.
+First, you will need to print or obtain the 3D printed parts.  These have been designed with some care to print reliably on most RepRap-style printers, without support material.  It's important to read through the notes before, as there are multiple versions of the STL files to choose from, so it's not a good idea just to pick all the parts in the folder.  The printed parts are described in their own pages, with details of how to pick the version of that part, for the parts with multiple versions.  A full list of links is at the bottom.
 
 ## Print settings
 I usually print with a layer size of 0.24mm on my Ormerod, which takes 10 hours for the main body.  "low" quality on an Ultimaker 2 (0.15mm layers) produces similar results in about 10 hours.  Our Prusa i3 Mk3 takes a similar time using 0.2mm layers, or 0.3mm layers if we want to go even faster (8 hours or less).
@@ -34,9 +34,9 @@ The basic version of the microscope uses a webcam lens instead of a microscope o
 * ``sample_clips.stl``
 * ``camera_platform_picamera_2_LS65.stl``
 * ``lens_spacer_picamera_2_pilens_LS65.stl``
-* ``microscope_stand.stl`` or ``back_foot.stl``
+* ``microscope_stand.stl`` (or ``back_foot.stl``)
 
-This will need the nuts, bolts, etc. described below, plus a Raspberry Pi computer (any model will do) and Raspberry Pi camera module.  No other optical bits are required, except an LED for illumination.  If your Raspberry Pi is in a case already, you should print ``back_foot.stl`` so the microscope sits flat on a table.  If you want to mount the Raspberry Pi underneath the microscope (our preferred option), print ``microscope_stand.stl`` instead.  Newer camera modules include a white circular tool for unscrewing the lens.  If you don't have one, you will need to print the lens gripper (marked as optional).
+This will need the nuts, bolts, etc. described below, plus a Raspberry Pi computer (any model will do) and Raspberry Pi camera module.  No other optical bits are required, except an LED for illumination.  If you want to mount the Raspberry Pi underneath the microscope (our preferred option), print ``microscope_stand.stl`` instead.  If your Raspberry Pi is in a case already, you should print ``back_foot.stl`` so the microscope sits flat on a table.  Newer camera modules include a white circular tool for unscrewing the lens.  If you don't have one, you will need to print the lens gripper (marked as optional).
 
 ### High resolution microscope
 The version of the microscope used for scientific or medical research generally requires a conventional objective lens.  Most of the parts are the same, but the optics and sample mount are different.  You will need one copy of each of the following files:
@@ -65,36 +65,35 @@ Additionally, you will need:
 * a 13mm diameter, 5mm focal length PMMA lens for the condenser (sold as LED lenses in bulk)
 * three 28BYJ-48 stepper motors and a [sangaboard](https://github.com/rwb27/openflexure_nano_motor_controller/) driver, or other suitable electronics.
 
-## Required parts
-Make sure you have all the necessary parts and tools.  The parts should all be listed in the bill of materials, which is currently a work in progress (eventually it will be produced automatically, which should help it to stay accurate).  We reccommend reading through all the instructions, rather than trusting what is currently listed here. 
-
-### Printed parts
-Currently, the STL files live in the [builds folder](../builds).  This will move to a build server soon.
+## Printed parts
+The best way to obtain these files is from the latest [release](https://gitlab.com/openflexure/openflexure-microscope/tags), or from the files associated with a particular commit on GitLab.com.
 
 **Plastic tools:**
-* band and nut insertion tools ``actuator_assembly_tools.stl``
-* tool to insert the 13mm diameter condenser lens and/or tube lens: ``lens_tool.stl``
-* jig to hold the camera board while you unscrew the lens ``picamera_2_gripper.stl``
-* [optional] tool to unscrew the camera's lens (only needed if your camera didn't come with one) ``picamera_2_lens_gripper.stl``
+* [band and nut insertion tools](./parts/printed_tools/actuator_assembly_tools.md) ``actuator_assembly_tools.stl``
+* [tool to insert](./parts/printed_tools/lens_tool.md) the 13mm diameter condenser lens and/or tube lens: ``lens_tool.stl``
+* [jig to hold the camera board](./parts/printed_tools/picamera_2_tools.md) while you unscrew the lens ``picamera_2_gripper.stl``
+* [optional] [tool to unscrew the camera's lens](./parts/printed_tools/picamera_2_tools.md) (only needed if your camera didn't come with one) ``picamera_2_lens_gripper.stl``
 
 **Components:**
-* body of the microscope: ``main_body_<stage size><height>[-M].stl``.
-* 3 feet: ``feet.stl`` or ``feet_tall.stl`` (contains all 3)
-* 3 large gears: ``gears.stl`` (contains all 3)
+* [body of the microscope](./parts/printed/main_body.md): ``main_body_<stage size><height>[-M].stl``.
+* 3 [feet](./parts/printed/feet.md): ``feet.stl`` or ``feet_tall.stl`` (contains all 3)
+* 3 [large gears](./parts/printed/gears.md): ``gears.stl`` (contains all 3)
 * illumination:
- - ``illumination_dovetail.stl``
- - ``condenser.stl``
-* 2 sample clips: ``sample_clips.stl`` (contains both)
+ - [vertical dovetail](./parts/printed/illumination_dovetail.md): ``illumination_dovetail.stl``
+ - [condenser arm](./parts/printed/condenser.md): ``condenser.stl``
+* 2 [sample clips](./parts/printed/sample_clips.md): ``sample_clips.stl`` (contains both)
 * optics module (you need one of the two options below):
- - old-style optics module (one part, best with RMS objectives): ``optics_<camera>_<lens>_<stage size><height>.stl``
- - platform-style optics module (two parts, best with webcam lenses): ``camera_platform_<camera>_<stage size><height>.stl`` and ``lens_spacer_<camera>_<lens>_<stage_size><height>.stl``
+ - old-style [optics module](./parts/printed/optics_module_casing.md) (one part, best with RMS objectives): ``optics_<camera>_<lens>_<stage size><height>.stl``
+ - platform-style optics module (two parts, best with webcam lenses): 
+  * [camera platform](./parts/printed/camera_platform.md): ``camera_platform_<camera>_<stage size><height>.stl``
+  * [lens spacer](./parts/printed/lens_spacer.md): ``lens_spacer_<camera>_<lens>_<stage_size><height>.stl``
 * [optional] camera cover: ``picamera_2_cover.stl``
-* [optional] 3 small gears for motors: ``small_gears.stl`` (contains all 3)
-* [optional] riser for the sample: ``sample_riser_<stage size><thickness>.stl``
+* [optional] 3 [small gears](./parts/printed/small_gears.md) for motors: ``small_gears.stl`` (contains all 3)
+* [optional] [riser for the sample](./parts/printed/sample_riser.md): ``sample_riser_<stage size><thickness>.stl``
 * [optional] slide holder that works better if using immersion oil: ``slide_riser_LS10.stl``
-* [optional] base to hold a Raspberry Pi: ``microscope_stand.stl``
-* [optional] base to hold the motor driver (fits under the base that holds the Pi): ``motor_driver_case.stl``
-* [optional] back foot, in case you are not using the microscope stand: ``back_foot.stl``
+* [optional] [base to hold a Raspberry Pi](./parts/printed/microscope_stand.md): ``microscope_stand.stl``
+* [optional] [base to hold the motor driver](./parts/printed/motor_driver_case.md) (fits under the base that holds the Pi): ``motor_driver_case.stl``
+* [optional] [back foot](./parts/printed/back_foot.md), in case you are not using the microscope stand: ``back_foot.stl``
 
 In the filenames above, where there are multiple versions, parameters are included in angle brackets:
 * ``<stage size>`` selects the size of the platform - but currently only ``LS`` is supported.

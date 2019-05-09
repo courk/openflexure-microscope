@@ -18,8 +18,8 @@ Make sure you have all the necessary parts and tools before you start.  The part
 *   [2-way JST header connector](./parts/electronics/2_way_jst_header.md) (so long as you have some way of lighting up the LED, it doesn't much matter)
 *   [Raspbery Pi camera module](./parts/electronics/raspberry_pi_camera.md) (v2, though v1 works too)
 *   [Raspberry Pi](./parts/electronics/raspberry_pi.md) (with associated power supply, keyboard, monitor, etc.)
-*   3x [28BYJ-48 micro stepper motors](./parts/electronics/micro_geared_stepper.md) (optional)
-*   [Motor driver board](./parts/electronics/sangaboard.md) for the above (optional)
+*   3x [28BYJ-48 micro stepper motors](./parts/electronics/stepper_motors.md) (optional)
+*   [Motor driver board](./parts/electronics/motor_driver.md) for the above (optional)
 
 ## Optical parts:
 *   [13mm diameter, 5mm focal length plastic condenser lens](./parts/optics/condenser_lens.md) (optional, strongly recommended for high resolution optics)

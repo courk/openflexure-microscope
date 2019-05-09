@@ -3,16 +3,16 @@ The microscope usually works by looking at light that has passed through the sam
 
 # Requirements
 ## Parts
-*   1 [Illumination dovetail](./parts/illumination_dovetail)
-*   1 [condenser arm](./parts/condenser)
-*   1 [5mm LED](./parts/white_led) ideally wired up to a 2-way female header
-*   2 [M3x8 cap head screws](./parts/m3x8mm_screws)
-*   2 [M3 Washers](./parts/m3_washer)
-*   1 [Condenser lens](./parts/condenser_lens) (optional)
+*   1 [Illumination dovetail](./parts/printed/illumination_dovetail.md)
+*   1 [condenser arm](./parts/printed/condenser.md)
+*   1 [5mm LED](./parts/electronics/white_led.md) ideally wired up to a 2-way female header
+*   2 [M3x8 cap head screws](./parts/fixings/m3x8mm_caphead_screw.md)
+*   2 [M3 Washers](./parts/fixings/m3_washer.md)
+*   1 [Condenser lens](./parts/optics/condenser_lens.md) (optional)
 
 ## Tools
 * 2.5mm hex key
-* Condenser lens insertion tool (if using a condenser lens)
+* [Condenser lens insertion tool](./parts/printed_tools/lens_tool.md) (if using a condenser lens)
 
 # Assembly Instructions
 ## Step 1

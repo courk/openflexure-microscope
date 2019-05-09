@@ -7,9 +7,9 @@ All the parts you need are shown below:
 
 ## Parts
 *   1 Microscope body, with 3 assembled actuators, an optics module, and the illumination attached.
-*   2 [M3x8mm screws](./parts/m3x8mm_screws)
-*   2 [Sample clips](./parts/sample_clips)
-*   1 [Raspberry Pi](./parts/raspberry_pi)
+*   2 [M3x8mm cap head screws](./parts/fixings/m3x8mm_caphead_screw.md) 
+*   [Sample clips](./parts/printed/sample_clips.md)
+*   [Raspberry Pi](./parts/electronics/raspberry_pi.md)
 
 ## Tools
 *   A 2.5mm ball-ended hex key

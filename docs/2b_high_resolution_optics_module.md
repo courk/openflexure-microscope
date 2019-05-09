@@ -7,20 +7,21 @@ You will need the parts shown in the picture below:
 ![Parts required for this step](./images/hires_optics_parts.jpg)
 
 ## Parts
-*   1 [RMS optics module casing](./parts/hires_optics_casing)
+*   1 [RMS optics module casing](./parts/printed/optics_module_casing.md)
 *   1 [Raspbery Pi camera module](./parts/electronics/raspberry_pi_camera.md)  (ideally v2, though v1 should also work)
 *   1 [M3 steel nut](./parts/fixings/m3_steel_nut.md)
-*   1 [M3x10mm cap head screw](./parts/m3x10mm_cap_head)
-*   2 [M2x6mm cap head screws](./parts/m2x6mm_cap_head)
-*   1 [12.7mm diameter, 50mm focal length achromatic lens](./parts/d13_f50_achromat)
-*   1 RMS threaded microscope objective
+*   1 [M3x10mm cap head screw](./parts/fixings/m3x8mm_caphead_screw.md)
+*   2 [M2x6mm cap head screws](./parts/fixings/m2x6mm_caphead_screw.md)
+*   1 [12.7mm diameter, 50mm focal length achromatic lens](./parts/optics/tube_lens.md)
+*   1 [RMS threaded microscope objective](./parts/optics/objective.md)
 
 ## Tools
-*   1 [Tube lens insertion tool](./parts/tube_lens_insertion_tool)
+*   1 [Tube lens insertion tool](./parts/printed_tools/lens_tool.md)
 *   1 2.5mm hex key
 *   1 1.5mm hex key
 *   1 scalpel or craft knife (optional)
-*   1 [Tool for removing the lens](./parts/camera_lens_removal_tools)
+*   1 lens removal tool (supplied with the camera)
+*   1 printed [board gripper](./parts/printed_tools/picamera_2_tools.md)
 
 
 # Assembly Instructions

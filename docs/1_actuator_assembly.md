@@ -11,14 +11,13 @@ All the parts you need for this step are in the picture below:
 *   3x [M3 brass nut](./parts/fixings/m3_brass_nut.md)
 *   6x [M3 stainless steel washers](./parts/fixings/m3_washer.md)
 *   3x [Viton O-ring, 30x2mm](./parts/fixings/viton_o_ring_30mm_inner_diameter_2mm_cross_section.md) (NB: get some spares!)
-*   3 [Plastic gears](./parts/gearthumbscrew)
-*   1 set of [Microscope Feet](./parts/microscope_feet) (NB there are different feet for X/Y axes and for the Z axis).
+*   3 [Plastic gears](./parts/printed/gears.md)
+*   1 set of [Microscope Feet](./parts/printed/feet.md) (NB there are different feet for X/Y axes and for the Z axis).
 *   light grease (if available)
 
 ## Tools
-*   [Nut insertion tool](./parts/nut_insertion_tool)
-*   [O ring insertion tool](./parts/o_ring_insertion_tool)
-*   [Craft knife](./parts/craft_knife)
+*   [Nut and O ring insertion tools](./parts/actuator_assembly_tools.md)
+*   Craft knife
 
 # Assembly Instructions
 There are three actuator columns on the microscope, for X, Y, and Z.  Follow these instructions for each column in turn.
