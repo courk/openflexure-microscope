@@ -13,5 +13,6 @@ docs/*.zip
 
 # Ignore automatically built files
 builds/
+docs/Output/
 
 .DS_Store
