@@ -198,14 +198,20 @@ module motor_lugs(h=20, tilt=0, angle=0){
     }
 }
 
-module screw_seat(h=25, travel=5, tilt=0, entry_w=2*column_base_r+3, extra_entry_h=7, motor_lugs=false, lug_angle=0){
+module screw_seat(h=25, travel=5, tilt=0, entry_w=2*column_base_r+3, extra_entry_h=7, motor_lugs=false, lug_angle=0, label=""){
     // This forms a hollow column, usually built around an actuator_column to
     // support the screw (see screw_seat_shell)
     entry_h = extra_entry_h + travel; //ensure the actuator can move
+    nut_slot_z = h-nut_size-1.5-nut_slot[2];
     difference(){
         union(){
             screw_seat_shell(h=h + travel, tilt=tilt);
             if(motor_lugs) rotate(180) motor_lugs(h=h + travel, angle=lug_angle, tilt=-tilt);
+            if(len(label) > 0) rotate([tilt,0,0]) translate([0, ss_outer(h)[1]/2, nut_slot_z - 2]){
+                rotate([90,0,0]) linear_extrude(1, center=true) mirror([1,0])
+                        text(label, size=10, font="Sans", halign="center", valign="top");
+            }
+                
         }
         nut_seat_void(h=h + travel, tilt=tilt); //hollow out the inside
         
@@ -214,7 +220,7 @@ module screw_seat(h=25, travel=5, tilt=0, entry_w=2*column_base_r+3, extra_entry
                     cube([entry_w, edge_y, entry_h*2], center=true);
         
         //entrance slot for nut
-        rotate([tilt,0,0]) translate([0,0,h-nut_size-1.5-nut_slot[2]]) nut_trap_and_slot(nut_size, nut_slot + [0,0,0.3]);
+        rotate([tilt,0,0]) translate([0,0,nut_slot_z]) nut_trap_and_slot(nut_size, nut_slot + [0,0,0.3]);
     }
 }
 
@@ -384,7 +390,7 @@ translate([40,0,0]){
 //
 difference(){
     union(){
-        screw_seat(25, motor_lugs=true);
+        screw_seat(25, motor_lugs=true, label="Z");
 
         difference(){ //an example actuator rod
             translate([-3,-40,0]) cube([6,40,5]);

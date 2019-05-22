@@ -190,8 +190,15 @@ module objective_mounting_screw_access(){
 
 module z_motor_clearance(){
     // clearance for the motor and gears, to be subtracted from the condenser mount
-    translate([0,z_nut_y,0]) rotate([z_actuator_tilt,0,0]) 
-        translate([0,0,actuator_h+z_actuator_travel+2-1]) rotate(180) motor_and_gear_clearance(gear_h=11);
+    // This also labels it as "Z"
+    translate([0,z_nut_y,0]) rotate([z_actuator_tilt,0,0]) {
+        translate([0,0,actuator_h+z_actuator_travel+2-1]) rotate(180){
+            motor_and_gear_clearance(gear_h=11);
+            linear_extrude(1, center=true) translate([0,15]) {
+                text("Z", size=10, font="Sans", halign="center", valign="baseline");
+            }
+        }
+    }
 }
 
 module z_axis_casing(condenser_mount=false){
@@ -256,7 +263,7 @@ module z_actuator_cutout(){
 // for(a=[-45,45]) rotate(a) translate([-leg_outer_w/2,leg_r,0]) cube([leg_outer_w, 4, sample_z]);
 
 // These are the moving parts of the axis
-objective_mount();
+//objective_mount();
 //z_axis_flexures();
 //z_axis_struts();
 //z_actuator_column();

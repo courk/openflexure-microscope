@@ -1,16 +1,13 @@
 /******************************************************************
 *                                                                 *
-* OpenFlexure Microscope: WaterScope logo                         *
+* OpenFlexure Microscope: logo                                    *
 *                                                                 *
-* This file draws the WaterScope logo.                            *
+* This file draws the OpenFlexure/Open Hardware logos.            *
 *                                                                 *
 * This is part of the OpenFlexure microscope, an open-source      *
 * microscope and 3-axis translation stage.  It gets really good   *
 * precision over a ~10mm range, by using plastic flexure          *
 * mechanisms.                                                     *
-*                                                                 *
-* WaterScope is a company that uses the microscope, and will      *
-* hopefully sell it quite soon.                                   *
 *                                                                 *
 * (c) Richard Bowman, January 2016                                *
 * Released under the CERN Open Hardware License                   *

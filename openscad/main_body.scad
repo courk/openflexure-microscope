@@ -288,8 +288,10 @@ union(){
 	} ///////// End of things to chop out of base/walls ///////
     
 	//Actuator housings (screw seats and motor mounts)
-	each_actuator() translate([0,actuating_nut_r,0]){
-        screw_seat(h=actuator_h, travel=xy_actuator_travel, motor_lugs=motor_lugs, extra_entry_h=actuator[2]+2);
+    xy_labels=["X","Y"];
+    xy_angles=[-45,45];
+	for(i=[0:1]) leg_frame(xy_angles[i]) translate([0,actuating_nut_r,0]){
+        screw_seat(h=actuator_h, travel=xy_actuator_travel, motor_lugs=motor_lugs, extra_entry_h=actuator[2]+2, label=xy_labels[i]);
     }
     difference(){
         z_actuator_housing();
