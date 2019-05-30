@@ -23,11 +23,12 @@ def process_markdown(infile, outfile):
                     output.write("---\n")
                     output.writelines(preamble_lines)
                     extracted_title = True
+                    print(f"Added header for '{title}' ({infile})")
                 else:
                     preamble_lines.append(line)
             else:
                 output.write(line) # copy over the file
-            m = re.search("images/([^.]*\.(jpeg|jpg|JPG|JPEG|png|PNG))", line)
+            m = re.search(r"images/([^.]*\.(jpeg|jpg|JPG|JPEG|png|PNG))", line)
             if m:
                 images.add(m.group(1))
     return images
