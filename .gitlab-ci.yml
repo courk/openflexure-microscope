@@ -1,4 +1,3 @@
-image: ubuntu:18.04
 before_script:
   - apt-get update -qq
   - apt-get -y -qq install software-properties-common dirmngr apt-transport-https lsb-release ca-certificates make
