@@ -53,6 +53,7 @@ module pi_support_frame(){
     // position supports for each of the pi's mounting screws
     pi_frame() translate([3.5,3.5]) repeat([58,0,0],2) repeat([0,49,0], 2) children();
 }
+
 module pi_supports(){
     // pillars into which the pi can be screwed (holes are hollowed out later)
     difference(){
@@ -96,6 +97,7 @@ module microscope_legs(){
         translate([-999,0]) square(999*2);
     }
 }
+
 
 module feet_in_place(grow_r=1, grow_h=2){
     each_actuator() translate([0,actuating_nut_r,0]) minkowski(){
@@ -253,9 +255,11 @@ module sangaboard_support_frame(){
 }
 
 module sangaboard_supports(){
-    // pillars into which the pi can be screwed (holes are hollowed out later)
+    // pillars into which the pi can be screwed
     difference(){
         sangaboard_support_frame() cylinder(h=raspi_z, d=7);
+        // holes for the sangaboard go all the way through
+        sangaboard_support_frame() trylinder_selftap(3, h=999, center=true); //these screws are M2.5, not M3
     }
 }
 
@@ -265,7 +269,7 @@ module motor_driver_case(){
         union(){
             bucket_base_stackable();
     
-            // supports for the circuit board (same as for the Pi)
+            // supports for the circuit board
             sangaboard_supports();
         }
         // space for sangaboard connectors
@@ -274,8 +278,6 @@ module motor_driver_case(){
         // motor cables
         translate([0,z_nut_y,h]) cube([20,50,15],center=true);
         
-        // holes for the pi go all the way through
-        sangaboard_support_frame() trylinder_selftap(3, h=999, center=true); //these screws are M2.5, not M3
         
         mounting_holes();
     }
