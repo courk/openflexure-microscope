@@ -477,7 +477,6 @@ module condenser(){
     aperture_r = lens_r-1.1;
     lens_t = 1;
     base_r = lens_r+2;
-    led_r = 5/2;
     union(){
         //lens gripper to hold the plastic asphere
         translate([0,0,lens_z-pedestal_h]){
