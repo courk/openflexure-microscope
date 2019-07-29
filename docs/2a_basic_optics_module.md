@@ -7,24 +7,27 @@ You will need the parts shown in the picture below:
 ![Parts required for this step](./images/basic_optics_module_parts.jpg)
 
 ## Parts
-*   1 [Camera platform](./parts/camera_platform)
-*   1 [Lens extension tube](./parts/lens_spacer)
-*   1 Raspberry Pi camera module (ideally v2, though v1 should also work)
-*   1 [M3 steel nut](./parts/m3_nut)
-*   1 [M3x10mm cap head screw](./parts/m3x10mm_cap_head)
-*   4 [M2x6mm cap head screws](./parts/m2x6mm_cap_head)
+*   1 [Camera platform](./parts/printed/camera_platform.md)
+*   1 [Lens extension tube](./parts/printed/lens_spacer.md)
+*   1 [Raspberry Pi camera module](./parts/electronics/raspberry_pi_camera.md) (ideally v2, though v1 should also work) - you could substitute a 6-LED webcam for an even lower-cost solution.
+*   1 [M3 steel nut](./parts/fixings/m3_steel_nut.md)
+*   1 [M3x10mm cap head screw](./parts/fixings/m3x8mm_caphead_screw.md)
+*   2 [M2x6mm cap head screws](./parts/fixings/m2x6mm_caphead_screw.md)
 
 ## Tools
 *   1 2.5mm hex key
 *   1 1.5mm hex key
 *   1 scalpel or craft knife (optional)
-*   1 [Tool for removing the lens](./parts/camera_lens_removal_tools)
+*   1 lens removal tool (supplied with the camera)
+*   1 printed [board gripper](./parts/printed_tools/picamera_2_tools.md)
 
 # Assembly Instructions
 ## Step 1
 First, get the necessary tools and parts: the optics module plastic parts (the lens spacer and the camera platform), the Raspberry Pi camera module, the tools for removing the camera lens, two M2 screws to secure the camera.  Depending on print quality, you might also need a sharp craft knife or some tape.
  
 NB the lens removal tools, board gripper, and optics module are all specific to the camera you're using.  This version of the instructions is for version 2 of the camera board, version 1 of the Rasbperry Pi camera module will also work, but you will need to remove the lens with pliers or tweezers instead.  Version 2 of the camera module ships with a lens removal tool included, which is a white disc of plastic with a hole in the centre.  This is better than the printed lens removal tool, if it's available.
+
+If you are using the 6-LED USB webcam (available for around £3 from eBay or AliExpress) you will need to skip some of these steps and also disassemble the plastic casing to extract the circuit board for the camera.  You can simply unscrew the webcam lens and tape or glue it upside down onto the holder, which is fixed onto the circuit board.  There is a camera platform STL for the 6-LED camera in the build, substitute this for the Raspberry Pi camera platform part.
 
 ## Step 2
 We need to remove the lens from the camera.  To do this, you need the two plastic tools (the board gripper and the lens remover) as well as the camera module.  It's best to make sure you have completed the steps up to this point before removing the lens, to minimise the amount of time the sensor is exposed to air and dust.
@@ -55,7 +58,7 @@ Once you've removed the lens, be sure to place the camera face down on the desk,
 Before assembling the parts into the holder, make sure it's free from dust by blowing some air through it, and check there are no strings of plastic in the central hole through the mount.
 
 ## Step 7
-Next, put the lens into the plastic extension tube.  This should just push-fit, but may take a small amount of force, or  require a layer of tape wrapped around the lens to make it fit tightly (depending on your printer).  If you wrap tape around the lens, trim off any tape that protrudes above the lens with a scalpel or sharp craft knife.  NB the lens should go in with the side that was next to the camera sensor on top, and the side that was facing outwards (the one with a small hole in the black plastic) facing into the extension tube.
+Next, put the lens into the plastic extension tube.  The lens should go in with the side that was next to the camera sensor on top, and the side that was facing outwards (the one with a small hole in the black plastic) facing into the extension tube.  This should just push-fit, but may take a small amount of force, or  require a layer of tape wrapped around the lens to make it fit tightly (depending on your printer).  If you wrap tape around the lens, trim off any tape that protrudes above the lens with a scalpel or sharp craft knife.
 
 ![The lens in the extension tube](./images/insert_camera_lens.jpg)
 ![](./images/lens_insertion_2.jpg)

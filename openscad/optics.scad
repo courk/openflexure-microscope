@@ -30,7 +30,7 @@ use <thorlabs_threads.scad>;
 use <cameras/camera.scad>; // this will define the 2 functions and 1 module for the camera mount, using the camera defined in the "camera" parameter.
 
 dt_bottom = -2; //where the dovetail starts (<0 to allow some play)
-camera_mount_top = dt_bottom - 3 - (optics=="rms_f50d13"?11:0); //the 50mm tube lens requires the camera to stick out the bottom.
+camera_mount_top = dt_bottom - 3 - (optics=="rms_f50d13"?8:0) - (optics=="rms_infinity_f50d13"?20:0); //the 50mm tube lens requires the camera to stick out the bottom.
 bottom = camera_mount_top-camera_mount_height(); //nominal distance from PCB to microscope bottom
 fl_cube_bottom = optics=="rms_f50d13"?-8:0; //bottom of the fluorescence filter cube
 fl_cube_w = 16; //width of the fluorescence filter cube
@@ -335,7 +335,7 @@ module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
     // the solution to this, if b=fo-dos and a=ft, is:
     // dts = 1/2 * (sqrt(b) * sqrt(4*a+b) - b)
     a = tube_lens_f;
-    dos = sample_z - objective_parfocal_distance - bottom;
+    dos = sample_z - objective_parfocal_distance - bottom - camera_sensor_height(); //distance from the sensor to the objective shoulder
     echo("Objective to sensor:",dos);
     b = tube_length - dos;
     dts = 1/2 * (sqrt(b) * sqrt(4*a+b) - b);
@@ -477,7 +477,6 @@ module condenser(){
     aperture_r = lens_r-1.1;
     lens_t = 1;
     base_r = lens_r+2;
-    led_r = 5/2;
     union(){
         //lens gripper to hold the plastic asphere
         translate([0,0,lens_z-pedestal_h]){
@@ -535,18 +534,19 @@ difference(){
             objective_parfocal_distance=35,
             fluorescence=beamsplitter,
             gripper_t=0.65,
-            tube_length=150//9999 //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
+            tube_length=tube_length//9999 //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
         );
         if(sample_z < 60 || objective_mount_y < 12) echo("Warning: RMS objectives won't fit in small microscope frames!");
-    }else if(optics=="rms_f50d13"){
+    }else if(optics=="rms_f50d13" || optics=="rms_infinity_f50d13"){
         // Optics module for RMS objective using ThorLabs ac127-050-a doublet tube lens
+        tube_length=(optics=="rms_f50d13" ? 150 : 99999);
         optics_module_rms(
             tube_lens_ffd=47, 
             tube_lens_f=50, 
             tube_lens_r=12.7/2+0.1, 
             objective_parfocal_distance=35,
             fluorescence=beamsplitter,
-            tube_length=150//9999 //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
+            tube_length=tube_length //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
         );
         if(sample_z < 60 || objective_mount_y < 12) echo("Warning: RMS objectives won't fit in small microscope frames!");
     }else if(optics=="m12_lens"){

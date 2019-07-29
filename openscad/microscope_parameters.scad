@@ -30,12 +30,12 @@ $fn=32;
 // These are the most useful parameters to change!
 big_stage = true; //this option is obsolete and must now always be true...
 motor_lugs = true;
-endstops = false; //motor_lugs;
-version_numstring = "5.20.0-b";
+version_numstring = "5.20.1";
 camera = "picamera_2"; //see cameras/camera.scad for valid values
-optics = "pilens"; //see optics.scad for valid values
-led_r = 5/2; //size of the LED used for illumination
-feet_endstops = false;
+optics = "rms_f50d13"; //see optics.scad for valid values
+led_r = 4.5/2; //size of the LED used for illumination
+endstops = false; //whether to build mounts for optical endstops inside the microscope.
+feet_endstops = false; //whether to include cut-outs for endstop switches in the feet. 
 beamsplitter = false; //enables a cut-out in some optics modules for a beamsplitter
 
 
@@ -119,3 +119,8 @@ base_mounting_holes = [[-20,z_nut_y-4,0],
 
 endstop_extra_ringheight=feet_endstops?1:0;
 endstop_hole_offset=0;
+//this is a temporary option to printfeet with smaller travel
+//without this with 15mm hole the stage hits the objective
+//the stage can move ~3mm in each direction, so the actuator only moves
+//~1.7 mm
+avoid_objective_xyfoot_offset=xy_actuator_travel-1.8;
