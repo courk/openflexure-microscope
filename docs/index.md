@@ -13,6 +13,7 @@ Assembly is broken up into several steps:
 * [Illumination](./3_illumination.md) covers attaching the condenser.
 * [Sample clips and wiring](./4_clips_and_wiring.md) completes the microscope.
 * [Motors](./5_motors.md) can be added for automatic control.
+* [Motor controller boards](./6_motor_controllers_.md) are required for driving motors.
 
 Happy building!
 
