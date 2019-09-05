@@ -60,9 +60,9 @@ The version of the microscope used for scientific or medical research generally 
 * ``motor_driver_case.stl``
 
 Additionally, you will need:
-* an RMS threaded, finite-conjugates [objective lens](https://gitlab.com/openflexure/openflexure-microscope/blob/master/docs/parts/optics/objective.md).  These can be obtained from e.g. AliExpress.  Depending on whether it is 35mm or 45mm from the "shoulder" of the lens to the sample, you may or may not need the sample riser.  We almost always use 45mm "plan" corrected lenses, which do require the riser.
-* a 12.7mm diameter, 50mm focal length [achromatic lens](https://gitlab.com/openflexure/openflexure-microscope/blob/master/docs/parts/optics/tube_lens.md), e.g. ThorLabs ac127-050-a or generic equivalent.
-* a 13mm diameter, 5mm focal length PMMA plano convex lens for the [condenser lens](https://gitlab.com/openflexure/openflexure-microscope/blob/master/docs/parts/optics/condenser_lens.md) (sold as LED lenses in bulk)
+* an RMS threaded, finite-conjugates [objective lens](parts/optics/objective.md).  These can be obtained from e.g. AliExpress.  Depending on whether it is 35mm or 45mm from the "shoulder" of the lens to the sample, you may or may not need the sample riser.  We almost always use 45mm "plan" corrected lenses, which do require the riser.
+* a 12.7mm diameter, 50mm focal length [achromatic lens](parts/optics/tube_lens.md), e.g. ThorLabs ac127-050-a or generic equivalent.
+* a 13mm diameter, 5mm focal length PMMA plano convex lens for the [condenser lens](docs/parts/optics/condenser_lens.md) (sold as LED lenses in bulk)
 * three 28BYJ-48 stepper motors and a [sangaboard](https://github.com/rwb27/openflexure_nano_motor_controller/) driver, or other suitable electronics.
 
 ## Printed parts
