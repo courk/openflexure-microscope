@@ -10,7 +10,9 @@ It is intended to be run whenever you need a new makefile.  The makefile lives i
 the repository and is versioned, so most people never need to run this script.
 """
 
-body_versions = ["LS65", "LS65-M", "LS75", "LS75-M"]
+body_versions = [size + motors + brim for size in ["LS65", "LS75"]
+                                      for motors in ["-M", ""]
+                                      for brim in ["", "_brim"]]
 
 cameras = ["picamera_2", "logitech_c270", "m12"]
 lenses = ["pilens", "c270_lens", "m12_lens", "rms_f40d16", "rms_f50d13", "rms_infinity_f50d13"]
@@ -28,10 +30,11 @@ def body_parameters(version):
     for v in body_versions: # first, pick the longest matching version string.
         if v in version and len(v) > len(matching_version):
             matching_version = v
-    m = re.match("(LS|SS)([\d]{2})((-M){0,1})", matching_version)
+    m = re.match("(LS|SS)([\d]{2})((-M){0,1})((_brim){0,1})", matching_version)
     p["big_stage"] = m.group(1)=="LS"
     p["motor_lugs"] = m.group(4)=="-M"
     p["sample_z"] = m.group(2)
+    p["enable_smart_brim"] = m.group(6)=="_brim"
     return p
     
 def optics_module_parameters(version):

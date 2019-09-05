@@ -5,7 +5,7 @@
 SOURCE = openscad
 OUTPUT = builds
 
-body_versions = LS65 LS65-M LS75 LS75-M
+body_versions = LS65-M LS65-M_brim LS65 LS65_brim LS75-M LS75-M_brim LS75 LS75_brim
 optics_versions = picamera_2_pilens_LS65 logitech_c270_c270_lens_LS65 picamera_2_rms_f40d16_LS65 picamera_2_rms_f50d13_LS65 picamera_2_rms_infinity_f50d13_LS65 logitech_c270_rms_f40d16_LS65 logitech_c270_rms_f50d13_LS65 logitech_c270_rms_infinity_f50d13_LS65 m12_rms_f40d16_LS65 m12_rms_f50d13_LS65 m12_rms_infinity_f50d13_LS65 m12_m12_lens_LS65
 sample_riser_versions = LS10
 slide_riser_versions = LS10
@@ -34,100 +34,136 @@ $(OUTPUT)/%.stl: $(all_deps)
 
 main_body_dep_names := compact_nut_seat dovetail logo z_axis
 main_body_deps := $(main_body_dep_names:%=$(SOURCE)/%.scad)
-$(OUTPUT)/main_body_LS65.stl: $(SOURCE)/main_body.scad $(main_body_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
-
 $(OUTPUT)/main_body_LS65-M.stl: $(SOURCE)/main_body.scad $(main_body_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
 
-$(OUTPUT)/main_body_LS75.stl: $(SOURCE)/main_body.scad $(main_body_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+$(OUTPUT)/main_body_LS65-M_brim.stl: $(SOURCE)/main_body.scad $(main_body_deps)
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
+
+$(OUTPUT)/main_body_LS65.stl: $(SOURCE)/main_body.scad $(main_body_deps)
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/main_body_LS65_brim.stl: $(SOURCE)/main_body.scad $(main_body_deps)
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
 
 $(OUTPUT)/main_body_LS75-M.stl: $(SOURCE)/main_body.scad $(main_body_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
 
+$(OUTPUT)/main_body_LS75-M_brim.stl: $(SOURCE)/main_body.scad $(main_body_deps)
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
 
-$(OUTPUT)/illumination_dovetail_LS65.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+$(OUTPUT)/main_body_LS75.stl: $(SOURCE)/main_body.scad $(main_body_deps)
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
 
-$(OUTPUT)/condenser_LS65.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+$(OUTPUT)/main_body_LS75_brim.stl: $(SOURCE)/main_body.scad $(main_body_deps)
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
 
 $(OUTPUT)/illumination_dovetail_LS65-M.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
 
 $(OUTPUT)/condenser_LS65-M.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
 
-$(OUTPUT)/illumination_dovetail_LS75.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+$(OUTPUT)/illumination_dovetail_LS65-M_brim.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
 
-$(OUTPUT)/condenser_LS75.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+$(OUTPUT)/condenser_LS65-M_brim.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=true' $<
+
+$(OUTPUT)/illumination_dovetail_LS65.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/condenser_LS65.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/illumination_dovetail_LS65_brim.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/condenser_LS65_brim.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
 
 $(OUTPUT)/illumination_dovetail_LS75-M.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
 
 $(OUTPUT)/condenser_LS75-M.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
-	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
+
+$(OUTPUT)/illumination_dovetail_LS75-M_brim.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
+
+$(OUTPUT)/condenser_LS75-M_brim.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
+
+$(OUTPUT)/illumination_dovetail_LS75.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/condenser_LS75.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/illumination_dovetail_LS75_brim.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/condenser_LS75_brim.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'enable_smart_brim=true' -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
 
 
 optics_dep_names := dovetail cameras/camera
 optics_deps := $(optics_dep_names:%=$(SOURCE)/%.scad)
 $(OUTPUT)/optics_picamera_2_pilens_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="pilens"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' $<
 
 $(OUTPUT)/optics_logitech_c270_c270_lens_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="c270_lens"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="logitech_c270"' -D 'optics="c270_lens"' $<
 
 $(OUTPUT)/optics_picamera_2_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="rms_f40d16"' $<
 
 $(OUTPUT)/optics_picamera_2_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="rms_f50d13"' $<
 
 $(OUTPUT)/optics_picamera_2_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="rms_infinity_f50d13"' $<
 
 $(OUTPUT)/optics_logitech_c270_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="logitech_c270"' -D 'optics="rms_f40d16"' $<
 
 $(OUTPUT)/optics_logitech_c270_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="logitech_c270"' -D 'optics="rms_f50d13"' $<
 
 $(OUTPUT)/optics_logitech_c270_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="logitech_c270"' -D 'optics="rms_infinity_f50d13"' $<
 
 $(OUTPUT)/optics_m12_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="m12"' -D 'optics="rms_f40d16"' $<
 
 $(OUTPUT)/optics_m12_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="m12"' -D 'optics="rms_f50d13"' $<
 
 $(OUTPUT)/optics_m12_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="m12"' -D 'optics="rms_infinity_f50d13"' $<
 
 $(OUTPUT)/optics_m12_m12_lens_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
-	openscad -o $@ -D 'optics="m12_lens"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="m12"' -D 'optics="m12_lens"' $<
 
 
 $(OUTPUT)/camera_platform_picamera_2_LS65.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' $<
 
 $(OUTPUT)/lens_spacer_picamera_2_pilens_LS65.stl: $(SOURCE)/lens_spacer.scad $(optics_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' $<
 
 $(OUTPUT)/camera_platform_picamera_2_LS75.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=75' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=75' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' $<
 
 $(OUTPUT)/lens_spacer_picamera_2_pilens_LS75.stl: $(SOURCE)/lens_spacer.scad $(optics_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=75' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=75' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' $<
 
 $(OUTPUT)/camera_platform_6led_LS65.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'camera="6led"' -D 'optics="pilens"' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=65' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="6led"' -D 'optics="pilens"' $<
 
 $(OUTPUT)/camera_platform_6led_LS75.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
-	openscad -o $@ -D 'big_stage=true' -D 'camera="6led"' -D 'optics="pilens"' -D 'sample_z=75' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'sample_z=75' -D 'motor_lugs=false' -D 'enable_smart_brim=false' -D 'big_stage=true' -D 'camera="6led"' -D 'optics="pilens"' $<
 
 riser_dep_names := main_body
 riser_deps := $(optics_dep_names:%=$(SOURCE)/%.scad)
@@ -141,10 +177,10 @@ $(OUTPUT)/slide_riser_LS10.stl: $(SOURCE)/slide_riser.scad $(riser_deps)
 stand_dep_names := main_body
 stand_deps := $(optics_dep_names:%=$(SOURCE)/%.scad)
 $(OUTPUT)/microscope_stand_LS65-30.stl: $(SOURCE)/microscope_stand.scad $(stand_deps)
-	openscad -o $@ -D 'h=30' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'motor_lugs=false' -D 'big_stage=true' -D 'sample_z=65' -D 'h=30' $<
 
 $(OUTPUT)/microscope_stand_LS65-160.stl: $(SOURCE)/microscope_stand.scad $(stand_deps)
-	openscad -o $@ -D 'h=160' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+	openscad -o $@ -D 'enable_smart_brim=false' -D 'motor_lugs=false' -D 'big_stage=true' -D 'sample_z=65' -D 'h=160' $<
 
 
 $(OUTPUT)/picamera_2_%.stl: $(SOURCE)/cameras/picamera_2_%.scad $(all_deps)

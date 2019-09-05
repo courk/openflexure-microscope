@@ -162,7 +162,7 @@ module wall_between_actuators(){
 }
 
 ///////////////////// MAIN STRUCTURE STARTS HERE ///////////////
-exterior_brim(r=2);
+exterior_brim(r=enable_smart_brim ? smart_brim_r : 0)
 difference(){
 union(){
 
