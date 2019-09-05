@@ -6,7 +6,7 @@ Three "official" designs for the Sangaboard exist, and these are described below
 
 ## Board designs
 
-### Simple board using Arduino Nano
+### Simple controller using Arduino Nano
 
 Most recommended [motors](./5_motors.md) will come packaged with a simple driver board. These can be connected to an Arduino Nano and a power supply following the diagram below.
 
@@ -24,6 +24,8 @@ The microscope software should recognise a supported Sangaboard is connected, an
 This option aims to be a super-simple motor controller board, based on an Arduino Nano and a couple of Darlington pair ICs. It owes quite a bit to [Fergus Riche's motor board](https://github.com/fr293/motor_board), the hardware developed by [OpenScope](http://2015.igem.org/Team:Cambridge-JIC) and the Arduino-based motor controller used by a number of summer students working with Richard Bowman in Cambridge, particularly James Sharkey. 
 
 The PCB design, bill of materials, and purchase links for both are available via [KitSpace](https://kitspace.org/boards/github.com/rwb27/openflexure_nano_motor_controller/).
+
+A circuit schematic can be found [here](./images/sangaboard_v2_schematic.png)
 
 
 ### Fully integrated board (Sangaboard v0.3)
