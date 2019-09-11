@@ -1,3 +1,5 @@
+# Printing the plastic parts
+
 First, you will need to print or obtain the 3D printed parts.  These have been designed with some care to print reliably on most RepRap-style printers, without support material.  It's important to read through the notes before, as there are multiple versions of the STL files to choose from, so it's not a good idea just to pick all the parts in the folder.  The printed parts are described in their own pages, with details of how to pick the version of that part, for the parts with multiple versions.
 
 The best way to obtain these files is from the latest [release](https://gitlab.com/openflexure/openflexure-microscope/tags).
