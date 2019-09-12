@@ -10,7 +10,7 @@ It is intended to be run whenever you need a new makefile.  The makefile lives i
 the repository and is versioned, so most people never need to run this script.
 """
 
-body_versions = ["LS65", "LS65-M", "LS75", "LS75-M"]
+body_versions = ["LS65-M", "LS75-M"]
 
 cameras = ["picamera_2", "logitech_c270", "m12"]
 lenses = ["pilens", "c270_lens", "m12_lens", "rms_f40d16", "rms_f50d13", "rms_infinity_f50d13"]
@@ -25,7 +25,8 @@ def body_parameters(version):
     """Retrieve the parameters we pass to OpenSCAD to generate the given body version."""
     p = {"motor_lugs": False, "sample_z":-1, "big_stage":None}
     matching_version = ""
-    for v in body_versions: # first, pick the longest matching version string.
+    for v in body_versions + [bv[:-2] for bv in body_versions]: # first, pick the longest matching version string.
+        # NB the above ugly hack restores the non-motorised bodies, for the purposes of the optics modules
         if v in version and len(v) > len(matching_version):
             matching_version = v
     m = re.match("(LS|SS)([\d]{2})((-M){0,1})", matching_version)
