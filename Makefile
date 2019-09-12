@@ -53,7 +53,107 @@ $(OUTPUT)/illumination_dovetail_LS75-M.stl: $(SOURCE)/illumination_dovetail.scad
 $(OUTPUT)/condenser_LS75-M.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
 	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=true' $<
 
+$(OUTPUT)/illumination_dovetail_LS65.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/condenser_LS65.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/illumination_dovetail_LS75.stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/condenser_LS75.stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad
+	openscad -o $@ -D 'big_stage=true' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
 
 optics_dep_names := dovetail cameras/camera
 optics_deps := $(optics_dep_names:%=$(SOURCE)/%.scad)
 $(OUTPUT)/optics_picamera_2_pilens_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="pilens"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_logitech_c270_c270_lens_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="c270_lens"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_picamera_2_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_picamera_2_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_picamera_2_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="picamera_2"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_logitech_c270_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_logitech_c270_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_logitech_c270_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="logitech_c270"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_m12_rms_f40d16_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_f40d16"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_m12_rms_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_f50d13"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_m12_rms_infinity_f50d13_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="rms_infinity_f50d13"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/optics_m12_m12_lens_LS65.stl: $(SOURCE)/optics.scad $(optics_deps)
+	openscad -o $@ -D 'optics="m12_lens"' -D 'camera="m12"' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+
+$(OUTPUT)/camera_platform_picamera_2_LS65.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
+	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/lens_spacer_picamera_2_pilens_LS65.stl: $(SOURCE)/lens_spacer.scad $(optics_deps)
+	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/camera_platform_picamera_2_LS75.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
+	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/lens_spacer_picamera_2_pilens_LS75.stl: $(SOURCE)/lens_spacer.scad $(optics_deps)
+	openscad -o $@ -D 'big_stage=true' -D 'camera="picamera_2"' -D 'optics="pilens"' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/camera_platform_6led_LS65.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
+	openscad -o $@ -D 'big_stage=true' -D 'camera="6led"' -D 'optics="pilens"' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/camera_platform_6led_LS75.stl: $(SOURCE)/camera_platform.scad $(optics_deps)
+	openscad -o $@ -D 'big_stage=true' -D 'camera="6led"' -D 'optics="pilens"' -D 'sample_z=75' -D 'motor_lugs=false' $<
+
+riser_dep_names := main_body
+riser_deps := $(optics_dep_names:%=$(SOURCE)/%.scad)
+$(OUTPUT)/sample_riser_LS10.stl: $(SOURCE)/sample_riser.scad $(riser_deps)
+	openscad -o $@ -D 'h=10' -D 'big_stage=true' $<
+
+$(OUTPUT)/slide_riser_LS10.stl: $(SOURCE)/slide_riser.scad $(riser_deps)
+	openscad -o $@ -D 'h=10' -D 'big_stage=true' $<
+
+
+stand_dep_names := main_body
+stand_deps := $(optics_dep_names:%=$(SOURCE)/%.scad)
+$(OUTPUT)/microscope_stand_LS65-30.stl: $(SOURCE)/microscope_stand.scad $(stand_deps)
+	openscad -o $@ -D 'h=30' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+$(OUTPUT)/microscope_stand_LS65-160.stl: $(SOURCE)/microscope_stand.scad $(stand_deps)
+	openscad -o $@ -D 'h=160' -D 'big_stage=true' -D 'sample_z=65' -D 'motor_lugs=false' $<
+
+
+$(OUTPUT)/picamera_2_%.stl: $(SOURCE)/cameras/picamera_2_%.scad $(all_deps)
+	openscad -o $@ -D 'camera="picamera_2"' $<
+
+
+$(OUTPUT)/feet_tall.stl: $(SOURCE)/feet.scad $(all_deps)
+	openscad -o $@ -D 'foot_height=26' $<
+
+
+$(OUTPUT)/actuator_assembly_tools.stl: $(SOURCE)/actuator_assembly_tools.scad $(all_deps)
+	openscad -o $@ -D 'foot_height=26' $<
+
+
+$(OUTPUT)/%.stl: $(SOURCE)/%.scad $(all_deps)
+	openscad -o $@ $<
+
+

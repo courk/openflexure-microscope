@@ -11,7 +11,8 @@ the repository and is versioned, so most people never need to run this script.
 """
 
 body_versions = ["LS65-M", "LS75-M"]
-
+match_body_versions = body_versions + [bv[:-2] for bv in body_versions]
+        # NB the above ugly hack restores the non-motorised bodies, for the purposes of the optics modules
 cameras = ["picamera_2", "logitech_c270", "m12"]
 lenses = ["pilens", "c270_lens", "m12_lens", "rms_f40d16", "rms_f50d13", "rms_infinity_f50d13"]
 optics_versions_LS65 = ["picamera_2_pilens", "logitech_c270_c270_lens"]
@@ -25,8 +26,7 @@ def body_parameters(version):
     """Retrieve the parameters we pass to OpenSCAD to generate the given body version."""
     p = {"motor_lugs": False, "sample_z":-1, "big_stage":None}
     matching_version = ""
-    for v in body_versions + [bv[:-2] for bv in body_versions]: # first, pick the longest matching version string.
-        # NB the above ugly hack restores the non-motorised bodies, for the purposes of the optics modules
+    for v in match_body_versions: # first, pick the longest matching version string.
         if v in version and len(v) > len(matching_version):
             matching_version = v
     m = re.match("(LS|SS)([\d]{2})((-M){0,1})", matching_version)
@@ -40,7 +40,7 @@ def optics_module_parameters(version):
     m = re.search("({cam})_({lens})_({body})".format(
                             cam="|".join(cameras), 
                             lens="|".join(lenses),
-                            body="|".join(body_versions)), 
+                            body="|".join(match_body_versions)), 
                         version)
     if m is None:
         raise ValueError("Error finding optics module parameters from version string '{}'".format(version))
@@ -49,7 +49,7 @@ def optics_module_parameters(version):
     return p
 	
 def stand_parameters(version):
-	m = re.match("({body})-([\d]+)$".format(body="|".join(body_versions)), version)
+	m = re.match("({body})-([\d]+)$".format(body="|".join(match_body_versions)), version)
 	p = body_parameters(m.group(1))
 	p["h"] = int(m.group(2))
 	return p
@@ -140,7 +140,7 @@ if __name__ == "__main__":
             M("$(OUTPUT)/main_body_" + version + ".stl: $(SOURCE)/main_body.scad $(main_body_deps)")
             M(openscad_recipe_baked(**body_parameters(version)))
         M("")
-        for version in body_versions:
+        for version in match_body_versions:
             M("$(OUTPUT)/illumination_dovetail_" + version + ".stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad")
             M(openscad_recipe_baked(**body_parameters(version)))
             M("$(OUTPUT)/condenser_" + version + ".stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad")
