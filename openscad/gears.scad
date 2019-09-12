@@ -151,5 +151,5 @@ module motor_and_gear_clearance(gear_h=10, h=999){
 //translate([c2c_distance*2,00]) small_gear();
 //thumbwheel();
 //motor_and_gear_clearance();
-//repeat([0,large_gear_spacing(),0],3,center=true) large_gear();
-repeat([0,thumbwheel_spacing(),0],3,center=true) thumbwheel();
+repeat([0,large_gear_spacing(),0],3,center=true) large_gear();
+//repeat([0,thumbwheel_spacing(),0],3,center=true) thumbwheel();

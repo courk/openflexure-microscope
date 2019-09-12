@@ -114,7 +114,7 @@ if __name__ == "__main__":
         M("TOOLS := actuator_assembly_tools lens_tool")
         M("TOOLS := $(TOOLS) picamera_2_cover picamera_2_gripper picamera_2_lens_gripper actuator_drilling_jig")
         M("ACCESSORIES := picamera_2_cover $(sample_riser_versions:%=sample_riser_%) $(slide_riser_versions:%=slide_riser_%) microscope_stand microscope_stand_no_pi motor_driver_case back_foot")
-        M("COMMONPARTS := feet feet_tall gears sample_clips small_gears")
+        M("COMMONPARTS := feet feet_tall gears sample_clips small_gears thumbwheels")
         M("BODIES := $(body_versions:%=main_body_%)")
         M("OPTICS := $(optics_versions:%=optics_%) camera_platform_picamera_2_LS65 camera_platform_6led_LS65 lens_spacer_picamera_2_pilens_LS65 lens_spacer_picamera_2_pilens_LS75")
         M("ILLUMINATIONS := illumination_dovetail condenser")
