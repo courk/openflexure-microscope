@@ -11,9 +11,14 @@ the repository and is versioned, so most people never need to run this script.
 """
 
 body_versions = [size + motors + brim for size in ["LS65", "LS75"]
-                                      for motors in ["-M", ""]
+                                      for motors in ["-M"] # NB we only want versions with motor lugs!
                                       for brim in ["", "_brim"]]
-
+match_body_versions = [size + motors + brim for size in ["LS65", "LS75"]
+                                      for motors in ["-M", ""] # Non-lugged versions are needed for optics modules
+                                      for brim in ["", "_brim"]]
+        # NB the above ugly hack restores the non-motorised bodies, for the purposes of the optics modules
+        # (optics modules are named LS65 etc. which will only match the now-obsolete versions without
+        # motor lugs.  This will all be fixed in the new build system much more nicely!)
 cameras = ["picamera_2", "logitech_c270", "m12"]
 lenses = ["pilens", "c270_lens", "m12_lens", "rms_f40d16", "rms_f50d13", "rms_infinity_f50d13"]
 optics_versions_LS65 = ["picamera_2_pilens", "logitech_c270_c270_lens"]
@@ -27,7 +32,7 @@ def body_parameters(version):
     """Retrieve the parameters we pass to OpenSCAD to generate the given body version."""
     p = {"motor_lugs": False, "sample_z":-1, "big_stage":None}
     matching_version = ""
-    for v in body_versions: # first, pick the longest matching version string.
+    for v in match_body_versions: # first, pick the longest matching version string.
         if v in version and len(v) > len(matching_version):
             matching_version = v
     m = re.match("(LS|SS)([\d]{2})((-M){0,1})((_brim){0,1})", matching_version)
@@ -42,7 +47,7 @@ def optics_module_parameters(version):
     m = re.search("({cam})_({lens})_({body})".format(
                             cam="|".join(cameras), 
                             lens="|".join(lenses),
-                            body="|".join(body_versions)), 
+                            body="|".join(match_body_versions)), 
                         version)
     if m is None:
         raise ValueError("Error finding optics module parameters from version string '{}'".format(version))
@@ -51,7 +56,7 @@ def optics_module_parameters(version):
     return p
 	
 def stand_parameters(version):
-	m = re.match("({body})-([\d]+)$".format(body="|".join(body_versions)), version)
+	m = re.match("({body})-([\d]+)$".format(body="|".join(match_body_versions)), version)
 	p = body_parameters(m.group(1))
 	p["h"] = int(m.group(2))
 	return p
@@ -117,7 +122,7 @@ if __name__ == "__main__":
         M("TOOLS := actuator_assembly_tools lens_tool")
         M("TOOLS := $(TOOLS) picamera_2_cover picamera_2_gripper picamera_2_lens_gripper actuator_drilling_jig")
         M("ACCESSORIES := picamera_2_cover $(sample_riser_versions:%=sample_riser_%) $(slide_riser_versions:%=slide_riser_%) microscope_stand microscope_stand_no_pi motor_driver_case back_foot")
-        M("COMMONPARTS := feet feet_tall gears sample_clips small_gears")
+        M("COMMONPARTS := feet feet_tall gears sample_clips small_gears thumbwheels")
         M("BODIES := $(body_versions:%=main_body_%)")
         M("OPTICS := $(optics_versions:%=optics_%) camera_platform_picamera_2_LS65 camera_platform_6led_LS65 lens_spacer_picamera_2_pilens_LS65 lens_spacer_picamera_2_pilens_LS75")
         M("ILLUMINATIONS := illumination_dovetail condenser")
@@ -142,7 +147,7 @@ if __name__ == "__main__":
             M("$(OUTPUT)/main_body_" + version + ".stl: $(SOURCE)/main_body.scad $(main_body_deps)")
             M(openscad_recipe_baked(**body_parameters(version)))
         M("")
-        for version in body_versions:
+        for version in match_body_versions:
             M("$(OUTPUT)/illumination_dovetail_" + version + ".stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad")
             M(openscad_recipe_baked(**body_parameters(version)))
             M("$(OUTPUT)/condenser_" + version + ".stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad")
