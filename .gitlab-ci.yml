@@ -1,16 +1,31 @@
-image: ubuntu:18.04
-before_script:
-  - apt-get update -qq
-  - apt-get -y -qq install software-properties-common dirmngr apt-transport-https lsb-release ca-certificates make
-  - add-apt-repository -y ppa:openscad/releases
-  - apt-get update -qq
-  - apt-get install -y -qq openscad
+stages:
+    - build
+    - deploy
 
-STLs:
-  script:
-    - mkdir -p /root/.local/share
-    - make -j7
-  artifacts:
-    name: "${CI_PROJECT_NAME}-${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}"
-    paths:
-      - builds/
+
+build:
+    stage: build
+    image: ubuntu:18.04
+    
+    before_script:
+      - apt-get update -qq
+      - apt-get -y -qq install software-properties-common dirmngr apt-transport-https lsb-release ca-certificates make
+      - add-apt-repository -y ppa:openscad/releases
+      - apt-get update -qq
+      - apt-get install -y -qq openscad
+    
+    script:
+      - mkdir -p /root/.local/share
+      - python3 ./generate_makefile.py
+      - make -j7
+    
+    artifacts:
+      expire_in: 1 week
+      name: "${CI_PROJECT_NAME}-${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}"
+      paths:
+        - builds/
+
+    only:
+      - tags
+      - merge_requests
+      - web
