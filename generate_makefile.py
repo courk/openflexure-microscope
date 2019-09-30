@@ -71,7 +71,7 @@ def riser_parameters(version):
 
 def openscad_recipe(**kwargs):
     output = "\t" + "openscad -o $@"
-    for name, value in kwargs.iteritems():
+    for name, value in kwargs.items():
         try:
             float(value)
         except ValueError:
