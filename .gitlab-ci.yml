@@ -17,7 +17,7 @@ build:
     script:
       # Build documentation
       # TODO: Implement git-building to render .md to .html
-      - cp -r docs builds/docs
+      - python3 ./build_docs.py
 
       # Build STL files with OpenSCAD
       - mkdir -p /root/.local/share
