@@ -10,7 +10,7 @@ def process_markdown(infile, outfile):
     preamble_lines = []
     images = set()
     extracted_title = False
-    with open(infile, 'r', encoding='utf8') as input_file, open(outfile, 'w') as output_file:
+    with open(infile, 'r', encoding='utf8') as input_file, open(outfile, 'w', encoding='utf8') as output_file:
         print(f"Opened {infile}...")
         for line in input_file:
             if not extracted_title:
