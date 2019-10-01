@@ -46,7 +46,7 @@ deploy:
 
   script:
     - 'which rsync || ( apt-get update -y && apt-get install rsync -y )'
-    - rsync -hrvz -e ssh builds/ ci-user@openflexure.bath.ac.uk:/var/www/build/openflexure-microscope/${CI_PIPELINE_ID}
+    - rsync -hrvz -e ssh builds/ ci-user@openflexure.bath.ac.uk:/var/www/build/openflexure-microscope/${CI_COMMIT_REF_SLUG} --delete
     - ssh -t ci-user@openflexure.bath.ac.uk "/var/www/build/update-latest.py"
 
   only:
