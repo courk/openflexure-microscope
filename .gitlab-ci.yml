@@ -52,6 +52,7 @@ deploy:
     - rsync -hrvz -e ssh builds/ ci-user@openflexure.bath.ac.uk:/var/www/build/openflexure-microscope/${CI_COMMIT_REF_NAME} --delete
 
     # Zip the builds folder and upload it to the openflexure-microscope build root
+    - 'which zip || ( apt-get update -y && apt-get install zip -y )'
     - zip -r -j "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip" builds/*
     - rsync -hrvz -e ssh "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip" ci-user@openflexure.bath.ac.uk:/var/www/build/openflexure-microscope/
 
