@@ -39,8 +39,7 @@ module pi_connectors(){
         // HDMI
         translate([32-25/2, -99, -2]) cube([25,100,18]);
         // micro-SD card
-        translate([0,raspi_board[1]/2+6,0]) cube([80,12,8], center=true);
-        translate([-4,raspi_board[1]/2,0]) cube([16,12,20], center=true);
+        translate([-25,raspi_board[1]/2-16,-10]) cube([30,30,16]);
     }
 }
 
