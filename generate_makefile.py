@@ -9,7 +9,7 @@ It is intended to be run whenever you need a new makefile.  The makefile lives i
 the repository and is versioned, so most people never need to run this script.
 """
 
-microscope_sizes = ["LS65", "LS75"]
+microscope_sizes = ["LS65"]
 
 body_versions = [
     size + motors + brim
