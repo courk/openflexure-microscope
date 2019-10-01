@@ -15,6 +15,11 @@ build:
       - apt-get install -y -qq openscad
     
     script:
+      # Build documentation
+      # TODO: Implement git-building to render .md to .html
+      - cp -r docs builds/docs
+
+      # Build STL files with OpenSCAD
       - mkdir -p /root/.local/share
       - python3 ./generate_makefile.py
       - make -j7
@@ -29,6 +34,7 @@ build:
       - tags
       - merge_requests
       - web
+
 
 # Deploy to builds.openflexure.org
 deploy:
