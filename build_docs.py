@@ -37,28 +37,35 @@ def process_markdown(infile, outfile):
     
 
 if __name__ == "__main__":
-    output_dir = "../builds/docs"
+    here = os.path.dirname(os.path.realpath(__file__))
+    docs_dir = os.path.abspath(os.path.join(here, "docs"))
+    parts_dir = os.path.abspath(os.path.join(docs_dir, "parts"))
+
+    output_dir = os.path.abspath(os.path.join(here, "builds/docs"))
 
     # Delete the output directory if it exists
     if os.path.isdir(output_dir):
         shutil.rmtree(output_dir)
+
     # Create the output directory and the folder structure
     os.mkdir(output_dir)
     os.mkdir(os.path.join(output_dir, "parts"))
-    for f in os.listdir("parts"):
-        if os.path.isdir(os.path.join("parts",f)):
+
+    for f in os.listdir(parts_dir):
+        if os.path.isdir(os.path.join(parts_dir, f)):
             os.mkdir(os.path.join(output_dir, "parts", f))
     os.mkdir(os.path.join(output_dir, "images"))
 
     images = set()
     # This should be recursive or something - but for now, I just enumerate the parts directory
-    for indir in ['.', 'parts'] + [os.path.join('parts',d) for d in os.listdir("parts") if os.path.isdir(os.path.join("parts", d))]:
-        for f in os.listdir(indir):
+    for input_dir in ['.', 'parts'] + [os.path.join('parts', d) for d in os.listdir(parts_dir) if os.path.isdir(os.path.join(parts_dir, d))]:
+        input_dir_abs = os.path.join(docs_dir, input_dir)
+        for f in os.listdir(os.path.join(docs_dir, input_dir)):
             if f.endswith(".md"):
-                f_images = process_markdown(os.path.join(indir, f), os.path.join(output_dir, indir, f))
+                f_images = process_markdown(os.path.join(input_dir_abs, f), os.path.join(output_dir, input_dir, f))
                 images.update(f_images)
 
     # copy over only the images that are actually used
     for f in images:
-        shutil.copyfile(os.path.join("images", f), os.path.join(output_dir, "images", f))
+        shutil.copyfile(os.path.join(docs_dir, "images", f), os.path.join(output_dir, "images", f))
                 
