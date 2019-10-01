@@ -2,7 +2,7 @@ stages:
     - build
     - deploy
 
-
+# Build STL files
 build:
     stage: build
     image: ubuntu:18.04
@@ -29,3 +29,26 @@ build:
       - tags
       - merge_requests
       - web
+
+# Deploy to builds.openflexure.org
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  image: ubuntu:latest
+
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY_BATH_OPENFLEXURE_BASE64" | base64 --decode)
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+
+  script:
+    - 'which rsync || ( apt-get update -y && apt-get install rsync -y )'
+    - rsync -hrvz -e ssh builds/ ci-user@openflexure.bath.ac.uk:/var/www/build/openflexure-microscope/${CI_PIPELINE_ID}
+    - ssh -t ci-user@openflexure.bath.ac.uk "/var/www/build/update-latest.py"
+
+  only:
+    - tags
+    - web
