@@ -10,24 +10,25 @@ def process_markdown(infile, outfile):
     preamble_lines = []
     images = set()
     extracted_title = False
-    with open(infile, 'r') as input, open(outfile, 'w') as output:
-        for line in input:
+    with open(infile, 'r', encoding='utf8') as input_file, open(outfile, 'w') as output_file:
+        print(f"Opened {infile}...")
+        for line in input_file:
             if not extracted_title:
                 if line.startswith("# "):
                     # once we have the title, write the YAML block, then regurgitate the preceding bit of the file.
                     title = line.strip("# \n")
-                    output.write("---\n")
-                    output.write("layout: page\n")
-                    output.write(f"title: {title}\n")
-                    output.write("nav: false\n")
-                    output.write("---\n")
-                    output.writelines(preamble_lines)
+                    output_file.write("---\n")
+                    output_file.write("layout: page\n")
+                    output_file.write(f"title: {title}\n")
+                    output_file.write("nav: false\n")
+                    output_file.write("---\n")
+                    output_file.writelines(preamble_lines)
                     extracted_title = True
                     print(f"Added header for '{title}' ({infile})")
                 else:
                     preamble_lines.append(line)
             else:
-                output.write(line) # copy over the file
+                output_file.write(line) # copy over the file
             m = re.search(r"images/([^.]*\.(jpeg|jpg|JPG|JPEG|png|PNG))", line)
             if m:
                 images.add(m.group(1))
