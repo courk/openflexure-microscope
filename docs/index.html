@@ -12,24 +12,27 @@
     :root {
       --base-font-size: 14px;
       --theme-color: #c5247f;
+      --sidebar-name-text-align: left;
     }
-    .app-name-link img {
-      width: 50%
+    a {
+      color: var(--theme-color)
     }
   </style>
   
 </head>
 
 <body>
+  <nav>
+    <a href="https://openflexure.org">OpenFlexure Homepage</a>
+  </nav>
   <div id="app"></div>
   <script>
     window.$docsify = {
       homepage: 'index.md',
-      logo: 'https://gitlab.com/openflexure/openflexure-identity/raw/master/emblem_black.svg',
       auto2top: true,
       name: 'OpenFlexure Documentation',
-      nameLink: 'https://openflexure.org',
-      repo: ''
+      nameLink: '#/',
+      themeColor: '#c5247f'
     }
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
