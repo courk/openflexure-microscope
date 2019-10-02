@@ -39,7 +39,8 @@ build-docs:
 
     before_script:
       - apt-get update -qq
-      - apt-get -y install git git-lfs
+      - apt-get -y -qq install software-properties-common
+      - apt-get -y -qq install git git-lfs
 
     script:
       # Build documentation
