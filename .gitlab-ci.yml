@@ -36,7 +36,11 @@ build:
 build-docs:
     stage: build
     image: ubuntu:18.04
-    
+
+    before_script:
+      - apt-get update -qq
+      - apt-get -y -qq install git git-lfs
+
     script:
       # Build documentation
       # TODO: Implement git-building to render .md to .html
