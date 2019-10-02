@@ -39,7 +39,7 @@ build-docs:
 
     before_script:
       - apt-get update -qq
-      - apt-get -y -qq install git git-lfs
+      - apt-get -y install git
 
     script:
       # Build documentation
