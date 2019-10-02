@@ -46,7 +46,6 @@ build-docs:
       # Build documentation
       # TODO: Implement git-building to render .md to .html
       - git lfs install
-      - git config --local lfs.fetchexclude "/docs/original_images,/design_files"
       - git lfs fetch
       - git lfs checkout
 
