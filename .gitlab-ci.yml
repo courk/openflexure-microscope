@@ -15,10 +15,6 @@ build:
       - apt-get install -y -qq openscad
     
     script:
-      # Build documentation
-      # TODO: Implement git-building to render .md to .html
-      - python3 ./build_docs.py
-
       # Build STL files with OpenSCAD
       - mkdir -p /root/.local/share
       - python3 ./generate_makefile.py
@@ -36,11 +32,39 @@ build:
       - web
 
 
+# Build docs
+build-docs:
+    stage: build
+    image: ubuntu:18.04
+    
+    script:
+      # Build documentation
+      # TODO: Implement git-building to render .md to .html
+      - git lfs install
+      - git config --local lfs.fetchexclude "/docs/original_images,/design_files"
+      - git lfs fetch
+      - git lfs checkout
+
+      - python3 ./build_docs.py
+
+    artifacts:
+      expire_in: 1 week
+      name: "${CI_PROJECT_NAME}-${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}-docs"
+      paths:
+        - builds/
+
+    only:
+      - tags
+      - merge_requests
+      - web
+
+
 # Deploy to builds.openflexure.org
 deploy:
   stage: deploy
   dependencies:
     - build
+    - build-docs
   image: ubuntu:latest
 
   before_script:
