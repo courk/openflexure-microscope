@@ -13,24 +13,22 @@
       --base-font-size: 14px;
       --theme-color: #c5247f;
     }
-    .app-nav.no-badge {
-      right: 30px;
+    .app-name-link img {
+      width: 50%
     }
   </style>
   
 </head>
 
 <body>
-  <nav>
-    <a href="https://openflexure.org">
-      <img src="https://gitlab.com/openflexure/openflexure-identity/raw/master/emblem_black.svg" width="60px" alt="OpenFlexure">
-    </a>
-  </nav>
   <div id="app"></div>
   <script>
     window.$docsify = {
       homepage: 'index.md',
-      name: '',
+      logo: 'https://gitlab.com/openflexure/openflexure-identity/raw/master/emblem_black.svg',
+      auto2top: true,
+      name: 'OpenFlexure Documentation',
+      nameLink: 'https://openflexure.org',
       repo: ''
     }
   </script>
