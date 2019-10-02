@@ -34,12 +34,10 @@ module pi_connectors(){
     pi_frame(){
         // USB/network ports
         translate([raspi_board[0]/2,-1,1]) cube(raspi_board + [2,2,-1]);
-        union(){
-            // micro-USB power
-            //translate([13-15/2, -100, -2]) cube([15,100,10]);
-            // HDMI
-            translate([26-42/2, -100, -2]) cube([42,100,14]);
-        }
+
+        // micro-USB power and HDMI
+        translate([28-42/2, -100, -2]) cube([42,100,14]);
+
         // micro-SD card
         translate([-25,raspi_board[1]/2-16,-10]) cube([30,30,16]);
     }
