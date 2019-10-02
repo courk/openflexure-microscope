@@ -39,7 +39,8 @@ module pi_connectors(){
         translate([28-42/2, -100, -2]) cube([42,100,14]);
 
         // micro-SD card
-        translate([-25,raspi_board[1]/2-16,-10]) cube([30,30,16]);
+        translate([0,raspi_board[1]/2+6,0]) cube([80,12,8], center=true);
+        translate([-4,raspi_board[1]/2,0]) cube([16,12,20], center=true);
     }
 }
 
