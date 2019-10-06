@@ -5,11 +5,23 @@ import sys
 import shutil
 import re
 
+def insert_markdown(infile, outfile):
+    """Insert content into the target markdown file"""
+    pass
+
 def process_markdown(infile, outfile):
     """Process and copy a markdown file, and scan for images used in the file"""
     images = set()
     with open(infile, 'r', encoding='utf8') as input_file, open(outfile, 'w', encoding='utf8') as output_file:
         print(f"Opened {infile}...")
+    
+        # Inject extra markdown only if the file isn't special
+        if (os.path.basename(infile)[0] != "_"):
+            insert_markdown(infile=infile, outfile=outfile)
+        else:
+            print(f"File {infile} is special. Copying without modification.")
+        
+        # Copy the basic markdown content into the new file, and find images
         for line in input_file:
             # Copy over the line
             output_file.write(line) # copy over the file
@@ -19,8 +31,6 @@ def process_markdown(infile, outfile):
                 images.add(m.group(1))
     return images
 
-
-    
 
 if __name__ == "__main__":
     # Find all relevant directories
