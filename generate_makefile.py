@@ -62,7 +62,6 @@ def body_parameters(version):
         if v in version and len(v) > len(matching_version):
             matching_version = v
     m = re.match("(LS|SS)([\d]{2})(-M)?(-BS)?(_brim)?", matching_version)
-    print(m.groups())
     p["big_stage"] = m.group(1) == "LS"
     p["sample_z"] = m.group(2)
     p["motor_lugs"] = m.group(3) == "-M"
