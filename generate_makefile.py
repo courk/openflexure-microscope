@@ -11,18 +11,21 @@ the repository and is versioned, so most people never need to run this script.
 
 microscope_sizes = ["LS65"]
 
+# Every version of the body we're building
 body_versions = [
-    size + motors + brim
+    size + motors + beamsplitter + brim
     for size in microscope_sizes
-    for motors in ["-M"]  # NB we only want versions with motor lugs!
+    for motors in ["-M"]  # NB we only need versions with motor lugs!
+    for beamsplitter in ["", "-BS"]
     for brim in ["", "_brim"]
 ]
 
-# TODO: Do we need this separately to body_versions?
+# Every /possible/ version of the body
 match_body_versions = [
-    size + motors + brim
+    size + motors + beamsplitter + brim
     for size in microscope_sizes
     for motors in ["-M", ""]  # Non-lugged versions are needed for optics modules
+    for beamsplitter in ["", "-BS"]
     for brim in ["", "_brim"]
 ]
 # NB the above ugly hack restores the non-motorised bodies, for the purposes of the optics modules
@@ -53,16 +56,18 @@ stand_versions = ["LS65-30", "LS65-160"]
 
 def body_parameters(version):
     """Retrieve the parameters we pass to OpenSCAD to generate the given body version."""
-    p = {"motor_lugs": False, "sample_z": -1, "big_stage": None}
+    p = {"motor_lugs": False, "beamsplitter": False, "sample_z": -1, "big_stage": None}
     matching_version = ""
     for v in match_body_versions:  # first, pick the longest matching version string.
         if v in version and len(v) > len(matching_version):
             matching_version = v
-    m = re.match("(LS|SS)([\d]{2})((-M){0,1})((_brim){0,1})", matching_version)
+    m = re.match("(LS|SS)([\d]{2})(-M)?(-BS)?(_brim)?", matching_version)
+    print(m.groups())
     p["big_stage"] = m.group(1) == "LS"
-    p["motor_lugs"] = m.group(4) == "-M"
     p["sample_z"] = m.group(2)
-    p["enable_smart_brim"] = m.group(6) == "_brim"
+    p["motor_lugs"] = m.group(3) == "-M"
+    p["beamsplitter"] = m.group(4) == "-BS"
+    p["enable_smart_brim"] = m.group(5) == "_brim"
     return p
 
 

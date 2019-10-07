@@ -113,7 +113,8 @@ module xy_limit_switch_mount(d=3.3*2, h=6){
 
 
 // The "wall" that forms most of the microscope's structure
-module wall_inside_xy_stage(){
+module wall_inside_xy_stage(beamsplitter=false){
+    front_wall_height = beamsplitter ? zawall_h : wall_h;
     // First, go around the inside of the legs, under the stage.
     // This starts at the Z nut seat.  I've split it into two
     // blocks, because the shape is not convex so the base
@@ -125,9 +126,10 @@ module wall_inside_xy_stage(){
         inner_wall_vertex(45, -leg_outer_w/2, zawall_h);
         z_anchor_wall_vertex();
         inner_wall_vertex(135, leg_outer_w/2, zawall_h);
-        inner_wall_vertex(135, -leg_outer_w/2, wall_h);
-        inner_wall_vertex(-135, leg_outer_w/2, wall_h);
-    }
+        inner_wall_vertex(135, -leg_outer_w/2, front_wall_height);
+        inner_wall_vertex(-135, leg_outer_w/2, front_wall_height);
+    };    
+
 }
 
 module wall_outside_xy_actuators(){
@@ -158,6 +160,16 @@ module wall_between_actuators(){
     hull(){
         y_actuator_wall_vertex();
         translate([0,z_nut_y+ss_outer()[1]/2-wall_t/2,0]) wall_vertex();
+    }
+}
+
+module fl_cube_cutout(cube_width){
+    // size of cutout for fl cube
+    fl_cube_cutout_w = cube_width + 1;
+    // Create a trapezoid with min width (cube_width) at top
+    hull() {
+        translate([-(1.2*fl_cube_cutout_w)/2, -49, 0]) cube([1.2*fl_cube_cutout_w, 49, 1]);
+        translate([-fl_cube_cutout_w/2, -49, fl_cube_cutout_w-(fl_cube_cutout_w/4)]) cube([fl_cube_cutout_w, 49, 1]);
     }
 }
 
@@ -216,7 +228,7 @@ union(){
 		union(){
             ////////////// Reinforcing wall and base /////////////////
             //Add_hull_base generates the flat base of the structure.  
-            add_hull_base(base_t) wall_inside_xy_stage();
+            add_hull_base(base_t) wall_inside_xy_stage(beamsplitter=beamsplitter);
             // add mounts for the optical end-stops for X and Y
             reflect([1,0,0]) hull(){
                 inner_wall_vertex(45, -9, zawall_h);
@@ -241,6 +253,11 @@ union(){
                     
 		}
         //////  Things we need to cut out holes for... ///////////
+        // Beamsplitter cube
+        if (beamsplitter) {
+            fl_cube_cutout(fl_cube_w);
+        }
+
         // XY actuator cut-outs
 		each_actuator(){
 			actuator_silhouette(xy_actuator_travel+actuator[2]);
