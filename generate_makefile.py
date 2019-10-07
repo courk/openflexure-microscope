@@ -170,7 +170,7 @@ if __name__ == "__main__":
         M("COMMONPARTS := feet feet_tall gears sample_clips small_gears thumbwheels")
         M("BODIES := $(body_versions:%=main_body_%)")
         M(
-            "OPTICS := $(optics_versions:%=optics_%) camera_platform_picamera_2_LS65 camera_platform_6led_LS65 lens_spacer_picamera_2_pilens_LS65"
+            "OPTICS := $(optics_versions:%=optics_%) camera_platform_picamera_2_LS65 camera_platform_6led_LS65 lens_spacer_picamera_2_pilens_LS65 fl_cube"
         )
         M("ILLUMINATIONS := illumination_dovetail condenser reflection_illuminator")
         M(
@@ -225,6 +225,10 @@ if __name__ == "__main__":
                 + ".stl: $(SOURCE)/optics.scad $(optics_deps)"
             )
             M(openscad_recipe_baked(**optics_module_parameters(version)))
+        M(
+            "$(OUTPUT)/fl_cube.stl: $(SOURCE)/fl_cube.scad $(optics_deps)"
+        )
+        M(openscad_recipe_baked(**optics_module_parameters(version)))
         M("")
         for b in microscope_sizes:
             for n in ["camera_platform_picamera_2", "lens_spacer_picamera_2_pilens"]:
