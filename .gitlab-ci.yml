@@ -19,7 +19,7 @@ build:
       # Build STL files with OpenSCAD
       - mkdir -p /root/.local/share
       - python3 ./generate_makefile.py
-      - make -j7
+      - make -j5
     
     artifacts:
       expire_in: 1 week
