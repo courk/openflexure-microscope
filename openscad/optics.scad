@@ -85,48 +85,6 @@ module lens_gripper(lens_r=10,h=6,lens_h=3.5,base_r=-1,t=0.65,solid=false, flare
     trylinder_gripper(inner_r=lens_r, h=h, grip_h=lens_h, base_r=base_r, t=t, solid=solid, flare=flare);
 }
 
-        
-module fl_led_mount(led_d=5){
-    // This part clips on to the filter cube, to allow a light source (generally LED) to be coupled in using the beamsplitter.
-    roc = 0.6;
-    w = fl_cube_w - 1; //nominal width of the mount (is the width between the outsides of the dovetail clip points)
-    dovetail_pinch = fl_cube_w - 4*roc - 1 - 3; //width between the pinch-points of the dovetail
-    h = fl_cube_w - 1; //should probably be fl_cube_w
-    led_z = fl_cube_w/2;//+2;
-    filter = [10,14,1.5];
-    beamsplit = [0, 0, w/2]; //NB different to fl_cube because we're printing with z=z here.
-    $fn=8;
-    front_t = 2;
-    back_y = fl_cube_w/2 + roc + 1.5; //flat of dovetail (we actually start 1.5mm behind this)
-    led_y = back_y+3; //don't worry about precise imaging (is this OK?)
-    front_y = led_y + front_t;
-    
-    union() translate([0,0,0]){
-        difference(){
-            union(){
-                translate([0, back_y, 0]) mirror([0,1,0]) dovetail_m([w, 1, h], t=2*roc);
-                hull(){
-                    translate([-w/2,back_y,0]) cube([w,d,h]);
-                    reflect([1,0,0]) translate([w/2-3*roc, front_y - 3*roc, 0]) cylinder(r=3*roc, h=h, $fn=16);
-                }
-                hull(){
-                    l=3.5;
-                    translate([-w/2+2.5,back_y-1.5+d,led_z-led_d/2-2-l]) cube([w-5,d,led_d+4+l]);
-                    translate([-w/2+2.5,back_y-1.5+d-l,led_z-led_d/2-2]) cube([w-5,d,led_d+4]);
-                }
-            }
-            
-            // add a hole for the LED
-            translate([0,led_y,led_z]){
-                cylinder_with_45deg_top(h=999, r=led_d/2*1.05, $fn=16, extra_height=0, center=true); //LED
-                cylinder_with_45deg_top(h=999, r=(led_d+1)/2*1.05, $fn=16, extra_height=0);
-            }
-        }
-        
-
-    }
-}
-
 module camera_mount_top(){
     // A thin slice of the top of the camera mount
     linear_extrude(d) projection(cut=true) camera_mount();
@@ -254,7 +212,7 @@ module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
             camera_mount_body(body_r=lens_assembly_base_r, bottom_r=10.5, body_top=lens_assembly_z, dt_top=dovetail_top,fluorescence=fluorescence, dovetail=dovetail);
             // camera cut-out and hole for the beam
             if(fluorescence){
-                optical_path_fl(tube_lens_aperture, lens_assembly_z, fluorescence=fluorescence);
+                optical_path_fl(tube_lens_aperture, lens_assembly_z);
             }else{
                 optical_path(tube_lens_aperture, lens_assembly_z);
             }
@@ -455,16 +413,12 @@ difference(){
             lens_h = 5.5
         );
         if(objective_mount_y < 10) echo("Warning: M12 lenses won't fit in small frames");
-    }else if(optics=="beamsplitter_led_mount"){
-        mirror([0,1,0]) fl_led_mount();
     }
     
     //picam_cover();
     //translate([0,objective_mount_y-7,0]) rotate([90,0,0]) cylinder(r=999,h=999,$fn=8);
     //mirror([0,0,1]) cylinder(r=999,h=999,$fn=8);
     //C270 lens could be a trylinder gripper, with lens_r=12.0, lens_h=1 and a pedestal that is smaller than the gripper by more than the usual amount (say 1mm space)
-    //#translate([0,0,fl_cube_bottom]) rotate([90,0,0]) translate([0,0,-fl_cube_w/2]) fl_cube();
-    //mirror([0,1,0]) fl_led_mount();
     //translate([0,0,21]) mirror([0,0,1]) cylinder(r=999,h=999);
 }
 //condenser();
