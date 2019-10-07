@@ -39,7 +39,11 @@ lenses = [
 ]
 optics_versions_LS65 = ["picamera_2_pilens", "logitech_c270_c270_lens"]
 optics_versions_LS65 += [
-    cam + "_" + lens for cam in cameras for lens in lenses if "rms" in lens
+    cam + "_" + lens + bs
+    for cam in cameras
+    for lens in lenses
+    if "rms" in lens
+    for bs in ["", "_beamsplitter"]
 ] + ["m12_m12_lens"]
 optics_versions = [v + "_LS65" for v in optics_versions_LS65]
 sample_riser_versions = ["LS10"]
@@ -64,14 +68,10 @@ def body_parameters(version):
 
 def optics_module_parameters(version):
     """Figure out the parameters we need to generate the optics module"""
-    m = re.search(
-        "({cam})_({lens})_({body})".format(
-            cam="|".join(cameras),
-            lens="|".join(lenses),
-            body="|".join(match_body_versions),
-        ),
-        version,
+    search_expression = "({cam})_({lens})_(beamsplitter_)?({body})".format(
+        cam="|".join(cameras), lens="|".join(lenses), body="|".join(match_body_versions)
     )
+    m = re.search(search_expression, version)
     if m is None:
         raise ValueError(
             "Error finding optics module parameters from version string '{}'".format(
@@ -79,7 +79,8 @@ def optics_module_parameters(version):
             )
         )
     p = {"camera": m.group(1), "optics": m.group(2)}
-    p.update(body_parameters(m.group(3)))
+    p["beamsplitter"] = m.group(3) == "beamsplitter_"
+    p.update(body_parameters(m.group(4)))
     return p
 
 
@@ -171,7 +172,7 @@ if __name__ == "__main__":
         M(
             "OPTICS := $(optics_versions:%=optics_%) camera_platform_picamera_2_LS65 camera_platform_6led_LS65 lens_spacer_picamera_2_pilens_LS65"
         )
-        M("ILLUMINATIONS := illumination_dovetail condenser")
+        M("ILLUMINATIONS := illumination_dovetail condenser reflection_illuminator")
         M(
             "ALLPARTS := $(COMMONPARTS) $(TOOLS) $(BODIES) $(ILLUMINATIONS) $(OPTICS) $(ACCESSORIES)"
         )
