@@ -1,7 +1,8 @@
-from ninja import Writer
+#!/usr/bin/env python3
+from ninja import Writer, ninja as run_build
 
-f = open("build.ninja", "w")
-ninja = Writer(f, width=120)
+build_file = open("build.ninja", "w")
+ninja = Writer(build_file, width=120)
 
 ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
@@ -39,3 +40,7 @@ for size, motors, brim in body_versions:
         inputs="openscad/main_body.scad",
         variables={"parameters": parameters},
     )
+
+
+build_file.close()
+run_build()
