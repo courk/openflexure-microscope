@@ -390,19 +390,18 @@ difference(){
             objective_parfocal_distance=35,
             fluorescence=beamsplitter,
             gripper_t=0.65,
-            tube_length=tube_length//9999 //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
+            tube_length=150
         );
         if(sample_z < 60 || objective_mount_y < 12) echo("Warning: RMS objectives won't fit in small microscope frames!");
     }else if(optics=="rms_f50d13" || optics=="rms_infinity_f50d13"){
         // Optics module for RMS objective using ThorLabs ac127-050-a doublet tube lens
-        tube_length=(optics=="rms_f50d13" ? 150 : 99999);
         optics_module_rms(
             tube_lens_ffd=47, 
             tube_lens_f=50, 
             tube_lens_r=12.7/2+0.1, 
             objective_parfocal_distance=35,
             fluorescence=beamsplitter,
-            tube_length=tube_length //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
+            tube_length=(optics=="rms_f50d13" ? 150 : 99999) //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
         );
         if(sample_z < 60 || objective_mount_y < 12) echo("Warning: RMS objectives won't fit in small microscope frames!");
     }else if(optics=="m12_lens"){
