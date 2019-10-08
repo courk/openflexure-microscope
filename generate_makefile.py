@@ -9,6 +9,7 @@ It is intended to be run whenever you need a new makefile.  The makefile lives i
 the repository and is versioned, so most people never need to run this script.
 """
 
+# This is used in a lot of places to determine various dimensions
 microscope_sizes = ["LS65"]
 
 # Every version of the body we're building
@@ -20,18 +21,10 @@ body_versions = [
     for brim in ["", "_brim"]
 ]
 
-# Every /possible/ version of the body
-match_body_versions = [
-    size + motors + beamsplitter + brim
-    for size in microscope_sizes
-    for motors in ["-M", ""]  # Non-lugged versions are needed for optics modules
-    for beamsplitter in ["", "-BS"]
-    for brim in ["", "_brim"]
-]
-# NB the above ugly hack restores the non-motorised bodies, for the purposes of the optics modules
-# (optics modules are named LS65 etc. which will only match the now-obsolete versions without
-# motor lugs.  This will all be fixed in the new build system much more nicely!)
+# List of available cameras
 cameras = ["picamera_2", "logitech_c270", "m12"]
+
+# List of all available lenses
 lenses = [
     "pilens",
     "c270_lens",
@@ -40,15 +33,19 @@ lenses = [
     "rms_f50d13",
     "rms_infinity_f50d13",
 ]
+
+# List of lenses which can support a beamsplitter cube
+bs_compatible_lenses = ["rms_f40d16", "rms_f50d13", "rms_infinity_f50d13"]
 optics_versions_LS65 = ["picamera_2_pilens", "logitech_c270_c270_lens"]
 optics_versions_LS65 += [
-    cam + "_" + lens + bs
+    cam + "_" + lens + (beamsplitter if lens in bs_compatible_lenses else "")
     for cam in cameras
     for lens in lenses
     if "rms" in lens
-    for bs in ["", "_beamsplitter"]
+    for beamsplitter in ["", "_beamsplitter"]
 ] + ["m12_m12_lens"]
 optics_versions = [v + "_LS65" for v in optics_versions_LS65]
+
 sample_riser_versions = ["LS10"]
 slide_riser_versions = ["LS10"]
 stand_versions = ["LS65-30", "LS65-30-BS"]
@@ -56,12 +53,15 @@ stand_versions = ["LS65-30", "LS65-30-BS"]
 
 def body_parameters(version):
     """Retrieve the parameters we pass to OpenSCAD to generate the given body version."""
+    m = re.match("(LS|SS)([\d]{2})(-M)?(-BS)?(_brim)?", version)
+    if m is None:
+        raise ValueError(
+            "Error finding optics module parameters from version string '{}'".format(
+                version
+            )
+        )
+
     p = {"motor_lugs": False, "beamsplitter": False, "sample_z": -1, "big_stage": None}
-    matching_version = ""
-    for v in match_body_versions:  # first, pick the longest matching version string.
-        if v in version and len(v) > len(matching_version):
-            matching_version = v
-    m = re.match("(LS|SS)([\d]{2})(-M)?(-BS)?(_brim)?", matching_version)
     p["big_stage"] = m.group(1) == "LS"
     p["sample_z"] = m.group(2)
     p["motor_lugs"] = m.group(3) == "-M"
@@ -73,7 +73,7 @@ def body_parameters(version):
 def optics_module_parameters(version):
     """Figure out the parameters we need to generate the optics module"""
     search_expression = "({cam})_({lens})_(beamsplitter_)?({body})".format(
-        cam="|".join(cameras), lens="|".join(lenses), body="|".join(match_body_versions)
+        cam="|".join(cameras), lens="|".join(lenses), body="|".join(microscope_sizes)
     )
     m = re.search(search_expression, version)
     if m is None:
@@ -82,16 +82,27 @@ def optics_module_parameters(version):
                 version
             )
         )
-    p = {"camera": m.group(1), "optics": m.group(2)}
+
+    # Start with the parameters for a matching body geometry
+    p = body_parameters(m.group(4))
+    # Add camera and optics parameters
+    p.update({"camera": m.group(1), "optics": m.group(2)})
+    # Check for beamsplitter option
     p["beamsplitter"] = m.group(3) == "beamsplitter_"
-    p.update(body_parameters(m.group(4)))
     return p
 
 
 def stand_parameters(version):
     m = re.match(
-        "({body})-([\d]+)(-BS)?$".format(body="|".join(match_body_versions)), version
+        "({body})-([\d]+)(-BS)?$".format(body="|".join(microscope_sizes)), version
     )
+    if m is None:
+        raise ValueError(
+            "Error finding optics module parameters from version string '{}'".format(
+                version
+            )
+        )
+
     p = body_parameters(m.group(1))
     p["h"] = int(m.group(2))
     p["beamsplitter"] = m.group(3) == "-BS"
@@ -101,6 +112,13 @@ def stand_parameters(version):
 def riser_parameters(version):
     """extract the parameters for sample risers"""
     m = re.match("(LS|SS)([\d]+)", version)
+    if m is None:
+        raise ValueError(
+            "Error finding optics module parameters from version string '{}'".format(
+                version
+            )
+        )
+
     p = {}
     p["big_stage"] = "LS" == m.group(1)
     p["h"] = int(m.group(2))
@@ -208,19 +226,19 @@ if __name__ == "__main__":
             )
             M(openscad_recipe_baked(**body_parameters(version)))
         M("")
-        for version in match_body_versions:
+        for size in microscope_sizes:
             M(
                 "$(OUTPUT)/illumination_dovetail_"
-                + version
+                + size
                 + ".stl: $(SOURCE)/illumination_dovetail.scad $(main_body_deps) $(SOURCE)/illumination.scad"
             )
-            M(openscad_recipe_baked(**body_parameters(version)))
+            M(openscad_recipe_baked(**body_parameters(size)))
             M(
                 "$(OUTPUT)/condenser_"
-                + version
+                + size
                 + ".stl: $(SOURCE)/condenser.scad $(main_body_deps) $(SOURCE)/illumination.scad"
             )
-            M(openscad_recipe_baked(**body_parameters(version)))
+            M(openscad_recipe_baked(**body_parameters(size)))
         M("")
         M("optics_dep_names := dovetail cameras/camera")
         M("optics_deps := $(optics_dep_names:%=$(SOURCE)/%.scad)")
@@ -231,9 +249,7 @@ if __name__ == "__main__":
                 + ".stl: $(SOURCE)/optics.scad $(optics_deps)"
             )
             M(openscad_recipe_baked(**optics_module_parameters(version)))
-        M(
-            "$(OUTPUT)/fl_cube.stl: $(SOURCE)/fl_cube.scad $(optics_deps)"
-        )
+        M("$(OUTPUT)/fl_cube.stl: $(SOURCE)/fl_cube.scad $(optics_deps)")
         M(openscad_recipe_baked(**optics_module_parameters(version)))
         M("")
         for b in microscope_sizes:
