@@ -11,7 +11,7 @@ ninja.rule(
 for brim in ["", "_brim"]:
     size = "65"
     motors = "-M"
-    outputs = "build/main_body_LS" + size + motors + brim + ".stl"
+    outputs = "builds/main_body_LS" + size + motors + brim + ".stl"
     parameters = ["-D big_stage=true", "-D sample_z=65", "-D motor_lugs=true"]
 
     if brim == "":
@@ -36,7 +36,7 @@ optics_versions = [
 ] + [(camera, lens) for camera in cameras for lens in rms_lenses]
 
 for (camera, lens) in optics_versions:
-    outputs = f"build/optics_{camera}_{lens}_LS65.stl"
+    outputs = f"builds/optics_{camera}_{lens}_LS65.stl"
     parameters = ["-D big_stage=true", "-D sample_z=65", "-D enable_smart_brim=false"]
     parameters.append(f"-D 'optics=\"{lens}\"'")
     parameters.append(f"-D 'camera=\"{camera}\"'")
@@ -50,7 +50,7 @@ for (camera, lens) in optics_versions:
 
 camera_platform_versions = ["picamera_2", "6led"]
 for version in camera_platform_versions:
-    outputs = f"build/camera_platform_{version}_LS65.stl"
+    outputs = f"builds/camera_platform_{version}_LS65.stl"
     parameters = ["-D big_stage=true", "-D sample_z=65", "-D enable_smart_brim=false"]
     parameters.append("-D 'optics=\"pilens\"'")
     parameters.append(f"-D 'camera=\"{version}\"'")
@@ -63,7 +63,7 @@ for version in camera_platform_versions:
 
 feet_versions = ["", "_tall"]
 for version in feet_versions:
-    outputs = f"build/feet{version}.stl"
+    outputs = f"builds/feet{version}.stl"
     if version == "_tall":
         parameters.append("-D foot_height=26")
     ninja.build(
@@ -76,7 +76,7 @@ for version in feet_versions:
 parameters = ["-D big_stage=true", "-D sample_z=65", "-D enable_smart_brim=false"]
 parameters.append("-D 'optics=\"pilens\"'")
 ninja.build(
-    outputs="build/lens_spacer_picamera_2_pilens_LS65.stl",
+    outputs="builds/lens_spacer_picamera_2_pilens_LS65.stl",
     rule="openscad",
     inputs="openscad/lens_spacer.scad",
     variables={"parameters": " ".join(parameters)},
@@ -84,7 +84,7 @@ ninja.build(
 
 picamera_2_tools = ["cover", "gripper", "lens_gripper"]
 for tool in picamera_2_tools:
-    outputs = f"build/picamera_2_{tool}.stl"
+    outputs = f"builds/picamera_2_{tool}.stl"
     inputs = f"openscad/cameras/picamera_2_{tool}.scad"
     parameters = ["-D 'camera=\"picamera_2\"'"]
     ninja.build(
@@ -96,7 +96,7 @@ for tool in picamera_2_tools:
 
 stand_versions = ["", "_no_pi"]
 for version in stand_versions:
-    output = f"build/microscope_stand{version}.stl"
+    output = f"builds/microscope_stand{version}.stl"
     inputs = f"openscad/microscope_stand{version}.scad"
     parameters = ["-D big_stage=true", "-D sample_z=65", "-D enable_smart_brim=false"]
     ninja.build(
@@ -109,7 +109,7 @@ for version in stand_versions:
 
 riser_types = ["sample", "slide"]
 for t in riser_types:
-    outputs = f"build/{t}_riser_LS10.stl"
+    outputs = f"builds/{t}_riser_LS10.stl"
     inputs = f"openscad/{t}_riser.scad"
     parameters = ["-D big_stage=true", "-D h=10"]
     ninja.build(
@@ -134,7 +134,7 @@ parts = [
 ]
 
 for part in parts:
-    outputs = f"build/{part}.stl"
+    outputs = f"builds/{part}.stl"
     inputs = f"openscad/{part}.scad"
     ninja.build(
         outputs,
