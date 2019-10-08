@@ -18,19 +18,19 @@ body_versions = [
 
 
 for size, motors, brim in body_versions:
-    parameters = ["-D 'big_stage=true'"]
+    parameters = ["-D big_stage=true"]
 
     if brim == "":
-        parameters.append("-D 'enable_smart_brim=false'")
+        parameters.append("-D enable_smart_brim=false")
     else:
-        parameters.append("-D 'enable_smart_brim=true'")
+        parameters.append("-D enable_smart_brim=true")
 
-    parameters.append("-D 'sample_z={}'".format(size))
+    parameters.append("-D sample_z=" + size)
 
     if motors == "":
-        parameters.append("-D 'motor_lugs=false'")
+        parameters.append("-D motor_lugs=false")
     else:
-        parameters.append("-D 'motor_lugs=true'")
+        parameters.append("-D motor_lugs=true")
 
     output = "build/main_body_LS" + size + motors + brim + ".stl"
 
