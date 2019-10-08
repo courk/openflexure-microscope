@@ -36,7 +36,7 @@ module pi_connectors(){
         translate([raspi_board[0]/2,-1,1]) cube(raspi_board + [2,2,-1]);
 
         // micro-USB power and HDMI
-        translate([24-40/2, -100, -2]) cube([40,100,14]);
+        translate([24-(40/2), -100, -2]) cube([46,100,14]);
 
         // micro-SD card
         translate([0,raspi_board[1]/2+6,0]) cube([80,12,8], center=true);
