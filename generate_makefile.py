@@ -80,6 +80,7 @@ def optics_module_parameters(version):
         )
     p = {"camera": m.group(1), "optics": m.group(2)}
     p.update(body_parameters(m.group(3)))
+    print(p)
     return p
 
 
