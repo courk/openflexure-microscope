@@ -2,11 +2,10 @@ stages:
     - build
     - deploy
 
-# Build STL files (disables cache)
+# Build STL files
 build:
     stage: build
     image: ubuntu:18.04
-    cache: {}
     
     before_script:
       - apt-get update -qq
