@@ -51,7 +51,7 @@ optics_versions_LS65 += [
 optics_versions = [v + "_LS65" for v in optics_versions_LS65]
 sample_riser_versions = ["LS10"]
 slide_riser_versions = ["LS10"]
-stand_versions = ["LS65-30", "LS65-160"]
+stand_versions = ["LS65-30", "LS65-30-BS"]
 
 
 def body_parameters(version):
@@ -90,10 +90,11 @@ def optics_module_parameters(version):
 
 def stand_parameters(version):
     m = re.match(
-        "({body})-([\d]+)$".format(body="|".join(match_body_versions)), version
+        "({body})-([\d]+)(-BS)?$".format(body="|".join(match_body_versions)), version
     )
     p = body_parameters(m.group(1))
     p["h"] = int(m.group(2))
+    p["beamsplitter"] = m.group(3) == "-BS"
     return p
 
 
@@ -161,6 +162,7 @@ if __name__ == "__main__":
         M("")
         M("body_versions = " + " ".join(body_versions))
         M("optics_versions = " + " ".join(optics_versions))
+        M("stand_versions = " + " ".join(stand_versions))
         M("sample_riser_versions = " + " ".join(sample_riser_versions))
         M("slide_riser_versions = " + " ".join(slide_riser_versions))
         M("")
@@ -169,7 +171,7 @@ if __name__ == "__main__":
             "TOOLS := $(TOOLS) picamera_2_cover picamera_2_gripper picamera_2_lens_gripper actuator_drilling_jig"
         )
         M(
-            "ACCESSORIES := picamera_2_cover $(sample_riser_versions:%=sample_riser_%) $(slide_riser_versions:%=slide_riser_%) microscope_stand microscope_stand_no_pi motor_driver_case back_foot"
+            "ACCESSORIES := picamera_2_cover $(sample_riser_versions:%=sample_riser_%) $(slide_riser_versions:%=slide_riser_%) $(stand_versions:%=microscope_stand_%) microscope_stand_no_pi motor_driver_case back_foot"
         )
         M("COMMONPARTS := feet feet_tall gears sample_clips small_gears thumbwheels")
         M("BODIES := $(body_versions:%=main_body_%)")
