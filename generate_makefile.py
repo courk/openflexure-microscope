@@ -90,6 +90,7 @@ def stand_parameters(version):
     )
     p = body_parameters(m.group(1))
     p["h"] = int(m.group(2))
+    print(p)
     return p
 
 
