@@ -8,16 +8,9 @@ ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
 )
 
-
-body_versions = [
-    (size, motors, brim)
-    for size in ["65"]
-    for motors in ["-M", ""]
-    for brim in ["", "_brim"]
-]
-
-
-for size, motors, brim in body_versions:
+for brim in ["", "_brim"]:
+    size = "65"
+    motors = "-M"
     output = "build/main_body_LS" + size + motors + brim + ".stl"
     parameters = ["-D big_stage=true"]
 
