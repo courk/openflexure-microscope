@@ -12,9 +12,13 @@
 docs/*.zip
 
 # Ignore automatically built files
+Makefile
 builds/
 docs/Output/
-Makefile
+*.stl.d
+ninja.build
+.ninja_deps
+.ninja_log
 
 # Ignore IDE files
 .vscode/
