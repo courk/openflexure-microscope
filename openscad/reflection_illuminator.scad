@@ -97,9 +97,14 @@ module field_stop(aperture=[3,4], illuminator_d=2*base_r, h=5){
     }
 }
 
-module illuminator_holder(illuminator_d = 2*base_r){
-    h = fl_cube_width() - 1;
-    w = illuminator_d+4;
+// Function we can import to get width of illuminator holder
+function illuminator_width() = (2*base_r) + 4;
+
+// Geometry of illuminator holder
+module illuminator_holder(){
+    illuminator_d = 2*base_r; // Illuminator diameter
+    h = fl_cube_width() - 1; // Illuminator holder height
+    w = illuminator_width(); // Illuminator holder width
     difference(){
         union(){
             fl_led_mount();

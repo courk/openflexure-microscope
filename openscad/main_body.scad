@@ -20,6 +20,7 @@ use <./z_axis.scad>;
 use <./gears.scad>;
 use <./wall.scad>;
 use <./main_body_transforms.scad>;
+use <./reflection_illuminator.scad>;
 include <./microscope_parameters.scad>; //All the geometric variables are now in here.
 
 
@@ -163,13 +164,18 @@ module wall_between_actuators(){
     }
 }
 
-module fl_cube_cutout(cube_width){
+// Cut out hole for reflection illuminator
+module fl_cube_cutout(){
     // size of cutout for fl cube
-    fl_cube_cutout_w = cube_width + 1;
+    top_cutout_w = 17.8; // As big as we can get at height 'wall_h' without bridging a corner
+    mid_cutout_w = illuminator_width() + 1;
+    bottom_cutout_w = illuminator_width() + 4;
+
     // Create a trapezoid with min width (cube_width) at top
     hull() {
-        translate([-(1.2*fl_cube_cutout_w)/2, -49, 0]) cube([1.2*fl_cube_cutout_w, 49, 1]);
-        translate([-fl_cube_cutout_w/2, -49, fl_cube_cutout_w-(fl_cube_cutout_w/4)]) cube([fl_cube_cutout_w, 49, 1]);
+        translate([-(bottom_cutout_w)/2, -49, -0.5]) cube([bottom_cutout_w, 49, 1]);
+        translate([-(mid_cutout_w)/2, -49, 10]) cube([mid_cutout_w, 49, 1]); // Highest we usually need
+        translate([-top_cutout_w/2, -49, wall_h]) cube([top_cutout_w, 49, 1]);
     }
 }
 
@@ -254,8 +260,9 @@ union(){
 		}
         //////  Things we need to cut out holes for... ///////////
         // Beamsplitter cube
+        beamsplitter = true;
         if (beamsplitter) {
-            fl_cube_cutout(fl_cube_w);
+            fl_cube_cutout();
         }
 
         // XY actuator cut-outs
