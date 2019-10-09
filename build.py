@@ -69,7 +69,7 @@ for version in feet_versions:
     ninja.build(
         outputs,
         rule="openscad",
-        inputs="openscad/camera_platform.scad",
+        inputs="openscad/feet.scad",
         variables={"parameters": " ".join(parameters)},
     )
 
