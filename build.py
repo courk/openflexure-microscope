@@ -133,6 +133,7 @@ for sample_z in sample_z_options:
 ####################
 ### MICROSCOPE STAND
 
+# Stand with pi
 for stand_height in [30]:
     for beamsplitter in [True, False]:
         outputs = "{build_dir}/microscope_stand_{stand_height}{beamsplitter}.stl".format(
@@ -153,6 +154,8 @@ for stand_height in [30]:
             variables={"parameters": " ".join(parameters)},
         )
 
+# Stand without pi
+parameters = []
 ninja.build(
     "builds/microscope_stand_no_pi.stl",
     rule="openscad",
