@@ -260,7 +260,6 @@ union(){
 		}
         //////  Things we need to cut out holes for... ///////////
         // Beamsplitter cube
-        beamsplitter = true;
         if (beamsplitter) {
             fl_cube_cutout();
         }
