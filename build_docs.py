@@ -14,13 +14,13 @@ def process_markdown(infile, outfile):
     images = set()
     with open(infile, 'r', encoding='utf8') as input_file, open(outfile, 'w', encoding='utf8') as output_file:
         print(f"Opened {infile}...")
-    
+
         # Inject extra markdown only if the file isn't special
         if (os.path.basename(infile)[0] != "_"):
             insert_markdown(infile=infile, outfile=outfile)
         else:
             print(f"File {infile} is special. Copying without modification.")
-        
+
         # Copy the basic markdown content into the new file, and find images
         for line in input_file:
             # Copy over the line
@@ -37,8 +37,11 @@ if __name__ == "__main__":
     here = os.path.dirname(os.path.realpath(__file__))
     docs_dir = os.path.abspath(os.path.join(here, "docs"))
     parts_dir = os.path.abspath(os.path.join(docs_dir, "parts"))
+    build_dir = os.path.abspath(os.path.join(here, "builds"))
+    output_dir = os.path.abspath(os.path.join(build_dir, "docs"))
 
-    output_dir = os.path.abspath(os.path.join(here, "builds/docs"))
+    if not os.path.isdir(build_dir):
+        os.mkdir(build_dir)
 
     # Delete the output directory if it exists
     if os.path.isdir(output_dir):
@@ -69,4 +72,4 @@ if __name__ == "__main__":
     # Copy over only the images that are actually used
     for f in images:
         shutil.copyfile(os.path.join(docs_dir, "images", f), os.path.join(output_dir, "images", f))
-                
+
