@@ -120,6 +120,7 @@ for sample_z in sample_z_options:
                 p_string("sample_z", sample_z),
                 p_string("optics", lens),
                 p_string("camera", camera),
+                p_string("beamsplitter", beamsplitter),
             ]
 
             ninja.build(
