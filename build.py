@@ -291,6 +291,8 @@ parts = [
     "sample_clips",
     "small_gears",
     "thumbwheels",
+    "fl_cube",
+    "reflection_illuminator"
 ]
 
 for part in parts:
