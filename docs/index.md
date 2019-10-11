@@ -10,7 +10,7 @@ Assembly is broken up into several steps:
 * [Printing parts](./0_printing.md)
 * [Assembling the actuators](./1_actuator_assembly.md) deals with the mechanism for moving the stage.
 * The optics module comes next, either the [basic optics module](./2a_basic_optics_module.md) or the [high resolution optics module](./2b_high_resolution_optics_module.md) depending on your needs.
-* [Illumination](./3_illumination.md) covers attaching the condenser.
+* [Illumination](./3_illumination.md) covers attaching the condenser for transmission illumination. [Reflection illumination](./3b_illumination_reflection.md) covers optional reflection illumination.
 * [Sample clips and wiring](./4_clips_and_wiring.md) completes the microscope.
 * [Motors](./5_motors.md) can be added for automatic control.
 * [Motor controller boards](./6_motor_controllers.md) are required for driving motors.
