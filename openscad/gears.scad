@@ -110,7 +110,7 @@ module thumbwheel(r=10,h=5,knobble_r=1,knobble_angle=45,chamfer=0.5){
             for( n = [0 : n_lobe-1] )
             {
                 deg = 360*n/n_lobe;
-                translate([lobe_r*sin(deg),lobe_r*cos(deg),base_h]){cone_cyl(r=lobe_r,lobe_h=5);}
+                translate([lobe_r*sin(deg),lobe_r*cos(deg),base_h]){cone_cyl(r=lobe_r,h=lobe_h);}
             }
         }
         translate([0,0,1.5]) nut(3,shaft=true,fudge=1.2,h=999);
@@ -128,7 +128,7 @@ module motor_clearance(h=15){
     // NB does not include cable clearance, I assume that goes on the outside.
     // The centre of the body is at the origin, NB this is NOT the shaft location.
     // The shaft is not included.
-    linear_extrude(h=h){
+    linear_extrude(height=h){
         circle(r=14+1.5);
         hull() reflect([1,0]) translate([35/2,0]) circle(r=4.5);
     }
