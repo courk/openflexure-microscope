@@ -22,9 +22,14 @@ The microscope can illuminate the sample from below, allowing imaging of reflect
 
 Place the condenser lens on the insertion tool (flat side up), and push the condenser housing down onto it.  Take care to keep it vertical.  You may need to push fairly hard.  As with the tube lens in the optics module, check it's flat and push again if necessary.
 
+![](./images/illumination_refl_lens_1.jpg)
+![](./images/illumination_refl_lens_2.jpg)
+
 ## Step 2
 
 Insert the LED into the condenser housing.  It should push-fit and stay in place.  It can be glued or taped if it doesn't stay in.
+
+![](./images/illumination_refl_led.jpg)
 
 ## Step 3
 
@@ -34,14 +39,23 @@ Assemble the cable for the LED, if you don't have one soldered on already.  You 
 
 Insert the condenser housing into the illumination holder. Tighten with a cable tie if the condenser housing is loose within the holder.
 
+![](./images/illumination_refl_gripper.jpg)
+
 ## Step 5
 
-Insert your chosen filters into the filter cube. Most applications will require a filter in the 45 degree slot, and an additional input/excitation filter slot is available if needed. 
+Insert your chosen filters into the filter cube. Most applications will require a filter in the 45 degree slot, and an additional input/excitation filter slot is available if needed.
+
+![](./images/illumination_refl_filter_insersion.jpg)
+![](./images/illumination_refl_filter.jpg)
 
 ## Step 6
 
-Slide the filter cube onto the illumination holder dovetail. The two should ideally be vertically centered with eachother. 
+Slide the filter cube onto the illumination holder dovetail. The two should ideally be vertically centered with eachother.
+
+![](./images/illumination_refl_illuminator_full.jpg)
 
 ## Step 7
 
 Push the reflection-illuminator/filter-cube assembly into the filter cube slot on your optics module.
+
+![](./images/illumination_refl_in_body.jpg)
