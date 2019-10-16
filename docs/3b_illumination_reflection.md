@@ -43,7 +43,9 @@ Insert the condenser housing into the illumination holder. Tighten with a cable 
 
 ## Step 5
 
-Insert your chosen filters into the filter cube. Most applications will require a filter in the 45 degree slot, and an additional input/excitation filter slot is available if needed.
+Insert your chosen filters into the filter cube. Most applications will require a filter in the 45 degree slot. If the filter fits tightly, gently use tweezers(or similar) to push the filter into place.
+
+Additional excitation and emission filter slots are available if needed, for example for fluorescence microscopy.
 
 ![](./images/illumination_refl_filter_insersion.jpg)
 ![](./images/illumination_refl_filter.jpg)
