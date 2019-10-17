@@ -69,7 +69,7 @@ NB the above commands will not download the full-resolution original images, or 
 Most of the Openflexure Microscope stuff lives on GitHub, under [my account](https://github.com/rwb27/).  Particularly useful ones are:
 * The ["sangaboard" motor controller](https://gitlab.com/bath_open_instrumentation_group/sangaboard) based on an Arduino + Darlington Pair ICs, developed collaboratively with [STICLab](http://www.sticlab.co.tz)
 * The ["fergboard" motor controller](https://github.com/fr293/motor_board) by Fergus Riche
-* An as-yet-quite-basic set of scripts that should become the [microscope software](https://github.com/rwb27/openflexure_microscope_software/)
+* The [microscope server software](https://gitlab.com/openflexure/openflexure-microscope-server)
 * The higher precision, smaller range [block stage](https://github.com/rwb27/openflexure_block_stage)
 * Some [characterisation scripts for analysing images of the USAF resolution test target](https://github.com/rwb27/usaf_analysis/)
 
