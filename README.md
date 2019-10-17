@@ -1,15 +1,15 @@
 # OpenFlexure Microscope
 The OpenFlexure Microscope is a  3D printable microscope, including a precise mechanical stage to move the sample and focus the optics.  There are many different options for the optics, ranging from a webcam lens to a 100x, oil immersion objective.
 
-![An OpenFlexure Microscope in an incubator (courtesy Stephanie Reichelt and Dario Bressan at CRUK, Cambridge)](https://rwb27.github.io/openflexure_microscope/images/microscope_in_incubator.jpg)
+![A trio of microscope](https://openflexure.org/assets/MicroscopeBlenderTrio.png)
 
 The trick of making a microscope out of a webcam has been around for a little while, and produces good results.  However, getting a nice mechanical stage to focus the microscope and move around on the sample is tricky.  This project is a 3D printable design that enables very fine (sub-micron) mechanical positioning of the sample and the lens, with surprisingly good mechanical stability.  It's discussed in various [media articles](https://gitlab.com/openflexure/openflexure-microscope/wikis/Media-Articles) and a [paper in Review of Scientific Instruments](http://dx.doi.org/10.1063/1.4941068) (open access).
 
 ## Instructions
-The editable instructions are MarkDown format, in the [docs folder](./docs/), and [they can be viewed on github pages](http://rwb27.github.io/openflexure_microscope/docs/).
+The editable instructions are MarkDown format, in the [docs folder](./docs/), and the latest release docs [can be viewed on here](https://build.openflexure.org/openflexure-microscope/latest/docs).
 
 ## Printing it yourself
-To build the microscope, go to [the tags page](https://gitlab.com/openflexure/openflexure-microscope/tags) and download the zip file containing the STL files from the latest release.  Don't just print everything from the folder, as there are a number of different configurations possible.  The [assembly instructions](http://rwb27.github.io/openflexure_microscope/docs/) contain instructions on what parts to print and how to build it.
+To build the microscope, go to [the tags page](https://gitlab.com/openflexure/openflexure-microscope/tags) and download the zip file containing the STL files from the latest release.  Don't just print everything from the folder, as there are a number of different configurations possible.  The [assembly instructions](https://build.openflexure.org/openflexure-microscope/latest/docs) contain instructions on what parts to print and how to build it.
 
 If you've built one, let us know - add yourself to the [wiki page of builds](https://gitlab.com/openflexure/openflexure-microscope/wikis/Assembly-Logs) or submit an [issue](https://gitlab.com/openflexure/openflexure-microscope/issues/new) marked as a build report.  This is a really helpful thing to do even if you don't suggest improvements or flag up problems.
 
@@ -18,7 +18,6 @@ Most of the development of this design has been done as part of various [researc
 
 ## Kits and License
 This project is open-source and is released under the CERN open hardware license.  We are working on bring able to sell kits through [OpenFlexure Industries Ltd.](https://www.openflexure.com/), and will update here once we have a good way of doing it.
-
 
 ## Get Involved!
 This project is open so that anyone can get involved, and you don't have to learn OpenSCAD to help (although that would be great).  Ways you can contribute include:
@@ -35,7 +34,29 @@ Things in need of attention are currently described in [issues](https://gitlab.c
 ## Developing
 If you want to play with the OpenSCAD files or change the documentation, you should fork the repository.  You can edit the documentation online in GitLab, or clone the repository if you want to edit the OpenSCAD files.  NB you'll need to clone the whole repository as the OpenSCAD files are dependent on each other.
 
-Also, by default this repository will store images using Git LFS, and is set up not to download these to your computer.  This is intended to make life easier for the members of our community who don't have fast internet connections.  If you want to download these, you can enable it with:
+### Release flow
+We use GitLab CI to manage builds and deployment. 
+
+The CI will build STL files that expire after 1 week when:
+* A build is manually triggered from GitLab web
+* A merge request is submitted
+* A merge request is modified
+* A release is tagged
+
+The CI will deploy the built STL files, and documentation, to [build.openflexure.org](https://build.openflexure.org/) when:
+* A build is manually triggered from GitLab web
+* A release is tagged
+
+The build server will mark a release as "latest" ([build.openflexure.org/openflexure-microscope/latest](https://build.openflexure.org/openflexure-microscope/latest)) when:
+* A release is tagged, with a semantic version and no suffix. For example:
+  * v6.0.0 will replace "latest"
+  * v6.0.1-beta.1 will **not** replace "latest" (pre-release suffix)
+  * v6.1 will **not** replace "latest" (no patch version specified)
+  * 6.0.1a will **not** replace "latest" (non-standard suffix)
+
+### LFS files
+
+This repository will store images using Git LFS, and is set up not to download these to your computer.  This is intended to make life easier for the members of our community who don't have fast internet connections.  If you want to download these, you can enable it with:
 ```bash
 git lfs install
 git config --local lfs.fetchexclude "/docs/original_images,/design_files"
