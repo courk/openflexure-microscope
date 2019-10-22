@@ -13,13 +13,14 @@ build_dir = "builds"
 
 def parameters_to_string(parameters):
     """
-    Build an OpenScad parameter string from a variable name and value
+    Build an OpenScad parameter arguments string from a variable name and value
     
     Arguments:
-        parameters {[(str, str)]} -- List of (name, value) tuples of parameters
+        parameters {dict} -- Dictionary of parameters
     """
     strings = []
-    for name, value in parameters:
+    for name in parameters:
+        value = parameters[name]
         # Convert bools to lowercase
         if type(value) == bool:
             value = str(value).lower()
@@ -34,13 +35,13 @@ def parameters_to_string(parameters):
 
 def stage_parameters(stage_size, sample_z):
     """
-    Return array of common stage parameters for a given size and sample z
+    Return common stage parameters for a given size and sample z
     
     Arguments:
         stage_size {str} -- Stage size, e.g. "LS"
         sample_z {int} -- Sample z position, default 65
     """
-    return [("big_stage", (stage_size == "LS")), ("sample_z", sample_z)]
+    return {"big_stage": stage_size == "LS", "sample_z": sample_z}
 
 
 ################################
@@ -75,12 +76,12 @@ for stage_size in stage_size_options:
                     brim="_brim" if brim else "",
                 )
 
-                parameters = [
-                    *stage_parameters(stage_size, sample_z),
-                    ("motor_lugs", motors),
-                    ("beamsplitter", beamsplitter),
-                    ("enable_smart_brim", brim),
-                ]
+                parameters = {
+                    **stage_parameters(stage_size, sample_z),
+                    "motor_lugs": motors,
+                    "beamsplitter": beamsplitter,
+                    "enable_smart_brim": brim,
+                }
 
                 ninja.build(
                     outputs,
@@ -119,12 +120,12 @@ for sample_z in sample_z_options:
                 beamsplitter="_beamsplitter" if beamsplitter else "",
             )
 
-            parameters = [
-                ("sample_z", sample_z),
-                ("optics", lens),
-                ("camera", camera),
-                ("beamsplitter", beamsplitter),
-            ]
+            parameters = {
+                "sample_z": sample_z,
+                "optics": lens,
+                "camera": camera,
+                "beamsplitter": beamsplitter,
+            }
 
             ninja.build(
                 outputs,
@@ -146,10 +147,7 @@ for stand_height in [30]:
             beamsplitter="-BS" if beamsplitter else "",
         )
 
-        parameters = [
-            ("h", stand_height),
-            ("beamsplitter", beamsplitter),
-        ]
+        parameters = {"h": stand_height, "beamsplitter": beamsplitter}
 
         ninja.build(
             outputs,
@@ -159,12 +157,10 @@ for stand_height in [30]:
         )
 
 # Stand without pi
-parameters = []
 ninja.build(
     "builds/microscope_stand_no_pi.stl",
     rule="openscad",
     inputs="openscad/microscope_stand_no_pi.scad",
-    variables={"parameters": parameters_to_string(parameters)},
 )
 
 
@@ -185,8 +181,7 @@ for foot_height in [15, 26]:
         build_dir=build_dir, version=version_name
     )
 
-    parameters = [("foot_height", foot_height)]
-
+    parameters = {"foot_height": foot_height}
 
     ninja.build(
         outputs,
@@ -209,13 +204,11 @@ for stage_size in stage_size_options:
                 sample_z=sample_z,
             )
 
-            parameters = [
-                *stage_parameters(stage_size, sample_z),
-                ("optics", "pilens"),
-                ("camera", version),
-            ]
-
-
+            parameters = {
+                **stage_parameters(stage_size, sample_z),
+                "optics": "pilens",
+                "camera": version,
+            }
 
             ninja.build(
                 outputs,
@@ -234,10 +227,7 @@ for stage_size in stage_size_options:
             build_dir=build_dir, stage_size=stage_size, sample_z=sample_z
         )
 
-        parameters = [
-            *stage_parameters(stage_size, sample_z),
-            ("optics", "pilens"),
-        ]
+        parameters = {**stage_parameters(stage_size, sample_z), "optics": "pilens"}
 
         ninja.build(
             outputs,
@@ -255,7 +245,7 @@ for tool in picamera_2_tools:
     outputs = f"builds/picamera_2_{tool}.stl"
     inputs = f"openscad/cameras/picamera_2_{tool}.scad"
 
-    parameters = [("camera", "picamera_2")]
+    parameters = {"camera": "picamera_2"}
 
     ninja.build(
         outputs,
@@ -272,7 +262,7 @@ for riser_type in ["sample", "slide"]:
     outputs = f"builds/{riser_type}_riser_LS10.stl"
     inputs = f"openscad/{riser_type}_riser.scad"
 
-    parameters = [("big_stage", True), ("h", 10)]
+    parameters = {"big_stage": True, "h": 10}
 
     ninja.build(
         outputs,
@@ -298,7 +288,7 @@ parts = [
     "small_gears",
     "thumbwheels",
     "fl_cube",
-    "reflection_illuminator"
+    "reflection_illuminator",
 ]
 
 for part in parts:
