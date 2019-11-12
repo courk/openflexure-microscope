@@ -220,6 +220,7 @@ module microscope_stand(){
     
             // supports for the pi circuit board
             pi_supports();
+           pi_frame() rotate(-16) translate([-2.5, -3, 0]) translate([0,0,raspi_z]) translate([-21.40,raspi_board[1]/2-20,6]) linear_extrude(height=17.23) polygon(points=[[3,0], [3.2, 0], [3.2, 35], [3, 35], [-1, 15]]);
         }
         
         // space for pi connectors
