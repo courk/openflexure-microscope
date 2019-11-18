@@ -67,10 +67,13 @@ NB the above commands will download the images that are currently used in the do
 
 ## Related Repositories
 The OpenFlexure repositories have been gradually migrating from [Richard's Github](https://github.com/rwb27/) to GitLab.  Particularly useful ones are:
+Most of the Openflexure Microscope stuff lives in the [OpenFlexure group on GitLab](https://gitlab.com/openflexure).  Particularly useful ones are:
+* The [microscope server software](https://gitlab.com/openflexure/openflexure-microscope-server)
+* The [microscope client software](https://gitlab.com/openflexure/openflexure-microscope-jsclient)
+* The higher precision, smaller range [block stage](https://gitlab.com/openflexure/openflexure-block-stage)
+A number of other related projects developed by us and our collaborators include:
 * The ["sangaboard" motor controller](https://gitlab.com/bath_open_instrumentation_group/sangaboard) based on an Arduino + Darlington Pair ICs, developed collaboratively with [STICLab](http://www.sticlab.co.tz)
 * The ["fergboard" motor controller](https://github.com/fr293/motor_board) by Fergus Riche
-* The [microscope server software](https://gitlab.com/openflexure/openflexure-microscope-server)
-* The higher precision, smaller range [block stage](https://github.com/rwb27/openflexure_block_stage)
 * Some [characterisation scripts for analysing images of the USAF resolution test target](https://github.com/rwb27/usaf_analysis/)
 
 ## Compiling from source
