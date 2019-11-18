@@ -63,10 +63,10 @@ git config --local lfs.fetchexclude "/docs/original_images,/design_files"
 git lfs fetch
 git lfs checkout
 ```
-NB the above commands will not download the full-resolution original images, or the design files.  New files will always be pushed.  If you don't need a local copy of the images, it's safe just to ignore this.
+NB the above commands will download the images that are currently used in the documentation, which have generally been edited, cropped, resized, and annotated.  Because of the ``lfs.fetchexclude "/docs/original_images,/design_files"`` those folders will not be downloaded, so you won't get the full-resolution original images, or the design files.  However, if you add files to those folders, they will always be uploaded.  If you want to download everything, just change that line to ``git config --local lfs.fetchexclude ""``.  If you don't need a local copy of the images, it's safe just to ignore this.
 
 ## Related Repositories
-Most of the Openflexure Microscope stuff lives on GitHub, under [my account](https://github.com/rwb27/).  Particularly useful ones are:
+The OpenFlexure repositories have been gradually migrating from [Richard's Github](https://github.com/rwb27/) to GitLab.  Particularly useful ones are:
 * The ["sangaboard" motor controller](https://gitlab.com/bath_open_instrumentation_group/sangaboard) based on an Arduino + Darlington Pair ICs, developed collaboratively with [STICLab](http://www.sticlab.co.tz)
 * The ["fergboard" motor controller](https://github.com/fr293/motor_board) by Fergus Riche
 * The [microscope server software](https://gitlab.com/openflexure/openflexure-microscope-server)
