@@ -203,7 +203,14 @@ module mounting_holes(){
     // NB the bottom hole is larger to allow for screwing through it, the top 
     // is approximately "self tapping" (a triangular hole, to allow for some 
     // space for swarf).
-    each_actuator() translate([0, actuating_nut_r, 0]){
+    mirror([1,0,0]) leg_frame(45)
+    translate([0, actuating_nut_r, 0]){
+        cylinder(d=4.4, h=20, center=true);
+        rotate(90) trylinder_selftap(3, h=999, center=true);
+    }
+    // this hole is moved out of the way of the sd-card cutout
+    leg_frame(45)
+    translate([-10, actuating_nut_r-1, 0]){
         cylinder(d=4.4, h=20, center=true);
         rotate(90) trylinder_selftap(3, h=999, center=true);
     }
@@ -303,3 +310,4 @@ module motor_driver_case(){
 
 //motor_driver_case();
 microscope_stand();
+
