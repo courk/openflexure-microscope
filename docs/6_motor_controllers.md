@@ -25,7 +25,7 @@ This option aims to be a super-simple motor controller board, based on an Arduin
 
 The PCB design, bill of materials, and purchase links for both are available via [Kitspace](https://kitspace.org/boards/github.com/rwb27/openflexure_nano_motor_controller/).
 
-A circuit schematic can be found [here](./images/sangaboard_v2_schematic.png)
+A circuit schematic can be found [here](./images/sangaboard_v2_schematic.png ':ignore')
 
 
 ### Fully integrated board (Sangaboard v0.3)
