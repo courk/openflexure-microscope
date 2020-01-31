@@ -14,10 +14,10 @@ ns = nut_slot_size();
 shaft_d = nut_size()*1.1;
 gap = 9; //size of the gap between gear and screw seat
 swing_a = 30; //angle through which the tool swings
-sso = ss_outer(45); //outer size of screw seat
+sso = ss_outer(25); //outer size of screw seat
 handle_w = shaft_d+4; //width of the "handle" part
 handle_l = sso[0]/2+gap; //length of handle part
-
+holder_height = 20; //height of the band insertion tool holder
 
 module tool_handle(){
     w = handle_w; //width of the handle
@@ -108,7 +108,7 @@ module band_tool(){
     }
 }
 
-band_tool_l = sso[2]/2+foot_height;
+band_tool_l = sso[2]/2+foot_height+holder_height;
 band_tool_w = ns[0]-0.5;
 band_tool_h = 4;
 
@@ -191,7 +191,8 @@ module double_ended_band_tool(bent=false){
     }
 }
 
-translate ([20,0,-1.7]) double_ended_band_tool(bent=false);
+translate ([12,0,-1.7]) double_ended_band_tool(bent=false);
+// ensure that the z offset is equal to the z dimension of the larger minkowski sphere
 
 //the holder is built from the difference between two minkowski sums of the band insertion tool
 difference() {
@@ -204,8 +205,8 @@ difference() {
             hull() double_ended_band_tool(bent=true);
             scale ([0.7,1,1]) sphere(r = 0.9);
             }
-        translate ([-60,-60,20]) cube([400,400,400], center = false);
+        translate ([-999/2,-999/2,holder_height]) cube([999,999,999], center = false);
     }
 }
 
-translate([10,0,0]) nut_tool();
+translate([0,40,0]) nut_tool();
