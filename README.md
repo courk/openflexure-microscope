@@ -56,14 +56,31 @@ The build server will mark a release as "latest" ([build.openflexure.org/openfle
 
 ### LFS files
 
-This repository will store images using Git LFS, and is set up not to download these to your computer.  This is intended to make life easier for the members of our community who don't have fast internet connections.  If you want to download these, you can enable it with:
+This repository will store images using Git LFS, and **is set up not to download these to your computer**.  This is intended to make life easier for the members of our community who don't have fast internet connections or want to save storage space.  If you want to download these files you will need to [install Git LFS](https://git-lfs.github.com/). Once installed to your computer Git LFS will need to be installed by running the following command in your terminal
 ```bash
 git lfs install
+```
+
+Now Git LFS is installed you can modify what to download.
+
+**Download images used in the documentation**
+
+To make Git always download the images used in the documentation (but not high-res images or design files) run the following commands in your terminal
+```
 git config --local lfs.fetchexclude "/docs/original_images,/design_files"
 git lfs fetch
 git lfs checkout
 ```
-NB the above commands will download the images that are currently used in the documentation, which have generally been edited, cropped, resized, and annotated.  Because of the ``lfs.fetchexclude "/docs/original_images,/design_files"`` those folders will not be downloaded, so you won't get the full-resolution original images, or the design files.  However, if you add files to those folders, they will always be uploaded.  If you want to download everything, just change that line to ``git config --local lfs.fetchexclude ""``.  If you don't need a local copy of the images, it's safe just to ignore this.
+
+**Download all files**
+
+To make Git always download *everything* in the repository run the following commands in your terminal:
+```
+git config --local lfs.fetchexclude ""
+git lfs fetch
+git lfs checkout
+```
+
 
 ## Related Repositories
 The OpenFlexure repositories have been gradually migrating from [Richard's Github](https://github.com/rwb27/) to GitLab.  Particularly useful ones are:

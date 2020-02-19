@@ -25,3 +25,6 @@ build.ninja
 .vscode/
 
 .DS_Store
+
+#Kate files
+*.backup
