@@ -96,6 +96,39 @@ There is a test file that prints a single leg of the microscope - ``just_leg_tes
 
 The optics module needs to print with some fine detail, so the dovetail meshes nicely with the stage.  A good way to ensure this is to print it at the same time as other parts - either print more than one optics module at a time, or print it at the same time as the microscope body.  This slows down the time for each layer, and means the plastic can cool more completely before the layer on top is deposited, resulting in a higher-quality part.  The optics module is best printed in black to cut down on stray light inside the tube - though it will still work in other colours.
 
+## Smart Brim
+
+For the majority of printed parts, your printer's slicer program will be able to automatically add a suitable brim to the print to improve adhesion. The exception to this is the main body, where an automatic brim is likely to fill gaps required for the movement of the sample.
+
+This smart brim automatically determines areas suitable for a brim to be added, and adds the brim to the STL file. As the brim is part of the STL it isn't always easy to remove. Rather than simply extending the lowest layer, the smart brim edge is a seperate part printed parallel to the edge of the part being printed, making clean up significantly easier.
+
+Sometimes slicers automatically combine the brim and the part. You can check this hasn't happened in your slicer software after slicing by previewing the lowest layer; the edges of the smart brim should appear parallel as shown below (edges of the part and brim are shown in orange).
+
+![The edges of the smart brim parallel to the edge of the printed part](./images/smart_brim_1.jpg)
+
+Regardless of your printer, when printing the microscope do not attempt to add a further brim in the slicer. Some example slicer settings required for a smart brim in different slicers are listed below.
+
+*   **Ultimaker Cura**
+
+Cura (v4.4) automatically slices the smarter brim suitably for printing.
+
+*   **PrusaSlicer**
+
+As shown below, without changing the default settings in PrusaSlicer (v2.1.1), the smart brim would be printed as an extension of the microscope base.
+
+![The smart brim being incorrectly printed as a solid extension of the base](./images/smart_brim_prusa_1.jpg)
+
+This can be corrected in the "Expert" tab of PrusaSlicer. Right click on the part(s) requiring a smart brim, and open the Add settings > Advanced menu. Check the "Slice gap closing radius" box and click OK.
+
+![How to open the advanced settings menu](./images/smart_brim_prusa_2.jpg)
+
+![The setting to be changed](./images/smart_brim_prusa_3.jpg)
+
+This will open a slice gap closing radius option, which should be set to 0.001 mm. This will add the option to re-slice the model, which will now print the brim as required.
+
+![Once changing the closing radius, slice the model again as shown](./images/smart_brim_prusa_4.jpg)
+
+![The brim now printing correctly after changing Prusa settings](./images/smart_brim_1.jpg)
 
 ## Clean-up of printed parts
 If you printed the parts yourself, start by opening out the three holes in the microscope body with a drill as shown.  Make sure to go all the way through.  If you don't have a drill, you can improvise by screwing in an M3 screw all the way, then forcibly rotating it with a screwdriver or the supplied nut.  Also, remove any loose strings of plastic from the underside of the sample stage, using a pair of pliers. The last step shouldn't be necessary if your machine is calibrated nicely for printing bridges.
