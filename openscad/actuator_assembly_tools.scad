@@ -191,22 +191,27 @@ module double_ended_band_tool(bent=false){
     }
 }
 
-translate ([12,0,-1.7]) double_ended_band_tool(bent=false);
-// ensure that the z offset is equal to the z dimension of the larger minkowski sphere
+holder_offset = 1.7;
 
-//the holder is built from the difference between two minkowski sums of the band insertion tool
-difference() {
-    minkowski() {
-        hull() double_ended_band_tool(bent=true);
-        scale ([0.7,1,1]) sphere(r = 1.7);
-    }
-    union(){
+module band_tool_holder(){
+    //the holder is built from the difference between two minkowski sums of the band insertion tool
+    difference() {
         minkowski() {
             hull() double_ended_band_tool(bent=true);
-            scale ([0.7,1,1]) sphere(r = 0.9);
-            }
-        translate ([-999/2,-999/2,holder_height]) cube([999,999,999], center = false);
+            scale ([0.7,1,1]) sphere(r = holder_offset);
+        }
+        union(){
+            minkowski() {
+                hull() double_ended_band_tool(bent=true);
+                scale ([0.7,1,1]) sphere(r = holder_offset-0.8);
+                }
+            translate ([-999/2,-999/2,holder_height]) cube([999,999,999], center = false);
+        }
     }
 }
+
+translate ([12,0,-holder_offset]) double_ended_band_tool(bent=false);
+
+band_tool_holder();
 
 translate([0,40,0]) nut_tool();
