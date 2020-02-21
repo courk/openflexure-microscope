@@ -14,7 +14,7 @@ The basic version of the microscope uses a webcam lens instead of a microscope o
 
 **Plastic tools:**
 
-* [band and nut insertion tools](./parts/printed_tools/actuator_assembly_tools.md) ``actuator_assembly_tools.stl``
+* [band and nut insertion tools, with band tool holder](./parts/printed_tools/actuator_assembly_tools.md) ``actuator_assembly_tools.stl``
 * [optional] ``picamera_2_lens_gripper.stl`` (only needed if your camera didn't come with a tool to remove the lens)
 
 
@@ -43,7 +43,7 @@ The version of the microscope used for scientific or medical research generally 
 
 **Plastic tools:**
 
-* [band and nut insertion tools](./parts/printed_tools/actuator_assembly_tools.md) ``actuator_assembly_tools.stl``
+* [band and nut insertion tools, with band tool holder](./parts/printed_tools/actuator_assembly_tools.md) ``actuator_assembly_tools.stl``
 * [tool to insert](./parts/printed_tools/lens_tool.md) the 13mm diameter condenser lens and/or tube lens: ``lens_tool.stl``
 * [optional] ``picamera_2_lens_gripper.stl`` (only needed if your camera didn't come with a tool to remove the lens)
 
@@ -112,7 +112,7 @@ Once you have your printed parts, you can start by [assembling the actuators](./
 You can safely ignore this section if you are building one of the two standard builds listed above. If you are building a customized versions and need to understand all of your options, read on.
 
 **Plastic tools:**
-* [band and nut insertion tools](./parts/printed_tools/actuator_assembly_tools.md) ``actuator_assembly_tools.stl``
+* [band and nut insertion tools, with band tool holder](./parts/printed_tools/actuator_assembly_tools.md) ``actuator_assembly_tools.stl``
 * [tool to insert](./parts/printed_tools/lens_tool.md) the 13mm diameter condenser lens and/or tube lens: ``lens_tool.stl``
 * [jig to hold the camera board](./parts/printed_tools/picamera_2_tools.md) while you unscrew the lens ``picamera_2_gripper.stl``
 * [optional] [tool to unscrew the camera's lens](./parts/printed_tools/picamera_2_tools.md) (only needed if your camera didn't come with one) ``picamera_2_lens_gripper.stl``
