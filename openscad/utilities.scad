@@ -436,7 +436,7 @@ module exterior_brim(r=4, h=0.2){
     if(r > 0) linear_extrude(h) difference(){
         offset(r) projection(cut=true) translate([0,0,-d]) children();
        
-        offset(-r) offset(r) projection(cut=true) translate([0,0,-d]) children();
+        offset(-r+d) offset(r) projection(cut=true) translate([0,0,-d]) children();
     }
 }
 

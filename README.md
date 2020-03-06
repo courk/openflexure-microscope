@@ -56,21 +56,41 @@ The build server will mark a release as "latest" ([build.openflexure.org/openfle
 
 ### LFS files
 
-This repository will store images using Git LFS, and is set up not to download these to your computer.  This is intended to make life easier for the members of our community who don't have fast internet connections.  If you want to download these, you can enable it with:
+This repository will store images using Git LFS, and **is set up not to download these to your computer**.  This is intended to make life easier for the members of our community who don't have fast internet connections or want to save storage space.  If you want to download these files you will need to [install Git LFS](https://git-lfs.github.com/). Once installed to your computer Git LFS will need to be installed by running the following command in your terminal
 ```bash
 git lfs install
+```
+
+Now Git LFS is installed you can modify what to download.
+
+**Download images used in the documentation**
+
+To make Git always download the images used in the documentation (but not high-res images or design files) run the following commands in your terminal
+```
 git config --local lfs.fetchexclude "/docs/original_images,/design_files"
 git lfs fetch
 git lfs checkout
 ```
-NB the above commands will not download the full-resolution original images, or the design files.  New files will always be pushed.  If you don't need a local copy of the images, it's safe just to ignore this.
+
+**Download all files**
+
+To make Git always download *everything* in the repository run the following commands in your terminal:
+```
+git config --local lfs.fetchexclude ""
+git lfs fetch
+git lfs checkout
+```
+
 
 ## Related Repositories
-Most of the Openflexure Microscope stuff lives on GitHub, under [my account](https://github.com/rwb27/).  Particularly useful ones are:
+The OpenFlexure repositories have been gradually migrating from [Richard's Github](https://github.com/rwb27/) to GitLab.  Particularly useful ones are:
+Most of the Openflexure Microscope stuff lives in the [OpenFlexure group on GitLab](https://gitlab.com/openflexure).  Particularly useful ones are:
+* The [microscope server software](https://gitlab.com/openflexure/openflexure-microscope-server)
+* The [microscope client software](https://gitlab.com/openflexure/openflexure-microscope-jsclient)
+* The higher precision, smaller range [block stage](https://gitlab.com/openflexure/openflexure-block-stage)
+A number of other related projects developed by us and our collaborators include:
 * The ["sangaboard" motor controller](https://gitlab.com/bath_open_instrumentation_group/sangaboard) based on an Arduino + Darlington Pair ICs, developed collaboratively with [STICLab](http://www.sticlab.co.tz)
 * The ["fergboard" motor controller](https://github.com/fr293/motor_board) by Fergus Riche
-* The [microscope server software](https://gitlab.com/openflexure/openflexure-microscope-server)
-* The higher precision, smaller range [block stage](https://github.com/rwb27/openflexure_block_stage)
 * Some [characterisation scripts for analysing images of the USAF resolution test target](https://github.com/rwb27/usaf_analysis/)
 
 ## Compiling from source

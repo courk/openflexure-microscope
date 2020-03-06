@@ -41,7 +41,7 @@ Turn the microscope over and, using the elastic band tool or a craft knife, snap
 ## Step 4
 Hook one of the Viton bands over the elastic band tool, and pass the tool through the foot as shown.  You should end up with one loop of elastic band passing over each fork-shaped end of the insertion tool.  The flat side of the tool should be on the outside, so that the channels in either end face towards the centre of the foot.  Make sure you pick the right foot - the middle axis (Z) has a smaller foot.  The angle of the feet is different, if the foot doesn't line up with the outside of the microscope casing, you may be using the wrong one.
 
-You may find it easier to put the band through the foot, then insert the tool and hook the band over either end - either way you should end up with the band, foot, and tool arranged as shown in the pictures.
+You may find it easier to put the band through the foot, then insert the tool and hook the band over either end - either way you should end up with the band, foot, and tool arranged as shown in the pictures. The band tool holder can be placed on the short end of the band insertion tool to hold it at the correct angle and increase the area to push against.
 
 ![The elastic band on the insertion tool, passed through the foot](./images/band_insertion_through_foot_1.jpg)
 ![Inserting the elastic bands](./images/band_insertion_through_foot_2.jpg)

@@ -36,7 +36,7 @@ contact:
     - platform: Twitter
       user-handle: @OpenFlexure
 
-version: 6.0.0
+version: 6.1.1
 
 development-stage: stable
 
@@ -74,3 +74,5 @@ software:
     title: openflexure-microscope-server
   - path: https://gitlab.com/openflexure/openflexure-microscope-jsclient
     title: openflexure-ev 
+
+image: https://openflexure.org/assets/MicroscopeAnnotated.png

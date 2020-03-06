@@ -201,6 +201,13 @@ module z_motor_clearance(){
     }
 }
 
+module top_of_z_axis_casing(){
+    // The top of the Z axis casing, in case you want to join things onto it
+    translate([-z_anchor_w/2-1.5, z_anchor_y - 1, z_flexures_z2]) cube([z_anchor_w+3, d, d]);
+    translate([0,z_nut_y,0]) rotate(180) 
+                    motor_lugs(h=actuator_h + z_actuator_travel, angle=180, tilt=-z_actuator_tilt);
+}
+
 module z_axis_casing(condenser_mount=false){
     // Casing for the Z axis - needs to have the axis subtracted from it
     intersection(){
@@ -216,9 +223,7 @@ module z_axis_casing(condenser_mount=false){
     }
     if(condenser_mount) hull(){
         // At the bottom, connect to the top of the housing and the motor lugs
-        translate([-z_anchor_w/2-1.5, z_anchor_y - 1, z_flexures_z2]) cube([z_anchor_w+3, d, d]);
-        translate([0,z_nut_y,0]) rotate(180) 
-                     motor_lugs(h=actuator_h + z_actuator_travel, angle=180, tilt=-z_actuator_tilt);
+        top_of_z_axis_casing();
         // The top is a flat shape that the illumination arm screws onto.
         each_illumination_arm_screw() mirror([0,0,1]) cylinder(r=5,h=7);
     }
