@@ -262,20 +262,27 @@ module z_actuator_cutout(){
 //legs
 // for(a=[-45,45]) rotate(a) translate([-leg_outer_w/2,leg_r,0]) cube([leg_outer_w, 4, sample_z]);
 
+include_z_axis_mechanism = true;
+include_z_axis_casing_outer = true;
+include_z_axis_casing_cutout = true;
+include_z_axis_actuator_housing = true;
+
 // These are the moving parts of the axis
-//objective_mount();
-//z_axis_flexures();
-//z_axis_struts();
-//z_actuator_column();
+if(include_z_axis_mechanism){
+    objective_mount();
+    z_axis_flexures();
+    z_axis_struts();
+    z_actuator_column();
+}
 
 // The casing needs to have voids subtracted from it to fit the moving bits in
 difference(){
-    z_axis_casing(condenser_mount=true);
-    z_axis_casing_cutouts();
+    if(include_z_axis_casing_outer) z_axis_casing(condenser_mount=true);
+    if(include_z_axis_casing_cutout) z_axis_casing_cutouts();
 }
 
 // We add on the actuator housing last, because it's got the clearance subtracted already.
-//z_actuator_housing();
+if(include_z_axis_actuator_housing) z_actuator_housing();
 //*/
 // This is what fits onto it
 //translate([0,-1.5,0])
