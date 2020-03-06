@@ -249,7 +249,7 @@ module z_actuator_column(){
     translate([0,z_nut_y,0]) actuator_column(actuator_h, tilt=z_actuator_tilt, join_to_casing=true);
 }
 
-module z_actuator_housing(){
+module z_actuator_housing(motor_lugs=motor_lugs){
     // This houses the actuator column and provides screw seat/motor lugs
     translate([0,z_nut_y,0]) screw_seat(h=actuator_h, 
                                         tilt=z_actuator_tilt, 
