@@ -271,7 +271,7 @@ module sangaboard_connectors(){
 
 module sangaboard_support_frame(){
     // position supports for each of the sangaboard's mounting screws
-    pi_frame() translate([3.5,3.5]) repeat([58,0,0],2) repeat([0,47,0], 2) children();
+    pi_frame() translate([3.5,3.5]) repeat([57,0,0],2) repeat([0,47,0], 2) children();
 }
 
 module sangaboard_supports(){
