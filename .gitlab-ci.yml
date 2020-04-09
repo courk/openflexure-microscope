@@ -94,6 +94,26 @@ deploy:
     # Run update-latest.py on the build server
     - ssh -t ci-user@openflexure.bath.ac.uk "/var/www/build/update-latest.py"
 
+  artifacts:
+    expire_in: 1 week
+    name: "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip"
+    paths:
+      - "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip"
+
+  only:
+    - tags
+    - web
+
+
+deploy-zenodo:
+  stage: deploy
+  image: ubuntu:18.04
+  dependencies:
+    - deploy
+  before_script:
+    - pip3 install -r scripts/zenodo/requirements.txt
+  script:
+    - upload_zenodo.py --use-sandbox "${ZENODO_API_KEY}" scripts/zenodo/meta.ini "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip"
   only:
     - tags
     - web

@@ -1,0 +1,1 @@
+-e git+https://github.com/kasbah/pyzenodo3#egg=pyzenodo3
