@@ -1,6 +1,7 @@
 stages:
     - build
     - deploy
+    - zenodo
 
 # Build STL files
 build:
@@ -105,8 +106,8 @@ deploy:
     - web
 
 
-deploy-zenodo:
-  stage: deploy
+zenodo:
+  stage: zenodo
   image: ubuntu:18.04
   dependencies:
     - deploy
