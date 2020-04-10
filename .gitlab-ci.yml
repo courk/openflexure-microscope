@@ -116,7 +116,7 @@ zenodo:
     - apt-get -y -qq install git python3-pip
     - pip3 install -r scripts/zenodo/requirements.txt
   script:
-    - upload_zenodo.py --use-sandbox "${ZENODO_API_KEY}" scripts/zenodo/meta.ini "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip"
+    - python3 scripts/zenodo/upload_to_zenodo.py --use-sandbox "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip"
   only:
     - tags
     - web
