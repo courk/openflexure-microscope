@@ -1,0 +1,7 @@
+# see https://developers.zenodo.org/#deposit-metadata
+title: OpenFlexure Microscope 3D Files
+upload_type: other
+description: Design files for a 3D-printed, customisable, open-source optical microscope
+creators:
+  - name: 'NAME, FIRST NAME'
+    affiliation: 'YOUR AFFILIATION'

@@ -1,6 +1,8 @@
-import pynodo
 import os
+import requests
 from argparse import ArgumentParser, Namespace
+from zenodo import Zenodo
+import yaml
 
 
 def parse_arguments() -> Namespace:
@@ -14,26 +16,28 @@ def parse_arguments() -> Namespace:
     return p.parse_args()
 
 
+def script_directory(path):
+    """resolves path to directory of the current script"""
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
+
+
+def get_meta():
+    with open(script_directory("metadata.yaml")) as f:
+        metadata = f.read()
+
+    return yaml.load(metadata)
+
+
 def main():
     args = parse_arguments()
 
-    zenodo = pynodo.Depositions(
-        access_token=os.environ["ZENODO_API_KEY"], sandbox=args.use_sandbox
-    )
+    metadata = get_meta()
 
-    new_depo = zenodo.create()
+    zenodo = Zenodo(args.use_sandbox)
+    deposit_id = zenodo.create_new_deposit()
 
-    ret_depo = zenodo.retrieve(deposition=new_depo.id)
-
-    zen_files = pynodo.DepositionFiles(
-        deposition=new_depo.id,
-        access_token=os.environ["ZENODO_API_KEY"],
-        sandbox=True,
-    )
-
-    zen_files.upload(args.path, os.path.basename(args.path))
-
-    print(new_depo, ret_depo, zen_files)
+    zenodo.set_metadata(deposit_id, metadata)
+    zenodo.upload_file(deposit_id, args.path)
 
 
 if __name__ == "__main__":
