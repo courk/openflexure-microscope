@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 from ninja import Writer, ninja as run_build
+import json
+import sys
 
 build_file = open("build.ninja", "w")
 ninja = Writer(build_file, width=120)
+
+generate_json = sys.argv[1] == "json"
 
 ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
@@ -31,6 +35,21 @@ def parameters_to_string(parameters):
         strings.append("-D '{}={}'".format(name, value))
 
     return " ".join(strings)
+
+
+if generate_json:
+    stl_options = {}
+
+
+def openscad(outputs, inputs, parameters):
+    if generate_json:
+        stl_options[outputs] = {"inputs": inputs, "parameters": parameters}
+    ninja.build(
+        outputs,
+        rule="openscad",
+        inputs=inputs,
+        variables={"parameters": parameters_to_string(parameters)},
+    )
 
 
 def stage_parameters(stage_size, sample_z):
@@ -83,11 +102,8 @@ for stage_size in stage_size_options:
                     "enable_smart_brim": brim,
                 }
 
-                ninja.build(
-                    outputs,
-                    rule="openscad",
-                    inputs="openscad/main_body.scad",
-                    variables={"parameters": parameters_to_string(parameters)},
+                openscad(
+                    outputs, inputs="openscad/main_body.scad", parameters=parameters
                 )
 
 
@@ -127,12 +143,7 @@ for sample_z in sample_z_options:
                 "beamsplitter": beamsplitter,
             }
 
-            ninja.build(
-                outputs,
-                rule="openscad",
-                inputs="openscad/optics.scad",
-                variables={"parameters": parameters_to_string(parameters)},
-            )
+            openscad(outputs, inputs="openscad/optics.scad", parameters=parameters)
 
 
 ####################
@@ -149,18 +160,15 @@ for stand_height in [30]:
 
         parameters = {"h": stand_height, "beamsplitter": beamsplitter}
 
-        ninja.build(
-            outputs,
-            rule="openscad",
-            inputs="openscad/microscope_stand.scad",
-            variables={"parameters": parameters_to_string(parameters)},
+        openscad(
+            outputs, inputs="openscad/microscope_stand.scad", parameters=parameters
         )
 
 # Stand without pi
-ninja.build(
+openscad(
     "builds/microscope_stand_no_pi.stl",
-    rule="openscad",
     inputs="openscad/microscope_stand_no_pi.scad",
+    parameters={},
 )
 
 
@@ -183,12 +191,7 @@ for foot_height in [15, 26]:
 
     parameters = {"foot_height": foot_height}
 
-    ninja.build(
-        outputs,
-        rule="openscad",
-        inputs="openscad/feet.scad",
-        variables={"parameters": parameters_to_string(parameters)},
-    )
+    openscad(outputs, inputs="openscad/feet.scad", parameters=parameters)
 
 
 ###################
@@ -210,11 +213,8 @@ for stage_size in stage_size_options:
                 "camera": version,
             }
 
-            ninja.build(
-                outputs,
-                rule="openscad",
-                inputs="openscad/camera_platform.scad",
-                variables={"parameters": parameters_to_string(parameters)},
+            openscad(
+                outputs, inputs="openscad/camera_platform.scad", parameters=parameters
             )
 
 
@@ -229,12 +229,7 @@ for stage_size in stage_size_options:
 
         parameters = {**stage_parameters(stage_size, sample_z), "optics": "pilens"}
 
-        ninja.build(
-            outputs,
-            rule="openscad",
-            inputs="openscad/lens_spacer.scad",
-            variables={"parameters": parameters_to_string(parameters)},
-        )
+        openscad(outputs, inputs="openscad/lens_spacer.scad", parameters=parameters)
 
 
 ##################
@@ -247,12 +242,7 @@ for tool in picamera_2_tools:
 
     parameters = {"camera": "picamera_2"}
 
-    ninja.build(
-        outputs,
-        rule="openscad",
-        inputs=inputs,
-        variables={"parameters": parameters_to_string(parameters)},
-    )
+    openscad(outputs, inputs=inputs, parameters=parameters)
 
 
 #################
@@ -264,12 +254,7 @@ for riser_type in ["sample", "slide"]:
 
     parameters = {"big_stage": True, "h": 10}
 
-    ninja.build(
-        outputs,
-        rule="openscad",
-        inputs=inputs,
-        variables={"parameters": parameters_to_string(parameters)},
-    )
+    openscad(outputs, inputs=inputs, parameters=parameters)
 
 
 ###############
@@ -294,11 +279,65 @@ parts = [
 for part in parts:
     outputs = f"builds/{part}.stl"
     inputs = f"openscad/{part}.scad"
-    ninja.build(outputs, rule="openscad", inputs=inputs)
 
 
 ###############
 ### RUN BUILD
 
 build_file.close()
-run_build()
+
+if not generate_json:
+    run_build()
+else:
+    scad_params = {}
+
+    for stl_file in stl_options:
+        input_file = stl_options[stl_file]["inputs"]
+        parameters = stl_options[stl_file]["parameters"]
+        if input_file in scad_params:
+            for k in parameters:
+                if k not in scad_params[input_file]:
+                    scad_params[input_file][k] = set()
+            for k in scad_params[input_file]:
+                if k in parameters:
+                    scad_params[input_file][k] = scad_params[input_file][k].union(
+                        [parameters[k]]
+                    )
+        else:
+            scad_params[input_file] = dict(
+                ((k, set([parameters[k]])) for k in parameters)
+            )
+
+    scad_options = {}
+
+    for scad_file in scad_params:
+        for k in scad_params[scad_file]:
+            params = scad_params[scad_file][k]
+            if len(params) > 1:
+                if not scad_file in scad_options:
+                    scad_options[scad_file] = {}
+                scad_options[scad_file][k] = params
+
+    overall_options = {}
+
+    for scad_file in scad_options:
+        for k in scad_options[scad_file]:
+            options = scad_options[scad_file][k]
+            if k in overall_options:
+                overall_options[k] = overall_options[k].union(options)
+            else:
+                overall_options[k] = options
+
+    def encode_set(s):
+        if type(s) is set:
+            if s == {False, True}:
+                return "bool"
+            return list(s)
+        else:
+            raise TypeError
+
+    with open("build.json", "w") as f:
+        json.dump(
+            {"stls": stl_options, "options": overall_options}, f, default=encode_set
+        )
+    print("generated build.json")
