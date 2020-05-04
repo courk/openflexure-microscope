@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 from ninja import Writer, ninja as run_build
 import json
+import os
 import sys
+
 
 build_file = open("build.ninja", "w")
 ninja = Writer(build_file, width=120)
@@ -43,7 +45,12 @@ if generate_json:
 
 def openscad(outputs, inputs, parameters):
     if generate_json:
-        stl_options[outputs] = {"inputs": inputs, "parameters": parameters}
+        output_file = os.path.relpath(outputs, build_dir)
+        stl_options[output_file] = {
+            "inputs": os.path.relpath(inputs, "openscad/"),
+            "parameters": parameters,
+        }
+
     ninja.build(
         outputs,
         rule="openscad",
