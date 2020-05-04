@@ -8,7 +8,10 @@ import sys
 build_file = open("build.ninja", "w")
 ninja = Writer(build_file, width=120)
 
-generate_json = sys.argv[1] == "json"
+generate_stl_options = len(sys.argv) > 1 and sys.argv[1] == "--generate-stl-options-json"
+
+if generate_stl_options:
+    sys.argv.pop()
 
 ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
@@ -39,12 +42,12 @@ def parameters_to_string(parameters):
     return " ".join(strings)
 
 
-if generate_json:
+if generate_stl_options:
     stl_options = {}
 
 
 def openscad(outputs, inputs, parameters):
-    if generate_json:
+    if generate_stl_options:
         output_file = os.path.relpath(outputs, build_dir)
         stl_options[output_file] = {
             "inputs": os.path.relpath(inputs, "openscad/"),
@@ -292,10 +295,9 @@ for part in parts:
 ### RUN BUILD
 
 build_file.close()
+run_build()
 
-if not generate_json:
-    run_build()
-else:
+if generate_stl_options:
     scad_params = {}
 
     for stl_file in stl_options:
@@ -343,8 +345,8 @@ else:
         else:
             raise TypeError
 
-    with open("build.json", "w") as f:
+    with open("builds/stl_options.json", "w") as f:
         json.dump(
             {"stls": stl_options, "options": overall_options}, f, default=encode_set
         )
-    print("generated build.json")
+    print("generated builds/stl_options.json")
