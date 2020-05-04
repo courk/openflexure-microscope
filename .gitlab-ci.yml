@@ -18,7 +18,7 @@ build:
     script:
       # Build STL files with OpenSCAD
       - mkdir -p /root/.local/share
-      - ./build.py
+      - ./build.py --generate-stl-options-json
 
     artifacts:
       expire_in: 1 week
