@@ -8,9 +8,12 @@ import sys
 build_file = open("build.ninja", "w")
 ninja = Writer(build_file, width=120)
 
-generate_stl_options = len(sys.argv) > 1 and sys.argv[1] == "--generate-stl-options-json"
+generate_stl_options = (
+    len(sys.argv) > 1 and sys.argv[1] == "--generate-stl-options-json"
+)
 
 if generate_stl_options:
+    # ninja looks at the arguments and would get confused if we didn't remove it
     sys.argv.pop()
 
 ninja.rule(
@@ -46,12 +49,13 @@ if generate_stl_options:
     stl_options = {}
 
 
-def openscad(outputs, inputs, parameters):
+def openscad(outputs, inputs, parameters, enable_if={}):
     if generate_stl_options:
         output_file = os.path.relpath(outputs, build_dir)
         stl_options[output_file] = {
             "inputs": os.path.relpath(inputs, "openscad/"),
             "parameters": parameters,
+            "enable_if": enable_if,
         }
 
     ninja.build(
@@ -171,7 +175,10 @@ for stand_height in [30]:
         parameters = {"h": stand_height, "beamsplitter": beamsplitter}
 
         openscad(
-            outputs, inputs="openscad/microscope_stand.scad", parameters=parameters
+            outputs,
+            inputs="openscad/microscope_stand.scad",
+            parameters=parameters,
+            enable_if={"raspberry_pi": True},
         )
 
 # Stand without pi
@@ -179,6 +186,7 @@ openscad(
     "builds/microscope_stand_no_pi.stl",
     inputs="openscad/microscope_stand_no_pi.scad",
     parameters={},
+    enable_if={"raspberry_pi": False},
 )
 
 
@@ -295,45 +303,58 @@ for part in parts:
 ### RUN BUILD
 
 build_file.close()
-run_build()
+# run_build()
 
 if generate_stl_options:
-    scad_params = {}
 
+    def merge_dicts(d1, d2):
+        merged = {}
+        for d in [d1, d2]:
+            for k, v in d.items():
+                if type(v) is set:
+                    if k not in merged:
+                        merged[k] = set()
+                    merged[k] = merged[k].union(v)
+                elif type(v) is dict:
+                    if k not in merged:
+                        merged[k] = {}
+                    merged[k] = merge_dicts(merged[k], v)
+                else:
+                    if k not in merged:
+                        merged[k] = set()
+                    merged[k] = merged[k].add(v)
+        return merged
+
+    scad_params = {}
     for stl_file in stl_options:
         input_file = stl_options[stl_file]["inputs"]
         parameters = stl_options[stl_file]["parameters"]
+        enable_if = stl_options[stl_file]["enable_if"]
         if input_file in scad_params:
-            for k in parameters:
-                if k not in scad_params[input_file]:
-                    scad_params[input_file][k] = set()
-            for k in scad_params[input_file]:
-                if k in parameters:
-                    scad_params[input_file][k] = scad_params[input_file][k].union(
-                        [parameters[k]]
-                    )
+            scad_params[input_file] = merge_dicts(scad_params[input_file], parameters)
         else:
-            scad_params[input_file] = dict(
-                ((k, set([parameters[k]])) for k in parameters)
-            )
+            scad_params[input_file] = merge_dicts({}, parameters)
+
+        scad_params[input_file]["enable_if"] = enable_if
 
     scad_options = {}
-
     for scad_file in scad_params:
         for k in scad_params[scad_file]:
             params = scad_params[scad_file][k]
-            if len(params) > 1:
+            if k == "enable_if" or len(params) > 1:
                 if not scad_file in scad_options:
                     scad_options[scad_file] = {}
                 scad_options[scad_file][k] = params
 
     overall_options = {}
-
     for scad_file in scad_options:
         for k in scad_options[scad_file]:
             options = scad_options[scad_file][k]
             if k in overall_options:
-                overall_options[k] = overall_options[k].union(options)
+                if k == "enable_if":
+                    overall_options[k] = merge_dicts(overall_options[k], options)
+                else:
+                    overall_options[k] = overall_options[k].union(options)
             else:
                 overall_options[k] = options
 
