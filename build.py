@@ -5,6 +5,7 @@ import os
 import sys
 import pathlib
 
+build_dir = "builds"
 
 build_file = open("build.ninja", "w")
 ninja = Writer(build_file, width=120)
@@ -47,8 +48,6 @@ if generate_stl_options:
 ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
 )
-
-build_dir = "builds"
 
 
 def parameters_to_string(parameters):
@@ -160,8 +159,7 @@ for stage_size in stage_size_options:
             for brim in [True, False]:
                 motors = True  # Right now we never need to remove motor lugs
 
-                output = "{build_dir}/main_body_{stage_size}{sample_z}{motors}{beamsplitter}{brim}.stl".format(
-                    build_dir=build_dir,
+                output = "main_body_{stage_size}{sample_z}{motors}{beamsplitter}{brim}.stl".format(
                     stage_size=stage_size,
                     sample_z=sample_z,
                     motors="-M" if motors else "",
@@ -201,8 +199,7 @@ for sample_z in sample_z_options:
         beamsplitter_options = [True, False] if lens in rms_lenses else [False]
 
         for beamsplitter in beamsplitter_options:
-            output = "{build_dir}/optics_{camera}_{lens}{beamsplitter}.stl".format(
-                build_dir=build_dir,
+            output = "optics_{camera}_{lens}{beamsplitter}.stl".format(
                 camera=camera,
                 lens=lens,
                 beamsplitter="_beamsplitter" if beamsplitter else "",
@@ -224,10 +221,8 @@ for sample_z in sample_z_options:
 # Stand with pi
 for stand_height in [30]:
     for beamsplitter in [True, False]:
-        output = "{build_dir}/microscope_stand_{stand_height}{beamsplitter}.stl".format(
-            build_dir=build_dir,
-            stand_height=stand_height,
-            beamsplitter="-BS" if beamsplitter else "",
+        output = "microscope_stand_{stand_height}{beamsplitter}.stl".format(
+            stand_height=stand_height, beamsplitter="-BS" if beamsplitter else ""
         )
 
         parameters = {"beamsplitter": beamsplitter}
@@ -242,7 +237,7 @@ for stand_height in [30]:
 
 # Stand without pi
 openscad(
-    "builds/microscope_stand_no_pi.stl",
+    "microscope_stand_no_pi.stl",
     input="microscope_stand_no_pi.scad",
     parameters={},
     stl_selection_parameters={"raspberry_pi": False},
@@ -262,9 +257,7 @@ for foot_height in [15, 26]:
     else:
         version_name = f"_{foot_height}"
 
-    output = "{build_dir}/feet{version}.stl".format(
-        build_dir=build_dir, version=version_name
-    )
+    output = "feet{version}.stl".format(version=version_name)
 
     parameters = {"foot_height": foot_height}
 
@@ -277,11 +270,8 @@ for foot_height in [15, 26]:
 for stage_size in stage_size_options:
     for sample_z in sample_z_options:
         for version in ["picamera_2", "6led"]:
-            output = "{build_dir}/camera_platform_{version}_{stage_size}{sample_z}.stl".format(
-                build_dir=build_dir,
-                version=version,
-                stage_size=stage_size,
-                sample_z=sample_z,
+            output = "camera_platform_{version}_{stage_size}{sample_z}.stl".format(
+                version=version, stage_size=stage_size, sample_z=sample_z
             )
 
             parameters = {
@@ -298,8 +288,8 @@ for stage_size in stage_size_options:
 
 for stage_size in stage_size_options:
     for sample_z in sample_z_options:
-        output = "{build_dir}/lens_spacer_picamera_2_pilens_{stage_size}{sample_z}.stl".format(
-            build_dir=build_dir, stage_size=stage_size, sample_z=sample_z
+        output = "lens_spacer_picamera_2_pilens_{stage_size}{sample_z}.stl".format(
+            stage_size=stage_size, sample_z=sample_z
         )
 
         parameters = {**stage_parameters(stage_size, sample_z), "optics": "pilens"}
@@ -346,6 +336,7 @@ parts = [
     "motor_driver_case",
     "sample_clips",
     "small_gears",
+    "thumbwheels",
     "fl_cube",
     "reflection_illuminator",
 ]
@@ -472,7 +463,6 @@ if generate_stl_options:
             return list(s)
         else:
             raise TypeError("Expecting 'set' got {}".format(type(s)))
-
 
     # eqivilent to mkdir -p
     pathlib.Path(build_dir).mkdir(parents=True, exist_ok=True)
