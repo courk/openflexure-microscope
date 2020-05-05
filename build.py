@@ -104,27 +104,21 @@ def openscad(
         stl_selection_parameters = {}
 
     if generate_stl_options:
-        input_file = os.path.relpath(input, "openscad/")
-        output_file = os.path.relpath(output, build_dir)
-
         # prefix any file-local parameters with the input file name so they
         # don't look like global parameters
-        prefix = os.path.splitext(input_file)[0] + ":"
+        prefix = os.path.splitext(input)[0] + ":"
         flp_prefixed = {}
         for k, v in file_local_parameters.items():
             flp_prefixed[prefix + k] = v
 
         stl_option_params = {**parameters, **stl_selection_parameters, **flp_prefixed}
 
-        stl_options[output_file] = {
-            "input": input_file,
-            "parameters": stl_option_params,
-        }
+        stl_options[output] = {"input": input, "parameters": stl_option_params}
 
     ninja.build(
-        output,
+        os.path.join(build_dir, output),
         rule="openscad",
-        inputs=input,
+        inputs=os.path.join("openscad/", input),
         variables={
             "parameters": parameters_to_string({**parameters, **file_local_parameters})
         },
@@ -181,7 +175,7 @@ for stage_size in stage_size_options:
                     "enable_smart_brim": brim,
                 }
 
-                openscad(output, "openscad/main_body.scad", parameters)
+                openscad(output, "main_body.scad", parameters)
 
 
 #################
@@ -220,7 +214,7 @@ for sample_z in sample_z_options:
                 "beamsplitter": beamsplitter,
             }
 
-            openscad(output, "openscad/optics.scad", parameters)
+            openscad(output, "optics.scad", parameters)
 
 
 ####################
@@ -239,7 +233,7 @@ for stand_height in [30]:
 
         openscad(
             output,
-            "openscad/microscope_stand.scad",
+            "microscope_stand.scad",
             parameters,
             file_local_parameters={"h": stand_height},
             stl_selection_parameters={"raspberry_pi": True},
@@ -248,7 +242,7 @@ for stand_height in [30]:
 # Stand without pi
 openscad(
     "builds/microscope_stand_no_pi.stl",
-    input="openscad/microscope_stand_no_pi.scad",
+    input="microscope_stand_no_pi.scad",
     parameters={},
     stl_selection_parameters={"raspberry_pi": False},
 )
@@ -273,7 +267,7 @@ for foot_height in [15, 26]:
 
     parameters = {"foot_height": foot_height}
 
-    openscad(output, "openscad/feet.scad", parameters)
+    openscad(output, "feet.scad", parameters)
 
 
 ###################
@@ -295,7 +289,7 @@ for stage_size in stage_size_options:
                 "camera": version,
             }
 
-            openscad(output, "openscad/camera_platform.scad", parameters)
+            openscad(output, "camera_platform.scad", parameters)
 
 
 ###############
@@ -309,7 +303,7 @@ for stage_size in stage_size_options:
 
         parameters = {**stage_parameters(stage_size, sample_z), "optics": "pilens"}
 
-        openscad(output, "openscad/lens_spacer.scad", parameters)
+        openscad(output, "lens_spacer.scad", parameters)
 
 
 ##################
@@ -317,8 +311,8 @@ for stage_size in stage_size_options:
 
 picamera_2_tools = ["cover", "gripper", "lens_gripper"]
 for tool in picamera_2_tools:
-    output = f"builds/picamera_2_{tool}.stl"
-    input = f"openscad/cameras/picamera_2_{tool}.scad"
+    output = f"picamera_2_{tool}.stl"
+    input = f"cameras/picamera_2_{tool}.scad"
 
     parameters = {"camera": "picamera_2"}
 
@@ -329,8 +323,8 @@ for tool in picamera_2_tools:
 ### SAMPLE RISERS
 
 for riser_type in ["sample", "slide"]:
-    output = f"builds/{riser_type}_riser_LS10.stl"
-    input = f"openscad/{riser_type}_riser.scad"
+    output = f"{riser_type}_riser_LS10.stl"
+    input = f"{riser_type}_riser.scad"
 
     parameters = {"big_stage": True}
 
@@ -351,14 +345,13 @@ parts = [
     "motor_driver_case",
     "sample_clips",
     "small_gears",
-    "thumbwheels",
     "fl_cube",
     "reflection_illuminator",
 ]
 
 for part in parts:
-    output = f"builds/{part}.stl"
-    input = f"openscad/{part}.scad"
+    output = f"{part}.stl"
+    input = f"{part}.scad"
     openscad(output, input)
 
 
@@ -480,11 +473,12 @@ if generate_stl_options:
         else:
             raise TypeError("Expecting 'set' got {}".format(type(s)))
 
-    with open("builds/stl_options.json", "w") as f:
+    p = os.path.join(build_dir, "stl_options.json")
+    with open(p, "w") as f:
         json.dump(
             {"stls": stl_options, "options": changeable_options, "docs": option_docs},
             f,
             indent=2,
             default=encode_set,
         )
-    print("generated builds/stl_options.json")
+    print(f"generated {p}")
