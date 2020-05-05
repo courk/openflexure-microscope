@@ -43,6 +43,10 @@ if generate_stl_options:
             "default": 26,
             "description": "Height of the microscope feet (in mm).",
         },
+        "motorised": {
+            "default": True,
+            "description": "Use unipolar stepper motors and a motor controller to move your stage. The alternative is to use hand-actuated thumbwheels.",
+        },
     }
 
 ninja.rule(
@@ -333,10 +337,7 @@ parts = [
     "gears",
     "illumination_dovetail",
     "lens_tool",
-    "motor_driver_case",
     "sample_clips",
-    "small_gears",
-    "thumbwheels",
     "fl_cube",
     "reflection_illuminator",
 ]
@@ -346,6 +347,18 @@ for part in parts:
     input = f"{part}.scad"
     openscad(output, input)
 
+
+openscad(
+    "motor_driver_case.stl",
+    "motor_driver_case.scad",
+    stl_selection_parameters={"motorised": True},
+)
+openscad(
+    "small_gears.stl", "small_gears.scad", stl_selection_parameters={"motorised": True}
+)
+openscad(
+    "thumbwheels.stl", "thumbwheels.scad", stl_selection_parameters={"motorised": False}
+)
 
 ###############
 ### RUN BUILD
