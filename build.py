@@ -3,6 +3,7 @@ from ninja import Writer, ninja as run_build
 import json
 import os
 import sys
+import pathlib
 
 
 build_file = open("build.ninja", "w")
@@ -472,9 +473,8 @@ if generate_stl_options:
         else:
             raise TypeError("Expecting 'set' got {}".format(type(s)))
 
-    # eqivilent to mkdir -p
-    import pathlib
 
+    # eqivilent to mkdir -p
     pathlib.Path(build_dir).mkdir(parents=True, exist_ok=True)
 
     p = os.path.join(build_dir, "stl_options.json")
