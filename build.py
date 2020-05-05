@@ -49,20 +49,23 @@ if generate_stl_options:
     stl_options = {}
 
 
-def openscad(outputs, inputs, parameters, enable_if={}):
+def openscad(
+    outputs, inputs, parameters, file_local_parameters={}, stl_selection_parameters={}
+):
     if generate_stl_options:
         output_file = os.path.relpath(outputs, build_dir)
         stl_options[output_file] = {
             "inputs": os.path.relpath(inputs, "openscad/"),
-            "parameters": parameters,
-            "enable_if": enable_if,
+            "parameters": {**parameters, **stl_selection_parameters},
         }
 
     ninja.build(
         outputs,
         rule="openscad",
         inputs=inputs,
-        variables={"parameters": parameters_to_string(parameters)},
+        variables={
+            "parameters": parameters_to_string({**parameters, **file_local_parameters})
+        },
     )
 
 
@@ -172,13 +175,14 @@ for stand_height in [30]:
             beamsplitter="-BS" if beamsplitter else "",
         )
 
-        parameters = {"h": stand_height, "beamsplitter": beamsplitter}
+        parameters = {"beamsplitter": beamsplitter}
 
         openscad(
             outputs,
             inputs="openscad/microscope_stand.scad",
             parameters=parameters,
-            enable_if={"raspberry_pi": True},
+            file_local_parameters={"h": stand_height},
+            stl_selection_parameters={"raspberry_pi": True},
         )
 
 # Stand without pi
@@ -186,7 +190,7 @@ openscad(
     "builds/microscope_stand_no_pi.stl",
     inputs="openscad/microscope_stand_no_pi.scad",
     parameters={},
-    enable_if={"raspberry_pi": False},
+    stl_selection_parameters={"raspberry_pi": False},
 )
 
 
@@ -270,9 +274,11 @@ for riser_type in ["sample", "slide"]:
     outputs = f"builds/{riser_type}_riser_LS10.stl"
     inputs = f"openscad/{riser_type}_riser.scad"
 
-    parameters = {"big_stage": True, "h": 10}
+    parameters = {"big_stage": True}
 
-    openscad(outputs, inputs=inputs, parameters=parameters)
+    openscad(
+        outputs, inputs=inputs, parameters=parameters, file_local_parameters={"h": 10}
+    )
 
 
 ###############
@@ -297,77 +303,99 @@ parts = [
 for part in parts:
     outputs = f"builds/{part}.stl"
     inputs = f"openscad/{part}.scad"
+    openscad(outputs, inputs=inputs, parameters={})
 
 
 ###############
 ### RUN BUILD
 
 build_file.close()
-# run_build()
+run_build()
 
 if generate_stl_options:
 
     def merge_dicts(d1, d2):
+        """ 
+        Recursively merge two dictionaries condensing all non-dict values into
+        sets. The result is a dict containing sets of all values used. 
+
+        We assume that the dicts are compatible in structure: one dict
+        shouldn't have a value where the other has a dict or a TypeError will
+        be raised. Any sets that are values in the original dicts are merged
+        in.
+        
+        >>> merge_dicts({'a': 1}, {'a': 2})
+        {'a': {1, 2}}
+        >>> merge_dicts({'a': 1}, {'b': 2})
+        {'a': {1}, 'b': {2}}
+        >>> merge_dicts({'a': {'b': 2}}, {'a': {'b': 1}})
+        {'a': {'b': {1, 2}}}
+        >>> merge_dicts({'a': 1}, {'a': {'b': 1}})
+        TypeError: Expecting 'dict' at key 'a', got <class 'set'>
+        >>> merge_dicts({'a': {1}, {'a': {2}})
+        {'a': {1, 2}}
+        >>> merge_dicts({'a': 1, {'a': {2}})
+        {'a': {1, 2}}
+        """
         merged = {}
         for d in [d1, d2]:
             for k, v in d.items():
-                if type(v) is set:
-                    if k not in merged:
-                        merged[k] = set()
-                    merged[k] = merged[k].union(v)
-                elif type(v) is dict:
+                if type(v) is dict:
                     if k not in merged:
                         merged[k] = {}
+                    if type(merged[k]) is not dict:
+                        raise TypeError(
+                            "Expecting 'dict' at key '{}', got {}".format(
+                                k, type(merged[k])
+                            )
+                        )
+
                     merged[k] = merge_dicts(merged[k], v)
+
+                elif type(v) is set:
+                    if k not in merged:
+                        merged[k] = set()
+                    if type(merged[k]) is not set:
+                        raise TypeError(
+                            "Expecting 'set' at key '{}', got {}".format(
+                                k, type(merged[k])
+                            )
+                        )
+
+                    merged[k] = merged[k].union(v)
+
                 else:
                     if k not in merged:
                         merged[k] = set()
-                    merged[k] = merged[k].add(v)
+
+                    merged[k].add(v)
+
         return merged
 
-    scad_params = {}
-    for stl_file in stl_options:
-        input_file = stl_options[stl_file]["inputs"]
-        parameters = stl_options[stl_file]["parameters"]
-        enable_if = stl_options[stl_file]["enable_if"]
-        if input_file in scad_params:
-            scad_params[input_file] = merge_dicts(scad_params[input_file], parameters)
-        else:
-            scad_params[input_file] = merge_dicts({}, parameters)
+    # condense all used parameters down to sets of possible values
+    available_options = {}
+    for stl_file, v in stl_options.items():
+        available_options = merge_dicts(available_options, v["parameters"])
 
-        scad_params[input_file]["enable_if"] = enable_if
-
-    scad_options = {}
-    for scad_file in scad_params:
-        for k in scad_params[scad_file]:
-            params = scad_params[scad_file][k]
-            if k == "enable_if" or len(params) > 1:
-                if not scad_file in scad_options:
-                    scad_options[scad_file] = {}
-                scad_options[scad_file][k] = params
-
-    overall_options = {}
-    for scad_file in scad_options:
-        for k in scad_options[scad_file]:
-            options = scad_options[scad_file][k]
-            if k in overall_options:
-                if k == "enable_if":
-                    overall_options[k] = merge_dicts(overall_options[k], options)
-                else:
-                    overall_options[k] = overall_options[k].union(options)
+    # filter out parameters that are never changed and rename {True, False}
+    # values to "bool"
+    changeable_options = {}
+    for name, options in available_options.items():
+        if len(options) > 1:
+            if options == {False, True}:
+                changeable_options[name] = "bool"
             else:
-                overall_options[k] = options
+                changeable_options[name] = options
 
     def encode_set(s):
+        """ encode 'set' as 'list' when converting to JSON """
         if type(s) is set:
-            if s == {False, True}:
-                return "bool"
             return list(s)
         else:
-            raise TypeError
+            raise TypeError("Expecting 'set' got {}".format(type(s)))
 
     with open("builds/stl_options.json", "w") as f:
         json.dump(
-            {"stls": stl_options, "options": overall_options}, f, default=encode_set
+            {"stls": stl_options, "options": changeable_options}, f, default=encode_set
         )
     print("generated builds/stl_options.json")
