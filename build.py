@@ -359,7 +359,6 @@ for part in parts:
 ### RUN BUILD
 
 build_file.close()
-run_build()
 
 if generate_stl_options:
 
@@ -482,3 +481,6 @@ if generate_stl_options:
             default=encode_set,
         )
     print(f"generated {p}")
+
+
+run_build()
