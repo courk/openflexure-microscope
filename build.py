@@ -79,12 +79,14 @@ def openscad(
     if generate_stl_options:
         input_file = os.path.relpath(input, "openscad/")
         output_file = os.path.relpath(output, build_dir)
+
         # prefix any file-local parameters with the input file name so they
         # don't look like global parameters
         prefix = os.path.splitext(input_file)[0] + ":"
         flp_prefixed = {}
         for k, v in file_local_parameters.items():
             flp_prefixed[prefix + k] = v
+
         stl_options[output_file] = {
             "input": input_file,
             "parameters": {**parameters, **stl_selection_parameters, **flp_prefixed},
@@ -151,7 +153,7 @@ for stage_size in stage_size_options:
                 }
 
                 openscad(
-                    output, input="openscad/main_body.scad", parameters
+                    output, "openscad/main_body.scad", parameters
                 )
 
 
@@ -191,7 +193,7 @@ for sample_z in sample_z_options:
                 "beamsplitter": beamsplitter,
             }
 
-            openscad(output, input="openscad/optics.scad", parameters)
+            openscad(output, "openscad/optics.scad", parameters)
 
 
 ####################
@@ -210,7 +212,7 @@ for stand_height in [30]:
 
         openscad(
             output,
-            input="openscad/microscope_stand.scad",
+            "openscad/microscope_stand.scad",
             parameters,
             file_local_parameters={"h": stand_height},
             stl_selection_parameters={"raspberry_pi": True},
@@ -244,7 +246,7 @@ for foot_height in [15, 26]:
 
     parameters = {"foot_height": foot_height}
 
-    openscad(output, input="openscad/feet.scad", parameters)
+    openscad(output, "openscad/feet.scad", parameters)
 
 
 ###################
@@ -267,7 +269,7 @@ for stage_size in stage_size_options:
             }
 
             openscad(
-                output, input="openscad/camera_platform.scad", parameters
+                output, "openscad/camera_platform.scad", parameters
             )
 
 
@@ -282,7 +284,7 @@ for stage_size in stage_size_options:
 
         parameters = {**stage_parameters(stage_size, sample_z), "optics": "pilens"}
 
-        openscad(output, input="openscad/lens_spacer.scad", parameters)
+        openscad(output, "openscad/lens_spacer.scad", parameters)
 
 
 ##################
@@ -348,7 +350,7 @@ if generate_stl_options:
     def merge_dicts(d1, d2):
         """
         Recursively merge two dictionaries condensing all non-dict values into
-        sets. The result is a dict containing sets of all values used.
+        sets. The result is a dict containing sets of all the values used.
 
         >>> merge_dicts({'a': 1}, {'a': 2})
         {'a': {1, 2}}
