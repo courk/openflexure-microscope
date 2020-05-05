@@ -458,9 +458,9 @@ if generate_stl_options:
             )
 
     def encode_set(s):
-        """ encode 'set' as 'list' when converting to JSON """
+        """ encode 'set' as sorted 'list' when converting to JSON """
         if type(s) is set:
-            return list(s)
+            return sorted(list(s))
         else:
             raise TypeError("Expecting 'set' got {}".format(type(s)))
 
