@@ -109,7 +109,7 @@ def openscad(
 
     if generate_stl_options:
         # prefix any file-local parameters with the input file name so they
-        # don't look like global parameters
+        # don't look overwrite global parameters
         prefix = os.path.splitext(input)[0] + ":"
         flp_prefixed = {}
         for k, v in file_local_parameters.items():
@@ -298,7 +298,12 @@ for stage_size in stage_size_options:
 
         parameters = {**stage_parameters(stage_size, sample_z), "optics": "pilens"}
 
-        openscad(output, "lens_spacer.scad", parameters)
+        openscad(
+            output,
+            "lens_spacer.scad",
+            parameters,
+            stl_selection_parameters={"camera": "picamera_2"},
+        )
 
 
 ##################
