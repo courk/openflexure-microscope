@@ -472,6 +472,11 @@ if generate_stl_options:
         else:
             raise TypeError("Expecting 'set' got {}".format(type(s)))
 
+    # eqivilent to mkdir -p
+    import pathlib
+
+    pathlib.Path(build_dir).mkdir(parents=True, exist_ok=True)
+
     p = os.path.join(build_dir, "stl_options.json")
     with open(p, "w") as f:
         json.dump(
