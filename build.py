@@ -50,8 +50,8 @@ if generate_stl_options:
 
 
 def openscad(
-    outputs,
-    inputs,
+    output,
+    input,
     parameters=None,
     file_local_parameters=None,
     stl_selection_parameters=None,
@@ -62,11 +62,11 @@ def openscad(
     parameters at this point.
 
     Arguments:
-        outputs {str} -- file path of the output stl file
-        inputs {str} -- file path of the input scad file
+        output {str} -- file path of the output stl file
+        input {str} -- file path of the input scad file
         parameters {dict} -- values of globally used parameters
         file_local_parameters {dict} -- values of parameters only used for this specific scad file
-        stl_selection_parameters {dict} -- values of parameters not used by openscad but for selecting this stl when building a specific variant
+        stl_selection_parameters {dict} -- values of parameters not used by openscad but relevant to selecting this stl when making a specific variant
     """
 
     if parameters is None:
@@ -77,21 +77,23 @@ def openscad(
         stl_selection_parameters = {}
 
     if generate_stl_options:
-        input_file = os.path.relpath(inputs, "openscad/")
-        output_file = os.path.relpath(outputs, build_dir)
+        input_file = os.path.relpath(input, "openscad/")
+        output_file = os.path.relpath(output, build_dir)
+        # prefix any file-local parameters with the input file name so they
+        # don't look like global parameters
         prefix = os.path.splitext(input_file)[0] + ":"
         flp_prefixed = {}
         for k, v in file_local_parameters.items():
             flp_prefixed[prefix + k] = v
         stl_options[output_file] = {
-            "inputs": input_file,
+            "input": input_file,
             "parameters": {**parameters, **stl_selection_parameters, **flp_prefixed},
         }
 
     ninja.build(
-        outputs,
+        output,
         rule="openscad",
-        inputs=inputs,
+        inputs=input,
         variables={
             "parameters": parameters_to_string({**parameters, **file_local_parameters})
         },
@@ -132,7 +134,7 @@ for stage_size in stage_size_options:
             for brim in [True, False]:
                 motors = True  # Right now we never need to remove motor lugs
 
-                outputs = "{build_dir}/main_body_{stage_size}{sample_z}{motors}{beamsplitter}{brim}.stl".format(
+                output = "{build_dir}/main_body_{stage_size}{sample_z}{motors}{beamsplitter}{brim}.stl".format(
                     build_dir=build_dir,
                     stage_size=stage_size,
                     sample_z=sample_z,
@@ -149,7 +151,7 @@ for stage_size in stage_size_options:
                 }
 
                 openscad(
-                    outputs, inputs="openscad/main_body.scad", parameters=parameters
+                    output, input="openscad/main_body.scad", parameters
                 )
 
 
@@ -175,7 +177,7 @@ for sample_z in sample_z_options:
         beamsplitter_options = [True, False] if lens in rms_lenses else [False]
 
         for beamsplitter in beamsplitter_options:
-            outputs = "{build_dir}/optics_{camera}_{lens}{beamsplitter}.stl".format(
+            output = "{build_dir}/optics_{camera}_{lens}{beamsplitter}.stl".format(
                 build_dir=build_dir,
                 camera=camera,
                 lens=lens,
@@ -189,7 +191,7 @@ for sample_z in sample_z_options:
                 "beamsplitter": beamsplitter,
             }
 
-            openscad(outputs, inputs="openscad/optics.scad", parameters=parameters)
+            openscad(output, input="openscad/optics.scad", parameters)
 
 
 ####################
@@ -198,7 +200,7 @@ for sample_z in sample_z_options:
 # Stand with pi
 for stand_height in [30]:
     for beamsplitter in [True, False]:
-        outputs = "{build_dir}/microscope_stand_{stand_height}{beamsplitter}.stl".format(
+        output = "{build_dir}/microscope_stand_{stand_height}{beamsplitter}.stl".format(
             build_dir=build_dir,
             stand_height=stand_height,
             beamsplitter="-BS" if beamsplitter else "",
@@ -207,9 +209,9 @@ for stand_height in [30]:
         parameters = {"beamsplitter": beamsplitter}
 
         openscad(
-            outputs,
-            inputs="openscad/microscope_stand.scad",
-            parameters=parameters,
+            output,
+            input="openscad/microscope_stand.scad",
+            parameters,
             file_local_parameters={"h": stand_height},
             stl_selection_parameters={"raspberry_pi": True},
         )
@@ -217,7 +219,7 @@ for stand_height in [30]:
 # Stand without pi
 openscad(
     "builds/microscope_stand_no_pi.stl",
-    inputs="openscad/microscope_stand_no_pi.scad",
+    input="openscad/microscope_stand_no_pi.scad",
     parameters={},
     stl_selection_parameters={"raspberry_pi": False},
 )
@@ -236,13 +238,13 @@ for foot_height in [15, 26]:
     else:
         version_name = f"_{foot_height}"
 
-    outputs = "{build_dir}/feet{version}.stl".format(
+    output = "{build_dir}/feet{version}.stl".format(
         build_dir=build_dir, version=version_name
     )
 
     parameters = {"foot_height": foot_height}
 
-    openscad(outputs, inputs="openscad/feet.scad", parameters=parameters)
+    openscad(output, input="openscad/feet.scad", parameters)
 
 
 ###################
@@ -251,7 +253,7 @@ for foot_height in [15, 26]:
 for stage_size in stage_size_options:
     for sample_z in sample_z_options:
         for version in ["picamera_2", "6led"]:
-            outputs = "{build_dir}/camera_platform_{version}_{stage_size}{sample_z}.stl".format(
+            output = "{build_dir}/camera_platform_{version}_{stage_size}{sample_z}.stl".format(
                 build_dir=build_dir,
                 version=version,
                 stage_size=stage_size,
@@ -265,7 +267,7 @@ for stage_size in stage_size_options:
             }
 
             openscad(
-                outputs, inputs="openscad/camera_platform.scad", parameters=parameters
+                output, input="openscad/camera_platform.scad", parameters
             )
 
 
@@ -274,13 +276,13 @@ for stage_size in stage_size_options:
 
 for stage_size in stage_size_options:
     for sample_z in sample_z_options:
-        outputs = "{build_dir}/lens_spacer_picamera_2_pilens_{stage_size}{sample_z}.stl".format(
+        output = "{build_dir}/lens_spacer_picamera_2_pilens_{stage_size}{sample_z}.stl".format(
             build_dir=build_dir, stage_size=stage_size, sample_z=sample_z
         )
 
         parameters = {**stage_parameters(stage_size, sample_z), "optics": "pilens"}
 
-        openscad(outputs, inputs="openscad/lens_spacer.scad", parameters=parameters)
+        openscad(output, input="openscad/lens_spacer.scad", parameters)
 
 
 ##################
@@ -288,25 +290,25 @@ for stage_size in stage_size_options:
 
 picamera_2_tools = ["cover", "gripper", "lens_gripper"]
 for tool in picamera_2_tools:
-    outputs = f"builds/picamera_2_{tool}.stl"
-    inputs = f"openscad/cameras/picamera_2_{tool}.scad"
+    output = f"builds/picamera_2_{tool}.stl"
+    input = f"openscad/cameras/picamera_2_{tool}.scad"
 
     parameters = {"camera": "picamera_2"}
 
-    openscad(outputs, inputs=inputs, parameters=parameters)
+    openscad(output, input, parameters)
 
 
 #################
 ### SAMPLE RISERS
 
 for riser_type in ["sample", "slide"]:
-    outputs = f"builds/{riser_type}_riser_LS10.stl"
-    inputs = f"openscad/{riser_type}_riser.scad"
+    output = f"builds/{riser_type}_riser_LS10.stl"
+    input = f"openscad/{riser_type}_riser.scad"
 
     parameters = {"big_stage": True}
 
     openscad(
-        outputs, inputs=inputs, parameters=parameters, file_local_parameters={"h": 10}
+        output, input, parameters, file_local_parameters={"h": 10}
     )
 
 
@@ -330,9 +332,9 @@ parts = [
 ]
 
 for part in parts:
-    outputs = f"builds/{part}.stl"
-    inputs = f"openscad/{part}.scad"
-    openscad(outputs, inputs=inputs)
+    output = f"builds/{part}.stl"
+    input = f"openscad/{part}.scad"
+    openscad(output, input)
 
 
 ###############
