@@ -26,7 +26,7 @@ build_dir = "builds"
 def parameters_to_string(parameters):
     """
     Build an OpenScad parameter arguments string from a variable name and value
-    
+
     Arguments:
         parameters {dict} -- Dictionary of parameters
     """
@@ -50,13 +50,42 @@ if generate_stl_options:
 
 
 def openscad(
-    outputs, inputs, parameters, file_local_parameters={}, stl_selection_parameters={}
+    outputs,
+    inputs,
+    parameters=None,
+    file_local_parameters=None,
+    stl_selection_parameters=None,
 ):
+    """
+    Invokes ninja task generation using the 'openscad' rule. if
+    --generate-stl-options-json is enabled we register the stl and it's
+    parameters at this point.
+
+    Arguments:
+        outputs {str} -- file path of the output stl file
+        inputs {str} -- file path of the input scad file
+        parameters {dict} -- values of globally used parameters
+        file_local_parameters {dict} -- values of parameters only used for this specific scad file
+        stl_selection_parameters {dict} -- values of parameters not used by openscad but for selecting this stl when building a specific variant
+    """
+
+    if parameters is None:
+        parameters = {}
+    if file_local_parameters is None:
+        file_local_parameters = {}
+    if stl_selection_parameters is None:
+        stl_selection_parameters = {}
+
     if generate_stl_options:
+        input_file = os.path.relpath(inputs, "openscad/")
         output_file = os.path.relpath(outputs, build_dir)
+        prefix = os.path.splitext(input_file)[0] + ":"
+        flp_prefixed = {}
+        for k, v in file_local_parameters.items():
+            flp_prefixed[prefix + k] = v
         stl_options[output_file] = {
-            "inputs": os.path.relpath(inputs, "openscad/"),
-            "parameters": {**parameters, **stl_selection_parameters},
+            "inputs": input_file,
+            "parameters": {**parameters, **stl_selection_parameters, **flp_prefixed},
         }
 
     ninja.build(
@@ -72,7 +101,7 @@ def openscad(
 def stage_parameters(stage_size, sample_z):
     """
     Return common stage parameters for a given size and sample z
-    
+
     Arguments:
         stage_size {str} -- Stage size, e.g. "LS"
         sample_z {int} -- Sample z position, default 65
@@ -303,7 +332,7 @@ parts = [
 for part in parts:
     outputs = f"builds/{part}.stl"
     inputs = f"openscad/{part}.scad"
-    openscad(outputs, inputs=inputs, parameters={})
+    openscad(outputs, inputs=inputs)
 
 
 ###############
@@ -315,27 +344,36 @@ run_build()
 if generate_stl_options:
 
     def merge_dicts(d1, d2):
-        """ 
+        """
         Recursively merge two dictionaries condensing all non-dict values into
-        sets. The result is a dict containing sets of all values used. 
+        sets. The result is a dict containing sets of all values used.
 
-        We assume that the dicts are compatible in structure: one dict
-        shouldn't have a value where the other has a dict or a TypeError will
-        be raised. Any sets that are values in the original dicts are merged
-        in.
-        
         >>> merge_dicts({'a': 1}, {'a': 2})
         {'a': {1, 2}}
         >>> merge_dicts({'a': 1}, {'b': 2})
         {'a': {1}, 'b': {2}}
         >>> merge_dicts({'a': {'b': 2}}, {'a': {'b': 1}})
         {'a': {'b': {1, 2}}}
+
+        We assume that the dicts are compatible in structure: one dict
+        shouldn't have a value where the other has a dict or a TypeError will
+        be raised.
+
         >>> merge_dicts({'a': 1}, {'a': {'b': 1}})
         TypeError: Expecting 'dict' at key 'a', got <class 'set'>
+
+
+        Any sets that are values in the original dicts are merged in.
+
         >>> merge_dicts({'a': {1}, {'a': {2}})
         {'a': {1, 2}}
         >>> merge_dicts({'a': 1, {'a': {2}})
         {'a': {1, 2}}
+
+        Arguments:
+            d1 {dict}
+            d2 {dict}
+
         """
         merged = {}
         for d in [d1, d2]:
@@ -396,6 +434,9 @@ if generate_stl_options:
 
     with open("builds/stl_options.json", "w") as f:
         json.dump(
-            {"stls": stl_options, "options": changeable_options}, f, default=encode_set
+            {"stls": stl_options, "options": changeable_options},
+            f,
+            indent=2,
+            default=encode_set,
         )
     print("generated builds/stl_options.json")
