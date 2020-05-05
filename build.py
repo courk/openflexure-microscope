@@ -16,6 +16,33 @@ if generate_stl_options:
     # ninja looks at the arguments and would get confused if we didn't remove it
     sys.argv.pop()
 
+    option_docs = {
+        "beamsplitter": {
+            "default": False,
+            "description": "Whether you'd like to build the variant of the microscope with the beam splitter.",
+        },
+        "enable_smart_brim": {
+            "default": True,
+            "description": "Add a smart brim to the main body that helps with bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
+        },
+        "optics": {
+            "default": "pilens",
+            "description": "The type of lens you'd like to use on your microscope.",
+        },
+        "camera": {
+            "default": "picamera_2",
+            "description": "The type of camera to use with your microscope.",
+        },
+        "raspberry_pi": {
+            "default": True,
+            "description": "Whether you'd like to house a Raspberry Pi in your microscope.",
+        },
+        "foot_height": {
+            "default": 26,
+            "description": "Height of the microscope feet (in mm).",
+        },
+    }
+
 ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
 )
@@ -87,9 +114,11 @@ def openscad(
         for k, v in file_local_parameters.items():
             flp_prefixed[prefix + k] = v
 
+        stl_option_params = {**parameters, **stl_selection_parameters, **flp_prefixed}
+
         stl_options[output_file] = {
             "input": input_file,
-            "parameters": {**parameters, **stl_selection_parameters, **flp_prefixed},
+            "parameters": stl_option_params,
         }
 
     ninja.build(
@@ -152,9 +181,7 @@ for stage_size in stage_size_options:
                     "enable_smart_brim": brim,
                 }
 
-                openscad(
-                    output, "openscad/main_body.scad", parameters
-                )
+                openscad(output, "openscad/main_body.scad", parameters)
 
 
 #################
@@ -268,9 +295,7 @@ for stage_size in stage_size_options:
                 "camera": version,
             }
 
-            openscad(
-                output, "openscad/camera_platform.scad", parameters
-            )
+            openscad(output, "openscad/camera_platform.scad", parameters)
 
 
 ###############
@@ -309,9 +334,7 @@ for riser_type in ["sample", "slide"]:
 
     parameters = {"big_stage": True}
 
-    openscad(
-        output, input, parameters, file_local_parameters={"h": 10}
-    )
+    openscad(output, input, parameters, file_local_parameters={"h": 10})
 
 
 ###############
@@ -429,6 +452,27 @@ if generate_stl_options:
             else:
                 changeable_options[name] = options
 
+    # make sure we have some docs for these options
+    for k in changeable_options:
+        if k not in option_docs:
+            raise Exception(
+                "No documentation found for '{}' option, please add it to 'option_docs' in '{}'".format(
+                    k, __file__
+                )
+            )
+        elif "description" not in option_docs[k]:
+            raise Exception(
+                "No description found for '{}' option, please add it to 'option_docs' in '{}'".format(
+                    k, __file__
+                )
+            )
+        elif "default" not in option_docs[k]:
+            raise Exception(
+                "No default value found for '{}' option, please add it to 'option_docs' in '{}'".format(
+                    k, __file__
+                )
+            )
+
     def encode_set(s):
         """ encode 'set' as 'list' when converting to JSON """
         if type(s) is set:
@@ -438,7 +482,7 @@ if generate_stl_options:
 
     with open("builds/stl_options.json", "w") as f:
         json.dump(
-            {"stls": stl_options, "options": changeable_options},
+            {"stls": stl_options, "options": changeable_options, "docs": option_docs},
             f,
             indent=2,
             default=encode_set,
