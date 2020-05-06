@@ -98,8 +98,8 @@ def openscad(
     output, input, parameters=None, file_local_parameters=None, select_stl_if=None
 ):
     """
-    Invokes ninja task generation using the 'openscad' rule. if
-    --generate-stl-options-json is enabled we register the stl and it's
+    Invokes ninja task generation using the 'openscad' rule. If
+    --generate-stl-options-json is enabled it registers the stl and its
     parameters at this point.
 
     Arguments:
@@ -119,7 +119,7 @@ def openscad(
 
     if generate_stl_options:
         # prefix any file-local parameters with the input file name so they
-        # don't look overwrite global parameters
+        # don't overwrite any global parameters
         prefix = os.path.splitext(input)[0] + ":"
         flp_prefixed = {}
         for k, v in file_local_parameters.items():
