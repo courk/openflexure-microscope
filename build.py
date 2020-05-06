@@ -47,7 +47,13 @@ if generate_stl_options:
             "default": True,
             "description": "Use unipolar stepper motors and a motor controller to move your stage. The alternative is to use hand-actuated thumbwheels.",
         },
+        "fluorescence": {
+            "default": False,
+            "description": "Print accessories for fluorscence microscopy.",
+        },
     }
+
+    all_select_stl_params = set()
 
 ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
@@ -81,11 +87,7 @@ if generate_stl_options:
 
 
 def openscad(
-    output,
-    input,
-    parameters=None,
-    file_local_parameters=None,
-    stl_selection_parameters=None,
+    output, input, parameters=None, file_local_parameters=None, select_stl_if=None
 ):
     """
     Invokes ninja task generation using the 'openscad' rule. if
@@ -97,15 +99,15 @@ def openscad(
         input {str} -- file path of the input scad file
         parameters {dict} -- values of globally used parameters
         file_local_parameters {dict} -- values of parameters only used for this specific scad file
-        stl_selection_parameters {dict} -- values of parameters not used by openscad but relevant to selecting this stl when making a specific variant
+        select_stl_if {dict} -- values of parameters not used by openscad but relevant to selecting this stl when making a specific variant
     """
 
     if parameters is None:
         parameters = {}
     if file_local_parameters is None:
         file_local_parameters = {}
-    if stl_selection_parameters is None:
-        stl_selection_parameters = {}
+    if select_stl_if is None:
+        select_stl_if = {}
 
     if generate_stl_options:
         # prefix any file-local parameters with the input file name so they
@@ -115,8 +117,9 @@ def openscad(
         for k, v in file_local_parameters.items():
             flp_prefixed[prefix + k] = v
 
-        stl_option_params = {**parameters, **stl_selection_parameters, **flp_prefixed}
-
+        global all_select_stl_params
+        all_select_stl_params = all_select_stl_params.union(select_stl_if.keys())
+        stl_option_params = {**parameters, **select_stl_if, **flp_prefixed}
         stl_options[output] = {"input": input, "parameters": stl_option_params}
 
     ninja.build(
@@ -236,7 +239,7 @@ for stand_height in [30]:
             "microscope_stand.scad",
             parameters,
             file_local_parameters={"h": stand_height},
-            stl_selection_parameters={"raspberry_pi": True},
+            select_stl_if={"raspberry_pi": True},
         )
 
 # Stand without pi
@@ -244,7 +247,7 @@ openscad(
     "microscope_stand_no_pi.stl",
     input="microscope_stand_no_pi.scad",
     parameters={},
-    stl_selection_parameters={"raspberry_pi": False},
+    select_stl_if={"raspberry_pi": False},
 )
 
 
@@ -302,7 +305,7 @@ for stage_size in stage_size_options:
             output,
             "lens_spacer.scad",
             parameters,
-            stl_selection_parameters={"camera": "picamera_2"},
+            select_stl_if={"camera": "picamera_2"},
         )
 
 
@@ -343,7 +346,6 @@ parts = [
     "illumination_dovetail",
     "lens_tool",
     "sample_clips",
-    "fl_cube",
     "reflection_illuminator",
 ]
 
@@ -352,18 +354,13 @@ for part in parts:
     input = f"{part}.scad"
     openscad(output, input)
 
+openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"fluorescence": True})
 
 openscad(
-    "motor_driver_case.stl",
-    "motor_driver_case.scad",
-    stl_selection_parameters={"motorised": True},
+    "motor_driver_case.stl", "motor_driver_case.scad", select_stl_if={"motorised": True}
 )
-openscad(
-    "small_gears.stl", "small_gears.scad", stl_selection_parameters={"motorised": True}
-)
-openscad(
-    "thumbwheels.stl", "thumbwheels.scad", stl_selection_parameters={"motorised": False}
-)
+openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
+openscad("thumbwheels.stl", "thumbwheels.scad", select_stl_if={"motorised": False})
 
 ###############
 ### RUN BUILD
@@ -450,6 +447,12 @@ if generate_stl_options:
     for name, options in available_options.items():
         if len(options) > 1:
             if options == {False, True}:
+                changeable_options[name] = "bool"
+            else:
+                changeable_options[name] = options
+        # if it's a select_stl_if param then it can have a single value
+        elif name in all_select_stl_params:
+            if (False in options) or (True in options):
                 changeable_options[name] = "bool"
             else:
                 changeable_options[name] = options
