@@ -55,6 +55,10 @@ if generate_stl_options:
             "default": "sample",
             "description": "Type of riser to use on top of the stage.",
         },
+        "reflection_illumination": {
+            "default": False,
+            "description": "Print accessories for reflection illumination.",
+        },
     }
 
     all_select_stl_params = set()
@@ -355,7 +359,6 @@ parts = [
     "gears",
     "illumination_dovetail",
     "lens_tool",
-    "reflection_illuminator",
 ]
 
 for part in parts:
@@ -370,8 +373,14 @@ openscad(
 )
 openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
 openscad("thumbwheels.stl", "thumbwheels.scad", select_stl_if={"motorised": False})
+
 openscad("sample_clips.stl", "sample_clips.scad", select_stl_if={"riser": "sample"})
 
+openscad(
+    "reflection_illuminator.stl",
+    "reflection_illuminator.scad",
+    select_stl_if={"reflection_illumination": True},
+)
 
 ###############
 ### RUN BUILD
