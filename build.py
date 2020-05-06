@@ -21,7 +21,7 @@ if generate_stl_options:
     option_docs = {
         "beamsplitter": {
             "default": False,
-            "description": "Whether you'd like to build the variant of the microscope with the beam splitter.",
+            "description": "Whether you'd like to build the variant of the microscope with the beam splitter. N.B. The beam splitter is only compatible with the Pi camera and the RMS objectives.",
         },
         "enable_smart_brim": {
             "default": True,
