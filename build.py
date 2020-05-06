@@ -51,6 +51,10 @@ if generate_stl_options:
             "default": False,
             "description": "Print accessories for fluorscence microscopy.",
         },
+        "riser": {
+            "default": "sample",
+            "description": "Type of riser to use on top of the stage.",
+        },
     }
 
     all_select_stl_params = set()
@@ -331,7 +335,13 @@ for riser_type in ["sample", "slide"]:
 
     parameters = {"big_stage": True}
 
-    openscad(output, input, parameters, file_local_parameters={"h": 10})
+    openscad(
+        output,
+        input,
+        parameters,
+        file_local_parameters={"h": 10},
+        select_stl_if={"riser": riser_type},
+    )
 
 
 ###############
@@ -345,7 +355,6 @@ parts = [
     "gears",
     "illumination_dovetail",
     "lens_tool",
-    "sample_clips",
     "reflection_illuminator",
 ]
 
@@ -361,6 +370,8 @@ openscad(
 )
 openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
 openscad("thumbwheels.stl", "thumbwheels.scad", select_stl_if={"motorised": False})
+openscad("sample_clips.stl", "sample_clips.scad", select_stl_if={"riser": "sample"})
+
 
 ###############
 ### RUN BUILD
