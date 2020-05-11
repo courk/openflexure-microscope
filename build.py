@@ -60,6 +60,18 @@ if generate_stl_options:
         "camera": {
             "default": "picamera_2",
             "description": "The type of camera to use with your microscope.",
+            "options": {
+                "picamera_2": {
+                    "title": "Pi Camera v2",
+                    "description": "The Raspberry Pi camera module, version 2",
+                },
+                "logitech_c270": {
+                    "title": "Logitech C270",
+                    "description": "The Logitech C270 webcam.",
+                },
+                "m12": {"title": "M12 Camera", "description": "A M12 CCTV camera"},
+                "6led": {"title": "6 LED", "description": "USB 6 LED Webcam"},
+            },
         },
         "raspberry_pi": {
             "default": True,
