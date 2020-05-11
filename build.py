@@ -28,8 +28,34 @@ if generate_stl_options:
             "description": "Add a smart brim to the main body that helps with bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
         },
         "optics": {
-            "default": "pilens",
+            "default": "rms_f50d13",
             "description": "The type of lens you'd like to use on your microscope.",
+            "options": {
+                "pilens": {
+                    "title": "Pi Lens",
+                    "description": "The lens included with the Raspberry Pi camera module, v1 or v2 (either will fit)",
+                },
+                "c270_lens": {
+                    "title": "C270 Lens",
+                    "description": "The lens included with the Logitech C270 webcam",
+                },
+                "m12_lens": {
+                    "title": "M12 Lens",
+                    "description": "A typical M12 CCTV lens",
+                },
+                "rms_f50d13": {
+                    "title": "RMS F50D13",
+                    "description": "An RMS-threaded microscope objective with 160mm tube length, and a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
+                },
+                "rms_f40d16": {
+                    "title": "RMS F40D16",
+                    "description": "An RMS-threaded microscope objective with 160mm tube length, and a 16mm diameter, 40mm focal length lens (no longer recommended due to poor quality at the edges of the image)",
+                },
+                "rms_infinity_f50d13": {
+                    "title": "RMS Infinity F50D13",
+                    "description": "An RMS-threaded, infinity-corrected microscope objective with a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
+                },
+            },
         },
         "camera": {
             "default": "picamera_2",
