@@ -15,9 +15,6 @@ generate_stl_options = (
 )
 
 if generate_stl_options:
-    # ninja looks at the arguments and would get confused if we didn't remove it
-    sys.argv.pop()
-
     option_docs = {
         "beamsplitter": {
             "default": False,
@@ -99,7 +96,25 @@ if generate_stl_options:
         },
     }
 
+    # additonal constraints, that are not already expressed through openscad
+    # paramaters, on what is required to build a working microscope.
+    # these are used to disable option combinations that result in essential
+    # parts missing
+    required_stls = [
+        # you need an optics module or a lens spacer
+        r"^(optics_|lens_spacer).*\.stl",
+        # you need a main microscope body
+        r"^main_body_.*\.stl",
+    ]
+
+    # we collect all the select_stl_if parameters and other parameters globally
     all_select_stl_params = set()
+    stl_options = {}
+
+    # ninja looks at the arguments and would get confused if we didn't remove
+    # the `--generate-stl-options-json`
+    sys.argv.pop()
+
 
 ninja.rule(
     "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
@@ -127,9 +142,6 @@ def parameters_to_string(parameters):
 
     return " ".join(strings)
 
-
-if generate_stl_options:
-    stl_options = {}
 
 
 def openscad(
@@ -549,7 +561,7 @@ if generate_stl_options:
     p = os.path.join(build_dir, "stl_options.json")
     with open(p, "w") as f:
         json.dump(
-            {"stls": stl_options, "options": changeable_options, "docs": option_docs},
+            {"stls": stl_options, "options": changeable_options, "docs": option_docs, 'required': required_stls},
             f,
             indent=2,
             default=encode_set,
