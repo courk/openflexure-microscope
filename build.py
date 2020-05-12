@@ -18,7 +18,7 @@ if generate_stl_options:
     option_docs = {
         "beamsplitter": {
             "default": False,
-            "description": "Whether you'd like to build the variant of the microscope with the beam splitter. N.B. The beam splitter is only compatible with the Pi camera and the RMS objectives.",
+            "description": "Whether you'd like to build the variant of the microscope with the beam splitter. N.B. The beam splitter is only compatible with RMS objectives.",
         },
         "enable_smart_brim": {
             "default": True,
@@ -363,7 +363,7 @@ for stage_size in stage_size_options:
             output,
             "lens_spacer.scad",
             parameters,
-            select_stl_if={"camera": "picamera_2"},
+            select_stl_if={"camera": "picamera_2", "beamsplitter": False},
         )
 
 
