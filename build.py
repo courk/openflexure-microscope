@@ -82,17 +82,13 @@ if generate_stl_options:
             "default": True,
             "description": "Use unipolar stepper motors and a motor controller to move your stage. The alternative is to use hand-actuated thumbwheels.",
         },
-        "fluorescence": {
-            "default": False,
-            "description": "Print accessories for fluorscence microscopy.",
-        },
         "riser": {
             "default": "sample",
             "description": "Type of riser to use on top of the stage.",
         },
         "reflection_illumination": {
             "default": False,
-            "description": "Print accessories for reflection illumination.",
+            "description": "Modify the microscope for reflection illumination and fluorescence microscopy.",
         },
         "base": {
             "default": "bucket",
@@ -292,12 +288,14 @@ for sample_z in sample_z_options:
 
             parameters = {"sample_z": sample_z, "optics": lens, "camera": camera}
             openscad_only = {"beamsplitter": beamsplitter}
+            select_stl_if = {"reflection_illumination": beamsplitter}
 
             openscad(
                 output,
                 "optics.scad",
                 parameters,
                 openscad_only_parameters=openscad_only,
+                select_stl_if=select_stl_if
             )
 
 
