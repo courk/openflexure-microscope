@@ -94,6 +94,10 @@ if generate_stl_options:
             "default": False,
             "description": "Print accessories for reflection illumination.",
         },
+        "base": {
+            "default": "bucket",
+            "description": "What kind of base to use on your microscope.",
+        },
     }
 
     # additonal constraints, that are not already expressed through openscad
@@ -143,9 +147,13 @@ def parameters_to_string(parameters):
     return " ".join(strings)
 
 
-
 def openscad(
-    output, input, parameters=None, file_local_parameters=None, select_stl_if=None
+    output,
+    input,
+    parameters=None,
+    file_local_parameters=None,
+    openscad_only_parameters=None,
+    select_stl_if=None,
 ):
     """
     Invokes ninja task generation using the 'openscad' rule. If
@@ -157,6 +165,7 @@ def openscad(
         input {str} -- file path of the input scad file
         parameters {dict} -- values of globally used parameters
         file_local_parameters {dict} -- values of parameters only used for this specific scad file
+        openscad_only_parameters {dict} -- values of parameters only used by openscad, ignored for stl selection
         select_stl_if {dict} -- values of parameters not used by openscad but relevant to selecting this stl when making a specific variant
     """
 
@@ -164,6 +173,8 @@ def openscad(
         parameters = {}
     if file_local_parameters is None:
         file_local_parameters = {}
+    if openscad_only_parameters is None:
+        openscad_only_parameters = {}
     if select_stl_if is None:
         select_stl_if = {}
 
@@ -185,7 +196,9 @@ def openscad(
         rule="openscad",
         inputs=os.path.join("openscad/", input),
         variables={
-            "parameters": parameters_to_string({**parameters, **file_local_parameters})
+            "parameters": parameters_to_string(
+                {**parameters, **file_local_parameters, **openscad_only_parameters}
+            )
         },
     )
 
@@ -235,11 +248,18 @@ for stage_size in stage_size_options:
                 parameters = {
                     **stage_parameters(stage_size, sample_z),
                     "motor_lugs": motors,
-                    "beamsplitter": beamsplitter,
                     "enable_smart_brim": brim,
                 }
+                openscad_only = {"beamsplitter": beamsplitter}
+                select_stl_if = {"reflection_illumination": beamsplitter}
 
-                openscad(output, "main_body.scad", parameters)
+                openscad(
+                    output,
+                    "main_body.scad",
+                    parameters,
+                    openscad_only_parameters=openscad_only,
+                    select_stl_if=select_stl_if,
+                )
 
 
 #################
@@ -270,14 +290,15 @@ for sample_z in sample_z_options:
                 beamsplitter="_beamsplitter" if beamsplitter else "",
             )
 
-            parameters = {
-                "sample_z": sample_z,
-                "optics": lens,
-                "camera": camera,
-                "beamsplitter": beamsplitter,
-            }
+            parameters = {"sample_z": sample_z, "optics": lens, "camera": camera}
+            openscad_only = {"beamsplitter": beamsplitter}
 
-            openscad(output, "optics.scad", parameters)
+            openscad(
+                output,
+                "optics.scad",
+                parameters,
+                openscad_only_parameters=openscad_only,
+            )
 
 
 ####################
@@ -290,14 +311,18 @@ for stand_height in [30]:
             stand_height=stand_height, beamsplitter="-BS" if beamsplitter else ""
         )
 
-        parameters = {"beamsplitter": beamsplitter}
+        openscad_only = {"beamsplitter": beamsplitter}
 
         openscad(
             output,
             "microscope_stand.scad",
-            parameters,
+            openscad_only_parameters=openscad_only,
             file_local_parameters={"h": stand_height},
-            select_stl_if={"raspberry_pi": True},
+            select_stl_if={
+                "raspberry_pi": True,
+                "base": "bucket",
+                "reflection_illumination": beamsplitter,
+            },
         )
 
 # Stand without pi
@@ -305,7 +330,7 @@ openscad(
     "microscope_stand_no_pi.stl",
     input="microscope_stand_no_pi.scad",
     parameters={},
-    select_stl_if={"raspberry_pi": False},
+    select_stl_if={"raspberry_pi": False, "base": "bucket"},
 )
 
 
@@ -324,9 +349,15 @@ for foot_height in [15, 26]:
 
     output = "feet{version}.stl".format(version=version_name)
 
-    parameters = {"foot_height": foot_height}
+    openscad_only_parameters = {"foot_height": foot_height}
+    select_stl_if = {"base": "bucket" if foot_height == 15 else "no base"}
 
-    openscad(output, "feet.scad", parameters)
+    openscad(
+        output,
+        "feet.scad",
+        openscad_only_parameters=openscad_only_parameters,
+        select_stl_if=select_stl_if,
+    )
 
 
 ###################
@@ -363,7 +394,7 @@ for stage_size in stage_size_options:
             output,
             "lens_spacer.scad",
             parameters,
-            select_stl_if={"camera": "picamera_2", "beamsplitter": False},
+            select_stl_if={"camera": "picamera_2", "reflection_illumination": False},
         )
 
 
@@ -416,10 +447,12 @@ for part in parts:
     input = f"{part}.scad"
     openscad(output, input)
 
-openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"fluorescence": True})
+openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"reflection_illumination": True})
 
 openscad(
-    "motor_driver_case.stl", "motor_driver_case.scad", select_stl_if={"motorised": True}
+    "motor_driver_case.stl",
+    "motor_driver_case.scad",
+    select_stl_if={"motorised": True, "base": "bucket"},
 )
 openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
 openscad("thumbwheels.stl", "thumbwheels.scad", select_stl_if={"motorised": False})
@@ -561,7 +594,12 @@ if generate_stl_options:
     p = os.path.join(build_dir, "stl_options.json")
     with open(p, "w") as f:
         json.dump(
-            {"stls": stl_options, "options": changeable_options, "docs": option_docs, 'required': required_stls},
+            {
+                "stls": stl_options,
+                "options": changeable_options,
+                "docs": option_docs,
+                "required": required_stls,
+            },
             f,
             indent=2,
             default=encode_set,
