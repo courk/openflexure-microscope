@@ -72,7 +72,7 @@ if generate_stl_options:
         },
         "raspberry_pi": {
             "default": True,
-            "description": "Whether you'd like to house a Raspberry Pi in your microscope.",
+            "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
         },
         "foot_height": {
             "default": 26,
@@ -80,7 +80,7 @@ if generate_stl_options:
         },
         "motorised": {
             "default": True,
-            "description": "Use unipolar stepper motors and a motor controller to move your stage. The alternative is to use hand-actuated thumbwheels.",
+            "description": "Use unipolar stepper motors and a motor controller PCB to move the stage. The alternative is to use hand-actuated thumbwheels.",
         },
         "riser": {
             "default": "sample",
@@ -90,9 +90,9 @@ if generate_stl_options:
             "default": False,
             "description": "Modify the microscope for reflection illumination and fluorescence microscopy.",
         },
-        "base": {
-            "default": "bucket",
-            "description": "What kind of base to use on your microscope.",
+        "bucket_base": {
+            "default": True,
+            "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet, but then it cannot house any of the electronics.",
         },
     }
 
@@ -295,7 +295,7 @@ for sample_z in sample_z_options:
                 "optics.scad",
                 parameters,
                 openscad_only_parameters=openscad_only,
-                select_stl_if=select_stl_if
+                select_stl_if=select_stl_if,
             )
 
 
@@ -318,7 +318,7 @@ for stand_height in [30]:
             file_local_parameters={"h": stand_height},
             select_stl_if={
                 "raspberry_pi": True,
-                "base": "bucket",
+                "bucket_base": True,
                 "reflection_illumination": beamsplitter,
             },
         )
@@ -328,7 +328,7 @@ openscad(
     "microscope_stand_no_pi.stl",
     input="microscope_stand_no_pi.scad",
     parameters={},
-    select_stl_if={"raspberry_pi": False, "base": "bucket"},
+    select_stl_if={"raspberry_pi": False, "bucket_base": True},
 )
 
 
@@ -348,7 +348,7 @@ for foot_height in [15, 26]:
     output = "feet{version}.stl".format(version=version_name)
 
     openscad_only_parameters = {"foot_height": foot_height}
-    select_stl_if = {"base": "bucket" if foot_height == 15 else "no base"}
+    select_stl_if = {"bucket_base": foot_height == 15}
 
     openscad(
         output,
@@ -433,7 +433,6 @@ for riser_type in ["sample", "slide"]:
 parts = [
     "actuator_assembly_tools",
     "actuator_drilling_jig",
-    "back_foot",
     "condenser",
     "gears",
     "illumination_dovetail",
@@ -447,10 +446,12 @@ for part in parts:
 
 openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"reflection_illumination": True})
 
+openscad("back_foot.stl", "back_foot.scad", select_stl_if={"bucket_base": False})
+
 openscad(
     "motor_driver_case.stl",
     "motor_driver_case.scad",
-    select_stl_if={"motorised": True, "base": "bucket"},
+    select_stl_if={"motorised": True, "bucket_base": True},
 )
 openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
 openscad("thumbwheels.stl", "thumbwheels.scad", select_stl_if={"motorised": False})
