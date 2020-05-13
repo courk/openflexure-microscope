@@ -15,91 +15,108 @@ generate_stl_options = (
 )
 
 if generate_stl_options:
-    option_docs = {
-        "beamsplitter": {
+    option_docs = [
+        {
+            "key": "beamsplitter",
             "default": False,
             "description": "Whether you'd like to build the variant of the microscope with the beam splitter. N.B. The beam splitter is only compatible with RMS objectives.",
         },
-        "enable_smart_brim": {
+        {
+            "key": "enable_smart_brim",
             "default": True,
             "description": "Add a smart brim to the main body that helps with bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
         },
-        "optics": {
+        {
+            "key": "optics",
             "default": "rms_f50d13",
             "description": "The type of lens you'd like to use on your microscope.",
-            "options": {
-                "pilens": {
-                    "title": "Pi Lens",
-                    "description": "The lens included with the Raspberry Pi camera module, v1 or v2 (either will fit)",
-                },
-                "c270_lens": {
-                    "title": "C270 Lens",
-                    "description": "The lens included with the Logitech C270 webcam",
-                },
-                "m12_lens": {
-                    "title": "M12 Lens",
-                    "description": "A typical M12 CCTV lens",
-                },
-                "rms_f50d13": {
+            "options": [
+                {
+                    "key": "rms_f50d13",
                     "title": "RMS F50D13",
                     "description": "An RMS-threaded microscope objective with 160mm tube length, and a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
                 },
-                "rms_f40d16": {
-                    "title": "RMS F40D16",
-                    "description": "An RMS-threaded microscope objective with 160mm tube length, and a 16mm diameter, 40mm focal length lens (no longer recommended due to poor quality at the edges of the image)",
-                },
-                "rms_infinity_f50d13": {
+                {
+                    "key": "rms_infinity_f50d13",
                     "title": "RMS Infinity F50D13",
                     "description": "An RMS-threaded, infinity-corrected microscope objective with a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
                 },
-            },
+                {
+                    "key": "pilens",
+                    "title": "Pi Lens",
+                    "description": "The lens included with the Raspberry Pi camera module, v1 or v2 (either will fit)",
+                },
+                {
+                    "key": "c270_lens",
+                    "title": "C270 Lens",
+                    "description": "The lens included with the Logitech C270 webcam",
+                },
+                {
+                    "key": "m12_lens",
+                    "title": "M12 Lens",
+                    "description": "A typical M12 CCTV lens",
+                },
+                {
+                    "key": "rms_f40d16",
+                    "title": "RMS F40D16",
+                    "description": "An RMS-threaded microscope objective with 160mm tube length, and a 16mm diameter, 40mm focal length lens (no longer recommended due to poor quality at the edges of the image)",
+                },
+            ],
         },
-        "camera": {
+        {
+            "key": "camera",
             "default": "picamera_2",
             "description": "The type of camera to use with your microscope.",
-            "options": {
-                "picamera_2": {
+            "options": [
+                {
+                    "key": "picamera_2",
                     "title": "Pi Camera v2",
                     "description": "The Raspberry Pi camera module, version 2",
                 },
-                "logitech_c270": {
+                {
+                    "key": "logitech_c270",
                     "title": "Logitech C270",
-                    "description": "The Logitech C270 webcam.",
+                    "description": "The Logitech C270 webcam",
                 },
-                "m12": {"title": "M12 Camera", "description": "A M12 CCTV camera"},
-                "6led": {"title": "6 LED", "description": "USB 6 LED Webcam"},
-            },
+                {
+                    "key": "m12",
+                    "title": "M12 Camera",
+                    "description": "A M12 CCTV camera",
+                },
+                {"key": "6led", "title": "6 LED", "description": "USB 6 LED Webcam"},
+            ],
         },
-        "raspberry_pi": {
-            "default": True,
-            "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
-        },
-        "foot_height": {
-            "default": 26,
-            "description": "Height of the microscope feet (in mm).",
-        },
-        "motorised": {
+        {
+            "key": "motorised",
             "default": True,
             "description": "Use unipolar stepper motors and a motor controller PCB to move the stage. The alternative is to use hand-actuated thumbwheels.",
         },
-        "riser": {
+        {
+            "key": "riser",
             "default": "sample",
-            "description": "Type of riser to use on top of the stage.",
+            "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using a set of sample clips that are included.",
         },
-        "reflection_illumination": {
+        {
+            "key": "reflection_illumination",
             "default": False,
-            "description": "Modify the microscope for reflection illumination and fluorescence microscopy.",
+            "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
         },
-        "bucket_base": {
+        {
+            "key": "bucket_base",
             "default": True,
-            "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet, but then it cannot house any of the electronics.",
+            "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet without housing any electronics inside it.",
         },
-    }
+        {
+            "key": "raspberry_pi",
+            "default": True,
+            "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
+        },
+    ]
 
-    # additonal constraints, that are not already expressed through openscad
-    # paramaters, on what is required to build a working microscope.
-    # these are used to disable option combinations that result in essential
-    # parts missing
+    # additonal constraints on what is required to build a working microscope
+    # that are not already expressed through openscad parameters, these are
+    # used to disable option combinations that result in essential parts
+    # missing
     required_stls = [
         # you need an optics module or a lens spacer
         r"^(optics_|lens_spacer).*\.stl",
@@ -560,20 +577,21 @@ if generate_stl_options:
                 changeable_options[name] = options
 
     # make sure we have some docs for these options
+    option_docs_dict = dict([(v["key"], v) for v in option_docs])
     for k in changeable_options:
-        if k not in option_docs:
+        if k not in option_docs_dict:
             raise Exception(
                 "No documentation found for '{}' option, please add it to 'option_docs' in '{}'".format(
                     k, __file__
                 )
             )
-        elif "description" not in option_docs[k]:
+        elif "description" not in option_docs_dict[k]:
             raise Exception(
                 "No description found for '{}' option, please add it to 'option_docs' in '{}'".format(
                     k, __file__
                 )
             )
-        elif "default" not in option_docs[k]:
+        elif "default" not in option_docs_dict[k]:
             raise Exception(
                 "No default value found for '{}' option, please add it to 'option_docs' in '{}'".format(
                     k, __file__
