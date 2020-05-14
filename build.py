@@ -60,11 +60,6 @@ if generate_stl_options:
             ],
         },
         {
-            "key": "use_pilens_optics_module",
-            "default": True,
-            "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
-        },
-        {
             "key": "camera",
             "default": "picamera_2",
             "description": "The type of camera to use with your microscope.",
@@ -111,6 +106,11 @@ if generate_stl_options:
             "key": "pi_in_base",
             "default": True,
             "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
+        },
+        {
+            "key": "use_pilens_optics_module",
+            "default": False,
+            "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
         },
     ]
 
