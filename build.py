@@ -90,7 +90,7 @@ if generate_stl_options:
         {
             "key": "riser",
             "default": "sample",
-            "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using a set of sample clips that are included.",
+            "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using the set of included sample clips.",
         },
         {
             "key": "reflection_illumination",
