@@ -606,24 +606,26 @@ if generate_stl_options:
     for k in changeable_options:
         if k not in option_docs_dict:
             raise Exception(
-                "No documentation found for '{}' option, please add it to 'option_docs' in '{}'".format(
-                    k, __file__
-                )
+                f"No documentation found for '{k}' option, please add it to 'option_docs' in '{__file__}'"
             )
-        elif "description" not in option_docs_dict[k]:
+        docs = option_docs_dict[k]
+        if "description" not in docs:
             raise Exception(
-                "No description found for '{}' option, please add it to 'option_docs' in '{}'".format(
-                    k, __file__
-                )
+                f"No description found for '{k}' option, please add it to 'option_docs' in '{__file__}'"
             )
-        elif "default" not in option_docs_dict[k]:
+        if "default" not in docs:
             raise Exception(
-                "No default value found for '{}' option, please add it to 'option_docs' in '{}'".format(
-                    k, __file__
-                )
+                f"No default value found for '{k}' option, please add it to 'option_docs' in '{__file__}'"
             )
+        if "options" in docs:
+            opts = [o["key"] for o in docs["options"]]
+            if set(opts) != changeable_options[k]:
+                raise Exception(f"Invalid sub-options in option_docs in '{k}'")
 
-    stl_options.sort(key=operator.itemgetter('stl'))
+            # replace the set with a list so we get the ordering from option_docs
+            changeable_options[k] = opts
+
+    stl_options.sort(key=operator.itemgetter("stl"))
 
     def encode_set(s):
         """ encode 'set' as sorted 'list' when converting to JSON """
