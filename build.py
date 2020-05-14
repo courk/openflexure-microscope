@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import pathlib
+import operator
 
 build_dir = "builds"
 
@@ -107,7 +108,7 @@ if generate_stl_options:
             "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet without housing any electronics inside it.",
         },
         {
-            "key": "raspberry_pi",
+            "key": "pi_in_base",
             "default": True,
             "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
         },
@@ -122,11 +123,13 @@ if generate_stl_options:
         r"^(optics_|lens_spacer).*\.stl",
         # you need a main microscope body
         r"^main_body_.*\.stl",
+        # you need some feet
+        r"^feet.*\.stl",
     ]
 
     # we collect all the select_stl_if parameters and other parameters globally
     all_select_stl_params = set()
-    stl_options = {}
+    stl_options = []
 
     # ninja looks at the arguments and would get confused if we didn't remove
     # the `--generate-stl-options-json`
@@ -179,7 +182,8 @@ def openscad(
         parameters {dict} -- values of globally used parameters
         file_local_parameters {dict} -- values of parameters only used for this specific scad file
         openscad_only_parameters {dict} -- values of parameters only used by openscad, ignored for stl selection
-        select_stl_if {dict} -- values of parameters not used by openscad but relevant to selecting this stl when making a specific variant
+        select_stl_if {dict}|{list} -- values of parameters not used by openscad but relevant to selecting this stl when making a specific variant.
+                                       Using a list means or-ing the combinations listed.
     """
 
     if parameters is None:
@@ -192,17 +196,23 @@ def openscad(
         select_stl_if = {}
 
     if generate_stl_options:
-        # prefix any file-local parameters with the input file name so they
-        # don't overwrite any global parameters
-        prefix = os.path.splitext(input)[0] + ":"
-        flp_prefixed = {}
-        for k, v in file_local_parameters.items():
-            flp_prefixed[prefix + k] = v
+        if not isinstance(select_stl_if, list):
+            select_stl_if = [select_stl_if]
 
-        global all_select_stl_params
-        all_select_stl_params = all_select_stl_params.union(select_stl_if.keys())
-        stl_option_params = {**parameters, **select_stl_if, **flp_prefixed}
-        stl_options[output] = {"input": input, "parameters": stl_option_params}
+        for select in select_stl_if:
+            # prefix any file-local parameters with the input file name so they
+            # don't overwrite any global parameters
+            prefix = os.path.splitext(input)[0] + ":"
+            flp_prefixed = {}
+            for k, v in file_local_parameters.items():
+                flp_prefixed[prefix + k] = v
+
+            global all_select_stl_params
+            all_select_stl_params = all_select_stl_params.union(select.keys())
+            stl_option_params = {**parameters, **select, **flp_prefixed}
+            stl_options.append(
+                {"stl": output, "input": input, "parameters": stl_option_params}
+            )
 
     ninja.build(
         os.path.join(build_dir, output),
@@ -334,7 +344,7 @@ for stand_height in [30]:
             openscad_only_parameters=openscad_only,
             file_local_parameters={"h": stand_height},
             select_stl_if={
-                "raspberry_pi": True,
+                "pi_in_base": True,
                 "bucket_base": True,
                 "reflection_illumination": beamsplitter,
             },
@@ -345,7 +355,7 @@ openscad(
     "microscope_stand_no_pi.stl",
     input="microscope_stand_no_pi.scad",
     parameters={},
-    select_stl_if={"raspberry_pi": False, "bucket_base": True},
+    select_stl_if={"pi_in_base": False, "bucket_base": True},
 )
 
 
@@ -365,7 +375,27 @@ for foot_height in [15, 26]:
     output = "feet{version}.stl".format(version=version_name)
 
     openscad_only_parameters = {"foot_height": foot_height}
-    select_stl_if = {"bucket_base": foot_height == 15}
+
+    if foot_height == 26:
+        select_stl_if = {
+            "bucket_base": False,
+            "optics": {"rms_f50d13", "rms_infinity_f50d13", "rms_f40d16"},
+        }
+    elif foot_height == 15:
+        select_stl_if = [
+            {
+                "bucket_base": True,
+                "optics": {
+                    "c270_lens",
+                    "m12_lens",
+                    "pilens",
+                    "rms_f40d16",
+                    "rms_f50d13",
+                    "rms_infinity_f50d13",
+                },
+            },
+            {"bucket_base": False, "optics": {"c270_lens", "m12_lens", "pilens"}},
+        ]
 
     openscad(
         output,
@@ -557,7 +587,7 @@ if generate_stl_options:
 
     # condense all used parameters down to sets of possible values
     available_options = {}
-    for stl_file, v in stl_options.items():
+    for v in stl_options:
         available_options = merge_dicts(available_options, v["parameters"])
 
     # filter out parameters that are never changed and rename {True, False}
@@ -597,6 +627,8 @@ if generate_stl_options:
                     k, __file__
                 )
             )
+
+    stl_options.sort(key=operator.itemgetter('stl'))
 
     def encode_set(s):
         """ encode 'set' as sorted 'list' when converting to JSON """
