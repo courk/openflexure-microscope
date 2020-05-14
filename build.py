@@ -18,11 +18,6 @@ generate_stl_options = (
 if generate_stl_options:
     option_docs = [
         {
-            "key": "beamsplitter",
-            "default": False,
-            "description": "Whether you'd like to build the variant of the microscope with the beam splitter. N.B. The beam splitter is only compatible with RMS objectives.",
-        },
-        {
             "key": "enable_smart_brim",
             "default": True,
             "description": "Add a smart brim to the main body that helps with bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
