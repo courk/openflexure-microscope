@@ -60,6 +60,11 @@ if generate_stl_options:
             ],
         },
         {
+            "key": "use_pilens_optics_module",
+            "default": True,
+            "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
+        },
+        {
             "key": "camera",
             "default": "picamera_2",
             "description": "The type of camera to use with your microscope.",
@@ -312,6 +317,9 @@ for sample_z in sample_z_options:
             openscad_only = {"beamsplitter": beamsplitter}
             select_stl_if = {"reflection_illumination": beamsplitter}
 
+            if lens == "pilens":
+                select_stl_if["use_pilens_optics_module"] = True
+
             openscad(
                 output,
                 "optics.scad",
@@ -434,7 +442,11 @@ for stage_size in stage_size_options:
             output,
             "lens_spacer.scad",
             parameters,
-            select_stl_if={"camera": "picamera_2", "reflection_illumination": False},
+            select_stl_if={
+                "camera": "picamera_2",
+                "reflection_illumination": False,
+                "use_pilens_optics_module": False,
+            },
         )
 
 
