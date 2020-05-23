@@ -16,6 +16,44 @@ generate_stl_options = (
 )
 
 if generate_stl_options:
+    stl_presets = [
+        {
+            "key": "high_resolution_raspberry_pi",
+            "title": "High Resolution with Raspberry Pi",
+            "description": "A microscope using the Raspberry Pi camera and  high resolution optics, as used for medical work.",
+            "parameters": {
+                "optics": "rms_f50d13",
+                "camera": "picamera_2",
+                "motorised": True,
+                "base": "bucket",
+                "pi_in_base": True,
+            },
+        },
+        {
+            "key": "basic_raspberry_pi",
+            "title": "Basic with Raspberry Pi",
+            "description": "A basic microscope using the Raspberry Pi camera and simple optics. Best suited for low resolution microscopy and educational workshops.",
+            "parameters": {
+                "optics": "pilens",
+                "camera": "picamera_2",
+                "motorised": False,
+                "base": "bucket",
+                "pi_in_base": True,
+            },
+        },
+        {
+            "key": "low_cost_webcam",
+            "title": "Low Cost with Webcam",
+            "description": "The cheapest possible option using a computer webcam.",
+            "parameters": {
+                "optics": "c270_lens",
+                "camera": "logitech_c270",
+                "motorised": False,
+                "base": "feet",
+            },
+        },
+    ]
+
     option_docs = [
         {
             "key": "enable_smart_brim",
@@ -684,6 +722,7 @@ if generate_stl_options:
                 "options": changeable_options,
                 "docs": option_docs,
                 "required": required_stls,
+                "presets": stl_presets,
             },
             f,
             indent=2,
