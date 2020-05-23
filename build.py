@@ -103,8 +103,8 @@ if generate_stl_options:
             "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
         },
         {
-            "key": "bucket_base",
-            "default": True,
+            "key": "base",
+            "default": "bucket",
             "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet without housing any electronics inside it.",
         },
         {
@@ -348,7 +348,7 @@ for stand_height in [30]:
             file_local_parameters={"h": stand_height},
             select_stl_if={
                 "pi_in_base": True,
-                "bucket_base": True,
+                "base": "bucket",
                 "reflection_illumination": beamsplitter,
             },
         )
@@ -358,7 +358,7 @@ openscad(
     "microscope_stand_no_pi.stl",
     input="microscope_stand_no_pi.scad",
     parameters={},
-    select_stl_if={"pi_in_base": False, "bucket_base": True},
+    select_stl_if={"pi_in_base": False, "base": "bucket"},
 )
 
 
@@ -381,13 +381,13 @@ for foot_height in [15, 26]:
 
     if foot_height == 26:
         select_stl_if = {
-            "bucket_base": False,
+            "base": "feet",
             "optics": {"rms_f50d13", "rms_infinity_f50d13", "rms_f40d16"},
         }
     elif foot_height == 15:
         select_stl_if = [
             {
-                "bucket_base": True,
+                "base": "bucket",
                 "optics": {
                     "c270_lens",
                     "m12_lens",
@@ -397,7 +397,7 @@ for foot_height in [15, 26]:
                     "rms_infinity_f50d13",
                 },
             },
-            {"bucket_base": False, "optics": {"c270_lens", "m12_lens", "pilens"}},
+            {"base": "feet", "optics": {"c270_lens", "m12_lens", "pilens"}},
         ]
 
     openscad(
@@ -500,12 +500,12 @@ for part in parts:
 
 openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"reflection_illumination": True})
 
-openscad("back_foot.stl", "back_foot.scad", select_stl_if={"bucket_base": False})
+openscad("back_foot.stl", "back_foot.scad", select_stl_if={"base": "feet"})
 
 openscad(
     "motor_driver_case.stl",
     "motor_driver_case.scad",
-    select_stl_if={"motorised": True, "bucket_base": True},
+    select_stl_if={"motorised": True, "base": "feet"},
 )
 openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
 openscad("thumbwheels.stl", "thumbwheels.scad", select_stl_if={"motorised": False})
