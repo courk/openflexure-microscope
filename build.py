@@ -112,6 +112,11 @@ if generate_stl_options:
             "default": True,
             "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
         },
+        {
+            "key": "include_actuator_drilling_jig",
+            "description": "This part is very much optional, and is only useful for cleaning up slightly dodgy prints, if the 3mm hole in the actuator has printed too small.",
+            "default": False,
+        },
     ]
 
     # additonal constraints on what is required to build a working microscope
@@ -486,7 +491,6 @@ for riser_type in ["sample", "slide"]:
 
 parts = [
     "actuator_assembly_tools",
-    "actuator_drilling_jig",
     "condenser",
     "gears",
     "illumination_dovetail",
@@ -497,6 +501,12 @@ for part in parts:
     output = f"{part}.stl"
     input = f"{part}.scad"
     openscad(output, input)
+
+openscad(
+    "actuator_drilling_jig.stl",
+    "actuator_drilling_jig.scad",
+    select_stl_if={"include_actuator_drilling_jig": True},
+)
 
 openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"reflection_illumination": True})
 
