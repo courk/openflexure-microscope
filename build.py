@@ -109,8 +109,8 @@ if generate_stl_options:
             "options": [
                 {
                     "key": "picamera_2",
-                    "title": "Pi Camera v2",
-                    "description": "The Raspberry Pi camera module, version 2",
+                    "title": "Pi Camera",
+                    "description": "The Raspberry Pi camera module, version 1 or 2",
                 },
                 {
                     "key": "logitech_c270",
