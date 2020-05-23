@@ -499,13 +499,7 @@ for riser_type in ["sample", "slide"]:
 ###############
 ### SMALL PARTS
 
-parts = [
-    "actuator_assembly_tools",
-    "condenser",
-    "gears",
-    "illumination_dovetail",
-    "lens_tool",
-]
+parts = ["actuator_assembly_tools", "condenser", "illumination_dovetail", "lens_tool"]
 
 for part in parts:
     output = f"{part}.stl"
@@ -525,18 +519,22 @@ openscad(
     "motor_driver_case.scad",
     select_stl_if={"motorised": True, "base": "feet"},
 )
-openscad(
-    "small_gears.stl",
-    "small_gears.scad",
-    select_stl_if=[
-        {"motorised": True},
-        {"motorised": False, "use_motor_gears_for_hand_actuation": True},
-    ],
-)
+
+openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
+
 openscad(
     "thumbwheels.stl",
     "thumbwheels.scad",
     select_stl_if={"motorised": False, "use_motor_gears_for_hand_actuation": False},
+)
+
+openscad(
+    "gears.stl",
+    "gears.scad",
+    select_stl_if=[
+        {"motorised": True},
+        {"motorised": False, "use_motor_gears_for_hand_actuation": True},
+    ],
 )
 
 openscad("sample_clips.stl", "sample_clips.scad", select_stl_if={"riser": "sample"})
