@@ -202,9 +202,11 @@ def openscad(
 
     if generate_stl_options:
         if not isinstance(select_stl_if, list):
-            select_stl_if = [select_stl_if]
+            ssif = [select_stl_if]
+        else:
+            ssif = select_stl_if
 
-        for select in select_stl_if:
+        for select in ssif:
             # prefix any file-local parameters with the input file name so they
             # don't overwrite any global parameters
             prefix = os.path.splitext(input)[0] + ":"
@@ -380,8 +382,6 @@ for foot_height in [15, 26]:
     else:
         version_name = f"_{foot_height}"
 
-    output = "feet{version}.stl".format(version=version_name)
-
     openscad_only_parameters = {"foot_height": foot_height}
 
     if foot_height == 26:
@@ -404,10 +404,15 @@ for foot_height in [15, 26]:
             },
             {"base": "feet", "optics": {"c270_lens", "m12_lens", "pilens"}},
         ]
-
     openscad(
-        output,
+        "feet{version}.stl".format(version=version_name),
         "feet.scad",
+        openscad_only_parameters=openscad_only_parameters,
+        select_stl_if=select_stl_if,
+    )
+    openscad(
+        f"back_foot{version_name}.stl",
+        "back_foot.scad",
         openscad_only_parameters=openscad_only_parameters,
         select_stl_if=select_stl_if,
     )
@@ -509,8 +514,6 @@ openscad(
 )
 
 openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"reflection_illumination": True})
-
-openscad("back_foot.stl", "back_foot.scad", select_stl_if={"base": "feet"})
 
 openscad(
     "motor_driver_case.stl",
