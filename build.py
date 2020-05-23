@@ -93,6 +93,11 @@ if generate_stl_options:
             "description": "Use unipolar stepper motors and a motor controller PCB to move the stage. The alternative is to use hand-actuated thumbwheels.",
         },
         {
+            "key": "use_motor_gears_for_hand_actuation",
+            "default": False,
+            "description": "Use the normal motor gears instead of the thumbwheels with the hand-actuated version of the microscope.",
+        },
+        {
             "key": "riser",
             "default": "sample",
             "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using the set of included sample clips.",
@@ -520,8 +525,19 @@ openscad(
     "motor_driver_case.scad",
     select_stl_if={"motorised": True, "base": "feet"},
 )
-openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
-openscad("thumbwheels.stl", "thumbwheels.scad", select_stl_if={"motorised": False})
+openscad(
+    "small_gears.stl",
+    "small_gears.scad",
+    select_stl_if=[
+        {"motorised": True},
+        {"motorised": False, "use_motor_gears_for_hand_actuation": True},
+    ],
+)
+openscad(
+    "thumbwheels.stl",
+    "thumbwheels.scad",
+    select_stl_if={"motorised": False, "use_motor_gears_for_hand_actuation": False},
+)
 
 openscad("sample_clips.stl", "sample_clips.scad", select_stl_if={"riser": "sample"})
 
