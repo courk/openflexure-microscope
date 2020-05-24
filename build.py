@@ -24,6 +24,7 @@ if generate_stl_options:
             "parameters": {
                 "optics": "rms_f50d13",
                 "camera": "picamera_2",
+                "reflection_illumination": False,
                 "motorised": True,
                 "base": "bucket",
                 "pi_in_base": True,
@@ -104,6 +105,11 @@ if generate_stl_options:
             "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
         },
         {
+            "key": "reflection_illumination",
+            "default": False,
+            "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
+        },
+        {
             "key": "camera",
             "default": "picamera_2",
             "description": "The type of camera to use with your microscope.",
@@ -140,11 +146,6 @@ if generate_stl_options:
             "key": "riser",
             "default": "sample",
             "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using the set of included sample clips.",
-        },
-        {
-            "key": "reflection_illumination",
-            "default": False,
-            "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
         },
         {
             "key": "base",
