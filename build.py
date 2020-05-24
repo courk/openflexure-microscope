@@ -35,6 +35,7 @@ if generate_stl_options:
             "description": "A basic microscope using the Raspberry Pi camera and simple optics. Best suited for low resolution microscopy and educational workshops.",
             "parameters": {
                 "optics": "pilens",
+                "use_pilens_optics_module": False,
                 "camera": "picamera_2",
                 "motorised": False,
                 "base": "bucket",
