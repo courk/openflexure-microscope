@@ -24,6 +24,8 @@ Then, use the Arduino IDE to upload the [Sangaboard arduino sketch], and connect
 
 When you boot up the Raspberry Pi, the microscope software should recognise a supported Sangaboard is connected, and enable motorised control of the microscope stage.  It should be detected as a Sangaboard v0.2; as far as the microcontroller is concerned, this option and the next one are identical.
 
+NB the diagram above shows the wires crossing over between the motors and the connectors - this is just due to the order of the wires on the two components in Fritzing; there is no need to modify the wiring between your motor and the driver board.
+
 [Sangaboard arduino sketch]: https://gitlab.com/bath_open_instrumentation_group/sangaboard/tree/master/arduino_code
 
 ### PCB + Arduino Nano (Sangaboard v0.2)
