@@ -372,6 +372,9 @@ for sample_z in sample_z_options:
             if lens == "pilens":
                 select_stl_if["use_pilens_optics_module"] = True
 
+            if lens not in rms_lenses:
+                select_stl_if["riser"] = "no riser"
+
             openscad(
                 output,
                 "optics.scad",
