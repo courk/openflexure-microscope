@@ -1,6 +1,12 @@
 # Motor controller boards
 
-The motorised version of the microscope uses a motor controller based on an Arduino and some very simple Darlington pair driver chips.  There are several options for how to build this, which should all work equally well.  In all cases, you need to upload the [Sangaboard arduino sketch] using the Arduino IDE.
+The motorised version of the microscope uses a motor controller based on an Arduino and some very simple Darlington pair driver chips.  There are several options for how to build this, which should all work equally well.  In all cases, you need to upload the [Sangaboard arduino sketch] using the Arduino IDE.  There are a few issues that crop up quite frequently, and we have highlighted these below:
+
+* **Power supply:** there are 5 Volt and 12 Volt versions of the 28BYJ-48 motors.  You should use a power supply that matches your motors.  As we use very simple drivers, if you use too high a voltage the motors will overheat. If in doubt, start with 5V.
+* **Arduino IDE:** Some users have found issues with old (or very new) versions of the Arduino IDE not working properly.  See the [issue thread on motor boards not working](https://gitlab.com/openflexure/openflexure-helpdesk/-/issues/12#note_342049911) for more details.
+* **Arduino Clones:** Many people use Nano boards not made by Arduino.  These often come with cheaper USB to serial ICs (which require drivers - see the Arduino section at the end of this page) and old bootloaders (which require different options in the Arduino IDE).  This is also discussed in the [issue thread on motor boards not working].
+
+[issue thread on motor boards not working]: https://gitlab.com/openflexure/openflexure-helpdesk/-/issues/12#note_342049911
 
 Three "official" designs for the Sangaboard exist, and these are described below.
 
@@ -16,7 +22,7 @@ Then, use the Arduino IDE to upload the [Sangaboard arduino sketch], and connect
 
 > **Warning:** Do not attempt to power the motors from the Raspberry Pi's pins. They can draw far more than the maximum current the Pi will safely supply. Always use a separate power supply for the motors.
 
-When you boot up the Raspberry Pi, the microscope software should recognise a supported Sangaboard is connected, and enable motorised control of the microscope stage.
+When you boot up the Raspberry Pi, the microscope software should recognise a supported Sangaboard is connected, and enable motorised control of the microscope stage.  It should be detected as a Sangaboard v0.2; as far as the microcontroller is concerned, this option and the next one are identical.
 
 [Sangaboard arduino sketch]: https://gitlab.com/bath_open_instrumentation_group/sangaboard/tree/master/arduino_code
 
