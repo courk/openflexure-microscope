@@ -11,7 +11,7 @@ use <feet.scad>;
 bottom_thickness = 1.0;
 inset_depth = 3.0;
 allow_space = 1.5;
-wall_thickness = 2.35;
+wall_thickness = 1.5; //2.35 works well for ABS
 raspi_support = 4.0;
 
 raspi_board = [85, 58, 19]; //this is wrong, should be 85, 56, 19
