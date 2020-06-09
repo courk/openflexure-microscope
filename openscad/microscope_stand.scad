@@ -11,10 +11,20 @@ use <feet.scad>;
 bottom_thickness = 1.0;
 inset_depth = 3.0;
 allow_space = 1.5;
-wall_thickness = 1.5; //2.35 works well for ABS
+wall_thickness = 2.35; //default 1.5 - 2.35 is good for ABS
 raspi_support = 4.0;
 
 raspi_board = [85, 58, 19]; //this is wrong, should be 85, 56, 19
+
+include_breadboard = false;
+
+nano = true;
+nano_width = 18.0;
+nano_length = 43.0;
+nano_support = 13.0;
+driver_width = 32.0;
+driver_length = 35.0;
+driver_support = 4.0;
 
 box_h = bottom_thickness + raspi_support + raspi_board[2] + 5;
 
@@ -226,7 +236,8 @@ module mounting_holes(){
     // holes to mount the buckets together (stacking) or to a breadboard
 
     // breadboard mounting
-    for(p=[[0,0,0], [25,25,0], [-25,25,0], [0,50,0], [0,-25,0]]) translate(p) cylinder(d=6.6,h=999,center=true);
+    if (include_breadboard)
+        for(p=[[0,0,0], [25,25,0], [-25,25,0], [0,50,0], [0,-25,0]]) translate(p) cylinder(d=6.6,h=999,center=true);
         
     // holes at 3 corners to allow mounting to something underneath/stacking
     // NB the bottom hole is larger to allow for screwing through it, the top 
@@ -312,24 +323,88 @@ module sangaboard_supports(){
     }
 }
 
+module nano_supports(){
+//supports for the three motor driver boards
+    difference(){
+        pi_frame() rotate([0,0,40]) translate([5,-6,bottom_thickness-d]) {
+            translate([2.5,2.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([driver_width-2.5,2.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([driver_width+3.0,12.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([2*driver_width-2.0,12.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([2*driver_width+3.5,2.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([3*driver_width-1.5,2.5,0]) cylinder(h=driver_support+d, d=7);   
+            translate([2.5,driver_length-2.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([driver_width-2.5,driver_length-2.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([driver_width+3.0,driver_length+7.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([2*driver_width-2.0,driver_length+7.5,0]) cylinder(h=driver_support+d, d=7);
+            translate([2*driver_width+3.5,driver_length-2.5,0]) cylinder(h=driver_support+d, d=7); 
+            translate([3*driver_width-1.5,driver_length-2.5,0]) cylinder(h=driver_support+d, d=7);
+        }
+
+//screw holes in the driver board support posts
+        pi_frame() rotate([0,0,40]) translate([5,-6,bottom_thickness-d]) {
+            translate([2.5,2.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([driver_width-2.5,2.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([driver_width+3.0,12.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([2*driver_width-2.0,12.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([2*driver_width+3.5,2.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([3*driver_width-1.5,2.5,0]) trylinder_selftap(3, h=999, center=true);   
+            translate([2.5,driver_length-2.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([driver_width-2.5,driver_length-2.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([driver_width+3.0,driver_length+7.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([2*driver_width-2.0,driver_length+7.5,0]) trylinder_selftap(3, h=999, center=true);
+            translate([2*driver_width+3.5,driver_length-2.5,0]) trylinder_selftap(3, h=999, center=true); 
+            translate([3*driver_width-1.5,driver_length-2.5,0]) trylinder_selftap(3, h=999, center=true);
+        }
+    }
+
+//supports for an arduino nano    
+    difference(){
+        //two posts with rounded tops and a base
+        pi_frame() rotate([0,0,40]) translate([8.5,-21.5,bottom_thickness-d]) {
+            translate([49.5-nano_length/2,-6.5,0]) cylinder(h=nano_width+2.4+d, d=5);
+            translate([49.5-nano_length/2,-6.5,nano_width+2.4+d]) sphere(r=2.5);
+            translate([50.5+nano_length/2,-6.5,0]) cylinder(h=nano_width+d+2.4, d=5);
+            translate([50.5+nano_length/2,-6.5,nano_width+2.4+d]) sphere(r=2.5);
+            translate([49.5-nano_length/2,-9.0,0]) cube([nano_length+1,5,2]);
+        }
+
+        pi_frame() rotate([0,0,40]) translate([8.5,-21.5,bottom_thickness-d]) {
+            //carve out for nano board
+            hull(){
+                translate([52.1-nano_length/2,-9.5,2+d]) cube([nano_length-4.2,6,0.1]);             
+                translate([49.8-nano_length/2,-9.5,5+d]) cube([nano_length+0.4,6,nano_width-5.6]); 
+                translate([52.1-nano_length/2,-9.5,nano_width+2.3+d]) cube([nano_length-4.2,6,0.1]);  
+            }
+            //carve out for usb module
+            hull(){
+                translate([39.8-nano_length/2,-12.5-1.7/2,nano_width-0.7+d]) cube([20,4.3,0.1]); 
+                translate([39.8-nano_length/2,-12.5-1.7/2,7.5+d]) cube([20,6,nano_width-10.6]); 
+                translate([39.8-nano_length/2,-12.5-1.7/2,5+d]) cube([20,4.3,0.1]); 
+            }
+            //actual slot for the nano
+            translate([49.8-nano_length/2,-6.5-1.7/2,2+d]) cube([nano_length+0.4,1.7,nano_width+0.4]); 
+        }
+    }
+}       
+
 module motor_driver_case(){
     // A stackable "bucket" that holds the motor board under the microscope stand
-    difference(){
-        union(){
+    union(){    
+        difference(){
             bucket_base_stackable();
-    
-            // supports for the circuit board
-            sangaboard_supports();
-        }
         // space for sangaboard connectors
-        translate([0,0,bottom_thickness+raspi_support]) sangaboard_connectors();
+            translate([0,0,bottom_thickness+raspi_support]) sangaboard_connectors();
     
         // motor cables
-        translate([0,z_nut_y,box_h]) cube([20,50,15],center=true);
+            translate([0,z_nut_y,box_h]) cube([20,50,15],center=true);
         
-        
-        mounting_holes();
-    }
+            mounting_holes();
+        }
+    
+        if (nano) nano_supports();
+        else sangaboard_supports();
+    }    
 }
 
 
@@ -337,7 +412,6 @@ module motor_driver_case(){
 //feet_in_place();
 //footprint();
 
-//motor_driver_case();
-microscope_stand();
-
+motor_driver_case();
+//microscope_stand();
 
