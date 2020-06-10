@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
+
+import sys
+
 from ninja import Writer, ninja as run_build
 
 build_file = open("build.ninja", "w")
 ninja = Writer(build_file, width=120)
 
+if sys.platform.startswith('darwin'):
+    executable = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD"
+else:
+    executable = "openscad"
+
 ninja.rule(
-    "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
+    "openscad", command=f"{executable} $parameters $in -o $out -d $out.d", depfile="$out.d"
 )
 
 build_dir = "builds"
@@ -14,7 +22,7 @@ build_dir = "builds"
 def parameters_to_string(parameters):
     """
     Build an OpenScad parameter arguments string from a variable name and value
-    
+
     Arguments:
         parameters {dict} -- Dictionary of parameters
     """
@@ -36,7 +44,7 @@ def parameters_to_string(parameters):
 def stage_parameters(stage_size, sample_z):
     """
     Return common stage parameters for a given size and sample z
-    
+
     Arguments:
         stage_size {str} -- Stage size, e.g. "LS"
         sample_z {int} -- Sample z position, default 65
