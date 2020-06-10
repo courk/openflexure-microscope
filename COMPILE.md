@@ -13,6 +13,11 @@ This will generate a Ninja build file and run it to compile the files and put th
 ## OpenSCAD command line
 You'll need to make sure OpenSCAD is in your executable path so the build script can [run it from the command line](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Using_OpenSCAD_in_a_command_line_environment).  This is probably the case on Linux, but on Windows I just ran ``PATH="$PATH:/c/Program Files/OpenSCAD/"`` before running the build script.  A nicer solution is to use "Windows Subsystem Linux" and this is what all the developers of the microscope currently do, when they are working on Windows.
 
-On mac, you may need to add a symlink as well, probably from ``/usr/local/bin/openscad`` -> ``/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD`` (I've not checked these paths but they should be approximately right).
+On MacOS, you will need to create a wrapper script for openscad, like so:
+```
+echo '#!/bin/sh' > openscad
+echo '/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD $*' >> openscad
+chmod +x openscad ; sudo mv test /usr/local/bin
+```
 
 [openflexure.org]: https://openflexure.org/projects/microscope/
