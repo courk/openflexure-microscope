@@ -185,3 +185,6 @@ Optional bits of filenames are in square brackets above:
 * ``_tall`` on the illumination or the feet means the body sits 26mm off the ground rather than 15mm, to give clearance for larger camera modules.  This is only useful if you are not using the microscope stand.
 
 Currently, there are two reccommended versions of the body; ``LS65`` and ``LS65-M``.  The only difference is that the ``-M`` version can be fitted with motors.  To build the high-resolution version of the microscope, use the 10mm thick sample riser ``sample_riser_LS10.stl``, and ``optics_picamera_2_rms_f50d13_LS65.stl``.  To build the low-resolution version, don't use the sample riser, and instead use ``camera_platform_picamera_2_LS65.stl`` and ``lens_spacer_picamera_2_pilens_LS65.stl``.  In both cases, it's best to print the microscope stand, and use the standard-height feet.
+
+**Printable elastic bands**
+If you are not able to get hold of Viton O rings, one possible alternative is to print some O rings using flexible TPU filament.  The STL file to use for this is ``actuator_tension_band.stl``.  More details are given in the [part page for O rings](./parts/fixings/viton_o_ring_30mm_inner_diameter_2mm_cross_section.md).
