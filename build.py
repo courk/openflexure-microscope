@@ -14,7 +14,7 @@ build_dir = "builds"
 def parameters_to_string(parameters):
     """
     Build an OpenScad parameter arguments string from a variable name and value
-    
+
     Arguments:
         parameters {dict} -- Dictionary of parameters
     """
@@ -36,7 +36,7 @@ def parameters_to_string(parameters):
 def stage_parameters(stage_size, sample_z):
     """
     Return common stage parameters for a given size and sample z
-    
+
     Arguments:
         stage_size {str} -- Stage size, e.g. "LS"
         sample_z {int} -- Sample z position, default 65
@@ -278,6 +278,7 @@ for riser_type in ["sample", "slide"]:
 parts = [
     "actuator_assembly_tools",
     "actuator_drilling_jig",
+    "actuator_tension_band",
     "back_foot",
     "condenser",
     "gears",
