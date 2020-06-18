@@ -147,7 +147,7 @@ for sample_z in sample_z_options:
 ### MICROSCOPE STAND
 
 # Stand with pi
-for stand_height in [30]:
+for stand_height in [30, 45]:
     for beamsplitter in [True, False]:
         outputs = "{build_dir}/microscope_stand_{stand_height}{beamsplitter}.stl".format(
             build_dir=build_dir,
