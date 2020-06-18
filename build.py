@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
+
+import sys
+
 from ninja import Writer, ninja as run_build
 
 build_file = open("build.ninja", "w")
 ninja = Writer(build_file, width=120)
 
+if sys.platform.startswith('darwin'):
+    executable = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD"
+else:
+    executable = "openscad"
+
 ninja.rule(
-    "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
+    "openscad", command=f"{executable} $parameters $in -o $out -d $out.d", depfile="$out.d"
 )
 
 build_dir = "builds"
