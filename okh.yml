@@ -3,7 +3,7 @@ date-created: 2019-10-15
 manifest-author:
   name:  Joel T. Collins
   affiliation: University of Bath
-  email: j.collins@bath.ac.uk
+  email: "j.collins@bath.ac.uk"
 
 manifest-language: English-UK
 
@@ -31,12 +31,12 @@ project-link: https://openflexure.org/projects/microscope/
 contact:
   name: Richard Bowman
   affiliation: University of Bath
-  email: rwb34@bath.ac.uk
+  email: "rwb34@bath.ac.uk"
   social:
     - platform: Twitter
-      user-handle: @OpenFlexure
+      user-handle: "@OpenFlexure"
 
-version: 6.1.1
+version: 6.1.2
 
 development-stage: stable
 
@@ -52,7 +52,7 @@ license:
 licensor:
   name: Richard Bowman
   affiliation: University of Bath
-  email: rwb34@bath.ac.uk
+  email: "rwb34@bath.ac.uk"
 
 
 # Documentation

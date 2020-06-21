@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+import sys
+
 from ninja import Writer, ninja as run_build
 import json
 import os
@@ -186,8 +189,15 @@ if generate_stl_options:
     sys.argv.pop()
 
 
+if sys.platform.startswith("darwin"):
+    executable = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD"
+else:
+    executable = "openscad"
+
 ninja.rule(
-    "openscad", command="openscad $parameters $in -o $out -d $out.d", depfile="$out.d"
+    "openscad",
+    command=f"{executable} $parameters $in -o $out -d $out.d",
+    depfile="$out.d",
 )
 
 
@@ -388,7 +398,7 @@ for sample_z in sample_z_options:
 ### MICROSCOPE STAND
 
 # Stand with pi
-for stand_height in [30]:
+for stand_height in [30, 45]:
     for beamsplitter in [True, False]:
         output = "microscope_stand_{stand_height}{beamsplitter}.stl".format(
             stand_height=stand_height, beamsplitter="-BS" if beamsplitter else ""
@@ -542,7 +552,13 @@ for riser_type in ["sample", "slide"]:
 ###############
 ### SMALL PARTS
 
-parts = ["actuator_assembly_tools", "condenser", "illumination_dovetail", "lens_tool"]
+parts = [
+    "actuator_assembly_tools",
+    "actuator_tension_band",
+    "condenser",
+    "illumination_dovetail",
+    "lens_tool",
+]
 
 for part in parts:
     output = f"{part}.stl"
