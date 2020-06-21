@@ -31,6 +31,7 @@ if generate_stl_options:
                 "motorised": True,
                 "base": "bucket",
                 "pi_in_base": True,
+                "riser": "sample",
             },
         },
         {
@@ -63,7 +64,7 @@ if generate_stl_options:
         {
             "key": "enable_smart_brim",
             "default": True,
-            "description": "Add a smart brim to the main body that helps with bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
+            "description": "Add a smart brim to the main body that helps with 3D-printer bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
         },
         {
             "key": "optics",
@@ -165,9 +166,14 @@ if generate_stl_options:
             "description": "This part is very much optional, and is only useful for cleaning up slightly dodgy prints, if the 3mm hole in the actuator has printed too small.",
             "default": False,
         },
+        {
+            "key": "microscope_stand:h",
+            "description": "Height of the microscope bucket base stand",
+            "default": 30,
+        },
     ]
 
-    # additonal constraints on what is required to build a working microscope
+    # additional constraints on what is required to build a working microscope
     # that are not already expressed through openscad parameters, these are
     # used to disable option combinations that result in essential parts
     # missing
@@ -732,7 +738,7 @@ if generate_stl_options:
         else:
             raise TypeError("Expecting 'set' got {}".format(type(s)))
 
-    # eqivilent to mkdir -p
+    # equivalent to mkdir -p
     pathlib.Path(build_dir).mkdir(parents=True, exist_ok=True)
 
     p = os.path.join(build_dir, "stl_options.json")
