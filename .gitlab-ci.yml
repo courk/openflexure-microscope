@@ -116,7 +116,10 @@ zenodo:
     - apt-get -y -qq install git python3-pip
     - pip3 install -r scripts/zenodo/requirements.txt
   script:
-    - python3 scripts/zenodo/upload_to_zenodo.py --use-sandbox "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip"
+    - mv "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}.zip" "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-outputs.zip"
+    - python3 scripts/zenodo/upload_to_zenodo.py --use-sandbox "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-outputs.zip"
+    - git archive "${CI_COMMIT_REF_NAME}" --format=zip --output="${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-source.zip"
+    - python3 scripts/zenodo/upload_to_zenodo.py --use-sandbox "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-source.zip"
   only:
     - tags
     - web
