@@ -7,7 +7,7 @@ import yaml
 
 def parse_arguments() -> Namespace:
     p = ArgumentParser(description="Upload data to Zenodo")
-    p.add_argument("path", help="Directory or file to upload to Zenodo")
+    p.add_argument("paths", help="Directories and files to upload to Zenodo", nargs="*")
     p.add_argument(
         "--use-sandbox",
         help="Use sandbox.zenodo.org instead of the real site.",
@@ -25,7 +25,7 @@ def get_meta():
     with open(script_directory("metadata.yaml")) as f:
         metadata = f.read()
 
-    return yaml.load(metadata)
+    return yaml.safe_load(metadata)
 
 
 def main():
@@ -37,7 +37,9 @@ def main():
     deposit_id = zenodo.create_new_deposit()
 
     zenodo.set_metadata(deposit_id, metadata)
-    zenodo.upload_file(deposit_id, args.path)
+
+    for path in args.paths:
+        zenodo.upload_file(deposit_id, path)
 
 
 if __name__ == "__main__":
