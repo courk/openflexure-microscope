@@ -106,11 +106,13 @@ if generate_stl_options:
         {
             "key": "use_pilens_optics_module",
             "default": False,
+            "advanced": True,
             "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
         },
         {
             "key": "reflection_illumination",
             "default": False,
+            "advanced": True,
             "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
         },
         {
@@ -144,6 +146,7 @@ if generate_stl_options:
         {
             "key": "use_motor_gears_for_hand_actuation",
             "default": False,
+            "advanced": True,
             "description": "Use the normal motor gears instead of the thumbwheels with the hand-actuated version of the microscope.",
         },
         {
@@ -159,16 +162,19 @@ if generate_stl_options:
         {
             "key": "pi_in_base",
             "default": True,
+            "advanced": True,
             "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
         },
         {
             "key": "include_actuator_drilling_jig",
             "description": "This part is very much optional, and is only useful for cleaning up slightly dodgy prints, if the 3mm hole in the actuator has printed too small.",
+            "advanced": True,
             "default": False,
         },
         {
             "key": "microscope_stand:h",
             "description": "Height of the microscope bucket base stand",
+            "advanced": True,
             "default": 30,
         },
     ]
