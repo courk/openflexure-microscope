@@ -151,7 +151,7 @@ option_docs = [
     },
     {
         "key": "microscope_stand:h",
-        "description": "Height of the microscope bucket base stand",
+        "description": "Height of the microscope bucket base stand in mm.",
         "advanced": True,
         "default": 30,
     },
