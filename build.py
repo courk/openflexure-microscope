@@ -92,18 +92,6 @@ option_docs = [
         ],
     },
     {
-        "key": "use_pilens_optics_module",
-        "default": False,
-        "advanced": True,
-        "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
-    },
-    {
-        "key": "reflection_illumination",
-        "default": False,
-        "advanced": True,
-        "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
-    },
-    {
         "key": "camera",
         "default": "picamera_2",
         "description": "The type of camera to use with your microscope.",
@@ -128,12 +116,6 @@ option_docs = [
         "description": "Use unipolar stepper motors and a motor controller PCB to move the stage. The alternative is to use hand-actuated thumbwheels.",
     },
     {
-        "key": "use_motor_gears_for_hand_actuation",
-        "default": False,
-        "advanced": True,
-        "description": "Use the normal motor gears instead of the thumbwheels with the hand-actuated version of the microscope.",
-    },
-    {
         "key": "riser",
         "default": "sample",
         "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using the set of included sample clips.",
@@ -142,6 +124,12 @@ option_docs = [
         "key": "base",
         "default": "bucket",
         "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet without housing any electronics inside it.",
+    },
+    {
+        "key": "reflection_illumination",
+        "default": False,
+        "advanced": True,
+        "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
     },
     {
         "key": "pi_in_base",
@@ -156,10 +144,22 @@ option_docs = [
         "default": False,
     },
     {
+        "key": "use_motor_gears_for_hand_actuation",
+        "default": False,
+        "advanced": True,
+        "description": "Use the normal motor gears instead of the thumbwheels with the hand-actuated version of the microscope.",
+    },
+    {
         "key": "microscope_stand:h",
         "description": "Height of the microscope bucket base stand",
         "advanced": True,
         "default": 30,
+    },
+    {
+        "key": "use_pilens_optics_module",
+        "default": False,
+        "advanced": True,
+        "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
     },
 ]
 
