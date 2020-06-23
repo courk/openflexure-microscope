@@ -3,11 +3,178 @@
 import sys
 
 from ninja import Writer, ninja as run_build
-import json
 import os
 import sys
-import pathlib
-import operator
+from build_system.json_generator import JsonGenerator
+
+stl_presets = [
+    {
+        "key": "high_resolution_raspberry_pi",
+        "title": "High Resolution with Raspberry Pi",
+        "description": "A microscope using the Raspberry Pi camera and  high resolution optics, as used for medical work.",
+        "parameters": {
+            "optics": "rms_f50d13",
+            "camera": "picamera_2",
+            "reflection_illumination": False,
+            "motorised": True,
+            "base": "bucket",
+            "pi_in_base": True,
+            "riser": "sample",
+        },
+    },
+    {
+        "key": "basic_raspberry_pi",
+        "title": "Basic with Raspberry Pi",
+        "description": "A basic microscope using the Raspberry Pi camera and simple optics. Best suited for low resolution microscopy and educational workshops.",
+        "parameters": {
+            "optics": "pilens",
+            "use_pilens_optics_module": False,
+            "camera": "picamera_2",
+            "motorised": False,
+            "base": "bucket",
+            "pi_in_base": True,
+        },
+    },
+    {
+        "key": "low_cost_webcam",
+        "title": "Low Cost with Webcam",
+        "description": "The cheapest possible option using a computer webcam.",
+        "parameters": {
+            "optics": "c270_lens",
+            "camera": "logitech_c270",
+            "motorised": False,
+            "base": "feet",
+        },
+    },
+]
+
+option_docs = [
+    {
+        "key": "enable_smart_brim",
+        "default": True,
+        "description": "Add a smart brim to the main body that helps with 3D-printer bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
+    },
+    {
+        "key": "optics",
+        "default": "rms_f50d13",
+        "description": "The type of lens you'd like to use on your microscope.",
+        "options": [
+            {
+                "key": "rms_f50d13",
+                "title": "RMS F50D13",
+                "description": "An RMS-threaded microscope objective with 160mm tube length, and a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
+            },
+            {
+                "key": "rms_infinity_f50d13",
+                "title": "RMS Infinity F50D13",
+                "description": "An RMS-threaded, infinity-corrected microscope objective with a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
+            },
+            {
+                "key": "pilens",
+                "title": "Pi Lens",
+                "description": "The lens included with the Raspberry Pi camera module, v1 or v2 (either will fit)",
+            },
+            {
+                "key": "c270_lens",
+                "title": "C270 Lens",
+                "description": "The lens included with the Logitech C270 webcam",
+            },
+            {
+                "key": "m12_lens",
+                "title": "M12 Lens",
+                "description": "A typical M12 CCTV lens",
+            },
+            {
+                "key": "rms_f40d16",
+                "title": "RMS F40D16",
+                "description": "An RMS-threaded microscope objective with 160mm tube length, and a 16mm diameter, 40mm focal length lens (no longer recommended due to poor quality at the edges of the image)",
+            },
+        ],
+    },
+    {
+        "key": "use_pilens_optics_module",
+        "default": False,
+        "advanced": True,
+        "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
+    },
+    {
+        "key": "reflection_illumination",
+        "default": False,
+        "advanced": True,
+        "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
+    },
+    {
+        "key": "camera",
+        "default": "picamera_2",
+        "description": "The type of camera to use with your microscope.",
+        "options": [
+            {
+                "key": "picamera_2",
+                "title": "Pi Camera",
+                "description": "The Raspberry Pi camera module, version 1 or 2",
+            },
+            {
+                "key": "logitech_c270",
+                "title": "Logitech C270",
+                "description": "The Logitech C270 webcam",
+            },
+            {"key": "m12", "title": "M12 Camera", "description": "A M12 CCTV camera"},
+            {"key": "6led", "title": "6 LED", "description": "USB 6 LED Webcam"},
+        ],
+    },
+    {
+        "key": "motorised",
+        "default": True,
+        "description": "Use unipolar stepper motors and a motor controller PCB to move the stage. The alternative is to use hand-actuated thumbwheels.",
+    },
+    {
+        "key": "use_motor_gears_for_hand_actuation",
+        "default": False,
+        "advanced": True,
+        "description": "Use the normal motor gears instead of the thumbwheels with the hand-actuated version of the microscope.",
+    },
+    {
+        "key": "riser",
+        "default": "sample",
+        "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using the set of included sample clips.",
+    },
+    {
+        "key": "base",
+        "default": "bucket",
+        "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet without housing any electronics inside it.",
+    },
+    {
+        "key": "pi_in_base",
+        "default": True,
+        "advanced": True,
+        "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
+    },
+    {
+        "key": "include_actuator_drilling_jig",
+        "description": "This part is very much optional, and is only useful for cleaning up slightly dodgy prints, if the 3mm hole in the actuator has printed too small.",
+        "advanced": True,
+        "default": False,
+    },
+    {
+        "key": "microscope_stand:h",
+        "description": "Height of the microscope bucket base stand",
+        "advanced": True,
+        "default": 30,
+    },
+]
+
+# additional constraints on what is required to build a working microscope
+# that are not already expressed through openscad parameters, these are
+# used to disable option combinations that result in essential parts
+# missing
+required_stls = [
+    # you need an optics module or a lens spacer
+    r"^(optics_|lens_spacer).*\.stl",
+    # you need a main microscope body
+    r"^main_body_.*\.stl",
+    # you need some feet
+    r"^feet.*\.stl",
+]
 
 build_dir = "builds"
 
@@ -19,183 +186,7 @@ generate_stl_options = (
 )
 
 if generate_stl_options:
-    stl_presets = [
-        {
-            "key": "high_resolution_raspberry_pi",
-            "title": "High Resolution with Raspberry Pi",
-            "description": "A microscope using the Raspberry Pi camera and  high resolution optics, as used for medical work.",
-            "parameters": {
-                "optics": "rms_f50d13",
-                "camera": "picamera_2",
-                "reflection_illumination": False,
-                "motorised": True,
-                "base": "bucket",
-                "pi_in_base": True,
-                "riser": "sample",
-            },
-        },
-        {
-            "key": "basic_raspberry_pi",
-            "title": "Basic with Raspberry Pi",
-            "description": "A basic microscope using the Raspberry Pi camera and simple optics. Best suited for low resolution microscopy and educational workshops.",
-            "parameters": {
-                "optics": "pilens",
-                "use_pilens_optics_module": False,
-                "camera": "picamera_2",
-                "motorised": False,
-                "base": "bucket",
-                "pi_in_base": True,
-            },
-        },
-        {
-            "key": "low_cost_webcam",
-            "title": "Low Cost with Webcam",
-            "description": "The cheapest possible option using a computer webcam.",
-            "parameters": {
-                "optics": "c270_lens",
-                "camera": "logitech_c270",
-                "motorised": False,
-                "base": "feet",
-            },
-        },
-    ]
-
-    option_docs = [
-        {
-            "key": "enable_smart_brim",
-            "default": True,
-            "description": "Add a smart brim to the main body that helps with 3D-printer bed adhesion but doesn't gunk up the spaces needed for the flexure hinges.",
-        },
-        {
-            "key": "optics",
-            "default": "rms_f50d13",
-            "description": "The type of lens you'd like to use on your microscope.",
-            "options": [
-                {
-                    "key": "rms_f50d13",
-                    "title": "RMS F50D13",
-                    "description": "An RMS-threaded microscope objective with 160mm tube length, and a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
-                },
-                {
-                    "key": "rms_infinity_f50d13",
-                    "title": "RMS Infinity F50D13",
-                    "description": "An RMS-threaded, infinity-corrected microscope objective with a 12.7mm diameter, 50mm focal length achromatic doublet lens.",
-                },
-                {
-                    "key": "pilens",
-                    "title": "Pi Lens",
-                    "description": "The lens included with the Raspberry Pi camera module, v1 or v2 (either will fit)",
-                },
-                {
-                    "key": "c270_lens",
-                    "title": "C270 Lens",
-                    "description": "The lens included with the Logitech C270 webcam",
-                },
-                {
-                    "key": "m12_lens",
-                    "title": "M12 Lens",
-                    "description": "A typical M12 CCTV lens",
-                },
-                {
-                    "key": "rms_f40d16",
-                    "title": "RMS F40D16",
-                    "description": "An RMS-threaded microscope objective with 160mm tube length, and a 16mm diameter, 40mm focal length lens (no longer recommended due to poor quality at the edges of the image)",
-                },
-            ],
-        },
-        {
-            "key": "use_pilens_optics_module",
-            "default": False,
-            "advanced": True,
-            "description": "Use the optics module with the Raspberry Pi lens rather than the lens spacer. Using the lens spacer is recommended for most uses.",
-        },
-        {
-            "key": "reflection_illumination",
-            "default": False,
-            "advanced": True,
-            "description": "Enable the microscope modifications required for reflection illumination and fluorescence microscopy.",
-        },
-        {
-            "key": "camera",
-            "default": "picamera_2",
-            "description": "The type of camera to use with your microscope.",
-            "options": [
-                {
-                    "key": "picamera_2",
-                    "title": "Pi Camera",
-                    "description": "The Raspberry Pi camera module, version 1 or 2",
-                },
-                {
-                    "key": "logitech_c270",
-                    "title": "Logitech C270",
-                    "description": "The Logitech C270 webcam",
-                },
-                {
-                    "key": "m12",
-                    "title": "M12 Camera",
-                    "description": "A M12 CCTV camera",
-                },
-                {"key": "6led", "title": "6 LED", "description": "USB 6 LED Webcam"},
-            ],
-        },
-        {
-            "key": "motorised",
-            "default": True,
-            "description": "Use unipolar stepper motors and a motor controller PCB to move the stage. The alternative is to use hand-actuated thumbwheels.",
-        },
-        {
-            "key": "use_motor_gears_for_hand_actuation",
-            "default": False,
-            "advanced": True,
-            "description": "Use the normal motor gears instead of the thumbwheels with the hand-actuated version of the microscope.",
-        },
-        {
-            "key": "riser",
-            "default": "sample",
-            "description": "Type of riser to use on top of the stage. The slide riser is custom made for microscope slides. The sample riser is more versatile and can also hold slides using the set of included sample clips.",
-        },
-        {
-            "key": "base",
-            "default": "bucket",
-            "description": "Whether to use a bucket base style microscope stand. The alternative is to let it rest on its feet without housing any electronics inside it.",
-        },
-        {
-            "key": "pi_in_base",
-            "default": True,
-            "advanced": True,
-            "description": "Whether you'd like to house a Raspberry Pi in the bucket base.",
-        },
-        {
-            "key": "include_actuator_drilling_jig",
-            "description": "This part is very much optional, and is only useful for cleaning up slightly dodgy prints, if the 3mm hole in the actuator has printed too small.",
-            "advanced": True,
-            "default": False,
-        },
-        {
-            "key": "microscope_stand:h",
-            "description": "Height of the microscope bucket base stand",
-            "advanced": True,
-            "default": 30,
-        },
-    ]
-
-    # additional constraints on what is required to build a working microscope
-    # that are not already expressed through openscad parameters, these are
-    # used to disable option combinations that result in essential parts
-    # missing
-    required_stls = [
-        # you need an optics module or a lens spacer
-        r"^(optics_|lens_spacer).*\.stl",
-        # you need a main microscope body
-        r"^main_body_.*\.stl",
-        # you need some feet
-        r"^feet.*\.stl",
-    ]
-
-    # we collect all the select_stl_if parameters and other parameters globally
-    all_select_stl_params = set()
-    stl_options = []
-
+    json_generator = JsonGenerator(build_dir, option_docs, stl_presets, required_stls)
     # ninja looks at the arguments and would get confused if we didn't remove
     # the `--generate-stl-options-json`
     sys.argv.pop()
@@ -205,6 +196,7 @@ if sys.platform.startswith("darwin"):
     executable = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD"
 else:
     executable = "openscad"
+
 
 ninja.rule(
     "openscad",
@@ -268,25 +260,14 @@ def openscad(
         select_stl_if = {}
 
     if generate_stl_options:
-        if not isinstance(select_stl_if, list):
-            ssif = [select_stl_if]
-        else:
-            ssif = select_stl_if
-
-        for select in ssif:
-            # prefix any file-local parameters with the input file name so they
-            # don't overwrite any global parameters
-            prefix = os.path.splitext(input)[0] + ":"
-            flp_prefixed = {}
-            for k, v in file_local_parameters.items():
-                flp_prefixed[prefix + k] = v
-
-            global all_select_stl_params
-            all_select_stl_params = all_select_stl_params.union(select.keys())
-            stl_option_params = {**parameters, **select, **flp_prefixed}
-            stl_options.append(
-                {"stl": output, "input": input, "parameters": stl_option_params}
-            )
+        json_generator.register(
+            output,
+            input,
+            parameters=parameters,
+            file_local_parameters=file_local_parameters,
+            openscad_only_parameters=openscad_only_parameters,
+            select_stl_if=select_stl_if,
+        )
 
     ninja.build(
         os.path.join(build_dir, output),
@@ -622,146 +603,6 @@ openscad(
 build_file.close()
 
 if generate_stl_options:
-
-    def merge_dicts(d1, d2):
-        """
-        Recursively merge two dictionaries condensing all non-dict values into
-        sets. The result is a dict containing sets of all the values used.
-
-        >>> merge_dicts({'a': 1}, {'a': 2})
-        {'a': {1, 2}}
-        >>> merge_dicts({'a': 1}, {'b': 2})
-        {'a': {1}, 'b': {2}}
-        >>> merge_dicts({'a': {'b': 2}}, {'a': {'b': 1}})
-        {'a': {'b': {1, 2}}}
-
-        We assume that the dicts are compatible in structure: one dict
-        shouldn't have a value where the other has a dict or a TypeError will
-        be raised.
-
-        >>> merge_dicts({'a': 1}, {'a': {'b': 1}})
-        TypeError: Expecting 'dict' at key 'a', got <class 'set'>
-
-
-        Any sets that are values in the original dicts are merged in.
-
-        >>> merge_dicts({'a': {1}, {'a': {2}})
-        {'a': {1, 2}}
-        >>> merge_dicts({'a': 1, {'a': {2}})
-        {'a': {1, 2}}
-
-        Arguments:
-            d1 {dict}
-            d2 {dict}
-
-        """
-        merged = {}
-        for d in [d1, d2]:
-            for k, v in d.items():
-                if type(v) is dict:
-                    if k not in merged:
-                        merged[k] = {}
-                    if type(merged[k]) is not dict:
-                        raise TypeError(
-                            "Expecting 'dict' at key '{}', got {}".format(
-                                k, type(merged[k])
-                            )
-                        )
-
-                    merged[k] = merge_dicts(merged[k], v)
-
-                elif type(v) is set:
-                    if k not in merged:
-                        merged[k] = set()
-                    if type(merged[k]) is not set:
-                        raise TypeError(
-                            "Expecting 'set' at key '{}', got {}".format(
-                                k, type(merged[k])
-                            )
-                        )
-
-                    merged[k] = merged[k].union(v)
-
-                else:
-                    if k not in merged:
-                        merged[k] = set()
-
-                    merged[k].add(v)
-
-        return merged
-
-    # condense all used parameters down to sets of possible values
-    available_options = {}
-    for v in stl_options:
-        available_options = merge_dicts(available_options, v["parameters"])
-
-    # filter out parameters that are never changed and rename {True, False}
-    # values to "bool"
-    changeable_options = {}
-    for name, options in available_options.items():
-        if len(options) > 1:
-            if options == {False, True}:
-                changeable_options[name] = "bool"
-            else:
-                changeable_options[name] = options
-        # if it's a select_stl_if param then it can have a single value
-        elif name in all_select_stl_params:
-            if (False in options) or (True in options):
-                changeable_options[name] = "bool"
-            else:
-                changeable_options[name] = options
-
-    # make sure we have some docs for these options
-    option_docs_dict = dict([(v["key"], v) for v in option_docs])
-    for k in changeable_options:
-        if k not in option_docs_dict:
-            raise Exception(
-                f"No documentation found for '{k}' option, please add it to 'option_docs' in '{__file__}'"
-            )
-        docs = option_docs_dict[k]
-        if "description" not in docs:
-            raise Exception(
-                f"No description found for '{k}' option, please add it to 'option_docs' in '{__file__}'"
-            )
-        if "default" not in docs:
-            raise Exception(
-                f"No default value found for '{k}' option, please add it to 'option_docs' in '{__file__}'"
-            )
-        if "options" in docs:
-            opts = [o["key"] for o in docs["options"]]
-            if set(opts) != changeable_options[k]:
-                raise Exception(f"Invalid sub-options in option_docs in '{k}'")
-
-            # replace the set with a list so we get the ordering from option_docs
-            changeable_options[k] = opts
-
-    stl_options.sort(key=operator.itemgetter("stl"))
-
-    def encode_set(s):
-        """ encode 'set' as sorted 'list' when converting to JSON """
-        if type(s) is set:
-            return sorted(list(s))
-        else:
-            raise TypeError("Expecting 'set' got {}".format(type(s)))
-
-    # equivalent to mkdir -p
-    pathlib.Path(build_dir).mkdir(parents=True, exist_ok=True)
-
-    p = os.path.join(build_dir, "stl_options.json")
-    with open(p, "w") as f:
-        json.dump(
-            {
-                "stls": stl_options,
-                "options": changeable_options,
-                "docs": option_docs,
-                "required": required_stls,
-                "presets": stl_presets,
-            },
-            f,
-            indent=2,
-            default=encode_set,
-        )
-    print(f"generated {p}")
-
+    json_generator.write()
 
 run_build()
