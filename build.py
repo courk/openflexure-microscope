@@ -265,7 +265,6 @@ def openscad(
             input,
             parameters=parameters,
             file_local_parameters=file_local_parameters,
-            openscad_only_parameters=openscad_only_parameters,
             select_stl_if=select_stl_if,
         )
 

@@ -85,7 +85,6 @@ class JsonGenerator:
         input,
         parameters,
         file_local_parameters,
-        openscad_only_parameters,
         select_stl_if,
     ):
         """
@@ -138,7 +137,7 @@ class JsonGenerator:
                     changeable_options[name] = "bool"
                 else:
                     changeable_options[name] = options
-            # if it's a select_stl_if param then it can have a single value
+            # if it's a select_stl_if param then it can have just a single value
             elif name in self._all_select_stl_params:
                 if (False in options) or (True in options):
                     changeable_options[name] = "bool"
