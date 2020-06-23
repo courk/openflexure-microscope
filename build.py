@@ -486,11 +486,16 @@ for stage_size in stage_size_options:
 
             parameters = {
                 **stage_parameters(stage_size, sample_z),
-                "optics": "pilens",
+                "optics": "pilens" if version == "picamera_2" else "m12_lens",
                 "camera": version,
             }
 
-            openscad(output, "camera_platform.scad", parameters)
+            openscad(
+                output,
+                "camera_platform.scad",
+                parameters,
+                select_stl_if={"riser": "no riser"},
+            )
 
 
 ###############
