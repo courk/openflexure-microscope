@@ -40,8 +40,8 @@ stl_presets = [
         "title": "Low Cost with Webcam",
         "description": "The cheapest possible option using a computer webcam.",
         "parameters": {
-            "optics": "c270_lens",
-            "camera": "logitech_c270",
+            "optics": "m12_lens",
+            "camera": "6led",
             "motorised": False,
             "base": "feet",
         },
