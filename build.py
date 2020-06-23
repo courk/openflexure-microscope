@@ -156,6 +156,12 @@ option_docs = [
         "default": 30,
     },
     {
+        "key": "include_actuator_tension_band",
+        "default": False,
+        "advanced": True,
+        "description": "Include some bands, to replace the o-rings, that need to be printed in TPU filament.",
+    },
+    {
         "key": "use_pilens_optics_module",
         "default": False,
         "advanced": True,
@@ -544,18 +550,18 @@ for riser_type in ["sample", "slide"]:
 ###############
 ### SMALL PARTS
 
-parts = [
-    "actuator_assembly_tools",
-    "actuator_tension_band",
-    "condenser",
-    "illumination_dovetail",
-    "lens_tool",
-]
+parts = ["actuator_assembly_tools", "condenser", "illumination_dovetail", "lens_tool"]
 
 for part in parts:
     output = f"{part}.stl"
     input = f"{part}.scad"
     openscad(output, input)
+
+openscad(
+    "actuator_tension_band.stl",
+    "actuator_tension_band.scad",
+    select_stl_if={"include_actuator_tension_band": True},
+)
 
 openscad(
     "actuator_drilling_jig.stl",
