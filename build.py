@@ -470,7 +470,7 @@ for foot_height in [15, 26]:
         f"back_foot{version_name}.stl",
         "back_foot.scad",
         openscad_only_parameters=openscad_only_parameters,
-        select_stl_if=select_stl_if,
+        select_stl_if={"base": "feet"},
     )
 
 
