@@ -1,5 +1,16 @@
-// A "bucket" base for the microscope to raise it up and houseto make a nice bridge above sd card cutout
+// A "bucket" base for the microscope to raise it up and house
 // the electronics.
+// There are two buckets on a motorised microscope, one to
+// hold the Raspberry Pi and one to hold the motor driver.
+// The motor driver case stacks underneath, as it's optional.
+// 
+// The buckets (with the exception of the top one that holds
+// the microscope body) are stackable - so other accessories 
+// like a battery pack or SSD for storage could be stacked
+// underneath
+
+// (c) Richard Bowman 2019
+// Released under the CERN Open Hardware License
 
 use <utilities.scad>;
 include <microscope_parameters.scad>;
@@ -17,7 +28,6 @@ raspi_support = 4.0;
 raspi_board = [85, 58, 19]; //this is wrong, should be 85, 56, 19
 
 include_breadboard = false;
-
 nano = true;
 nano_width = 18.0;
 nano_length = 43.0;
@@ -43,6 +53,8 @@ module pi_footprint(){
     pi_frame() translate([-1,-1]) square([raspi_board[0]+2,raspi_board[1]+2]);
 }
 
+sd_card_cutout_top = 20;
+
 module pi_connectors(){
     pi_frame(){
         // USB/network ports
@@ -52,7 +64,7 @@ module pi_connectors(){
         translate([24-(40/2), -100, -2]) cube([46,100,14]);
 
         // micro-SD card cutout
-        translate([-25,raspi_board[1]/2-16,-10]) cube([30,30,16]);
+        translate([-25,raspi_board[1]/2-16,-10]) cube([30, sd_card_cutout_top + 10, 16]);
     }
 }
 
@@ -139,6 +151,13 @@ module footprint(){
     }
 }
 
+module footprint_after_pi_cutouts(){
+    hull() difference(){
+        footprint();
+        projection() pi_connectors();
+    }
+}
+
 module bucket_base_stackable(local_h=box_h){
     // The stackable "bucket" before holes and supports
     difference(){
@@ -170,13 +189,21 @@ module top_casing_block(local_h=box_h, os=0, legs=true, lugs=true){
     bottom = os<0?bottom_thickness:0;
     top_h = os<0?d:inset_depth;
     union(){
-        translate([0,0,bottom]) linear_extrude(local_h+d-bottom) offset(os) footprint();
+        sequential_hull(){
+            // The bottom part has a slightly cropped footprint, so the bridge over the SD card
+            // can be straight.
+            translate([0,0,bottom]) linear_extrude(d) offset(os) footprint_after_pi_cutouts();
+            translate([0,0,min(sd_card_cutout_top, local_h)]) linear_extrude(d) offset(os) footprint_after_pi_cutouts();
+            translate([0,0,local_h]) linear_extrude(d) offset(os) footprint();
+        }
         hull_from(){
-            translate([0,0,local_h]) linear_extrude(2*d) offset(os) footprint(); //top of the box
+            translate([0,0,local_h]) linear_extrude(2*d) offset(os) footprint();
             
-            for(a=[0,180]) translate([0,0,local_h+foot_height]) linear_extrude(top_h) difference(){
+            //for(a=[0,180]) // I'm sure there used to be a good reason to do this in two stages, but
+            // I cannot now remember what it was, and it seems to make no difference...
+            translate([0,0,local_h+foot_height]) linear_extrude(top_h) difference(){
                 offset(os*2+wall_thickness) microscope_bottom(lugs=lugs, feet=false, legs=legs);
-                rotate(a) translate([-999,0]) square(999*2);
+                //rotate(a) translate([-999,0]) square(999*2);
             }
             //if(legs) translate([0,0,local_h+foot_height-t]) linear_extrude(t+top_h) offset(os+1.5+t) microscope_legs();
         }
@@ -192,27 +219,15 @@ module bucket_base_with_microscope_top(local_h=box_h){
                 top_casing_block(local_h=local_h, os=0, legs=true);
         
                 difference(){
-            // we hollow out the casing, but not underneath the legs or lugs.
+                    // we hollow out the casing, but not underneath the legs or lugs.
                     top_casing_block(local_h=local_h, os=-wall_thickness, legs=false, lugs=false);
                     for(p=base_mounting_holes) hull(){
-                // double-subtract under the mounting holes to make attachment points
+                        // double-subtract under the mounting holes to make attachment points
                         translate(p+[0,0,local_h+foot_height-4]) cylinder(r=4,h=4);
                         translate(p*1.2 + [0,0,local_h+foot_height-4-norm(p)*0.3]) cylinder(r=4,h=4+norm(p)*0.3);
                     }
                 }
   
-            }
-            
-//The following is a monstrous but necessary kludge.
-//A good bridge will need a straight run, but both ends
-//are along a curve that shifts with different wall thicknesses.
-//I manually located the block once for my chosen wall
-//and interpolate for others.
-//It is at least close - but not entirely correct.
-            pi_frame() {
-                translate([-17.06+(wall_thickness-2.35)/sin(90-15.35),raspi_board[1]/2-16,5.8+bottom_thickness+raspi_support]) rotate([0,0,-15.35-0.8*(2.35-wall_thickness)]) translate([-3,0,0]) linear_extrude(height=19.0) {
-                    polygon(points=[[3,0], [3.2, 0], [3.2, 35], [3, 35], [-1, 15]]);
-                }
             }
         }   
      
@@ -412,6 +427,6 @@ module motor_driver_case(){
 //feet_in_place();
 //footprint();
 
-motor_driver_case();
-//microscope_stand();
+//motor_driver_case();
+microscope_stand();
 
