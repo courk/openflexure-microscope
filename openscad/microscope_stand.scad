@@ -25,9 +25,12 @@ allow_space = 1.5;
 wall_thickness = 1.5; //default 1.5 - 2.35 is good for ABS
 raspi_support = 4.0;
 
+//TODO: move the pi-specific stuff into its own file
 raspi_board = [85, 58, 19]; //this is wrong, should be 85, 56, 19
 
 include_breadboard_holes = true;
+
+//TODO: move the motor driver specific stuff into motor_driver_case.scad
 motor_driver_electronics = "sangaboard";
 nano_width = 18.0;
 nano_length = 43.0;
@@ -201,6 +204,7 @@ module top_casing_block(local_h=box_h, os=0, legs=true, lugs=true){
             
             //for(a=[0,180]) // I'm sure there used to be a good reason to do this in two stages, but
             // I cannot now remember what it was, and it seems to make no difference...
+            // I think there was some strange issue with badly-formed meshes...
             translate([0,0,local_h+foot_height]) linear_extrude(top_h) difference(){
                 offset(os*2+wall_thickness) microscope_bottom(lugs=lugs, feet=false, legs=legs);
                 //rotate(a) translate([-999,0]) square(999*2);
