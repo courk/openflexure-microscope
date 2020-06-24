@@ -445,6 +445,12 @@ for foot_height in [15, 26]:
             "base": "feet",
             "optics": {"rms_f50d13", "rms_infinity_f50d13", "rms_f40d16"},
         }
+        openscad(
+            f"back_foot_tall.stl",
+            "back_foot.scad",
+            openscad_only_parameters=openscad_only_parameters,
+            select_stl_if=select_stl_if
+        )
     elif foot_height == 15:
         select_stl_if = [
             {
@@ -460,17 +466,17 @@ for foot_height in [15, 26]:
             },
             {"base": "feet", "optics": {"c270_lens", "m12_lens", "pilens"}},
         ]
+        openscad(
+            f"back_foot.stl",
+            "back_foot.scad",
+            openscad_only_parameters=openscad_only_parameters,
+            select_stl_if=select_stl_if[1]
+        )
     openscad(
         "feet{version}.stl".format(version=version_name),
         "feet.scad",
         openscad_only_parameters=openscad_only_parameters,
         select_stl_if=select_stl_if,
-    )
-    openscad(
-        f"back_foot{version_name}.stl",
-        "back_foot.scad",
-        openscad_only_parameters=openscad_only_parameters,
-        select_stl_if={"base": "feet"},
     )
 
 
