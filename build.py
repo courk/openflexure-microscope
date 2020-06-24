@@ -163,6 +163,17 @@ ninja.build(
     inputs="openscad/microscope_stand_no_pi.scad",
 )
 
+# Motor driver electronics case
+for motor_driver_electronics in ["sangaboard", "arduino_nano"]:
+    outputs = f"{build_dir}/motor_driver_case_{motor_driver_electronics}.stl"
+    parameters = {"motor_driver_electronics": motor_driver_electronics}
+    
+    ninja.build(
+        outputs,
+        rule="openscad",
+        inputs="openscad/motor_driver_case.scad",
+        variables={"parameters": parameters_to_string(parameters)},
+    )
 
 ########
 ### FEET
@@ -283,7 +294,6 @@ parts = [
     "gears",
     "illumination_dovetail",
     "lens_tool",
-    "motor_driver_case",
     "sample_clips",
     "small_gears",
     "thumbwheels",

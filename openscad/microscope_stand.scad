@@ -22,13 +22,13 @@ use <feet.scad>;
 bottom_thickness = 1.0;
 inset_depth = 3.0;
 allow_space = 1.5;
-wall_thickness = 2.35; //default 1.5 - 2.35 is good for ABS
+wall_thickness = 1.5; //default 1.5 - 2.35 is good for ABS
 raspi_support = 4.0;
 
 raspi_board = [85, 58, 19]; //this is wrong, should be 85, 56, 19
 
-include_breadboard = false;
-nano = true;
+include_breadboard_holes = true;
+motor_driver_electronics = "sangaboard";
 nano_width = 18.0;
 nano_length = 43.0;
 nano_support = 13.0;
@@ -250,8 +250,9 @@ module bucket_base_with_microscope_top(local_h=box_h){
 module mounting_holes(){
     // holes to mount the buckets together (stacking) or to a breadboard
 
-    // breadboard mounting
-    if (include_breadboard)
+    // Allow the base to be bolted to a metric optical breadboard
+    // with M6 holes on 25mm centres
+    if (include_breadboard_holes)
         for(p=[[0,0,0], [25,25,0], [-25,25,0], [0,50,0], [0,-25,0]]) translate(p) cylinder(d=6.6,h=999,center=true);
         
     // holes at 3 corners to allow mounting to something underneath/stacking
@@ -417,8 +418,8 @@ module motor_driver_case(){
             mounting_holes();
         }
     
-        if (nano) nano_supports();
-        else sangaboard_supports();
+        if(motor_driver_electronics=="sangaboard") sangaboard_supports();
+        if (motor_driver_electronics=="arduino_nano") nano_supports();
     }    
 }
 
