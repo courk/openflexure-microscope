@@ -2,6 +2,7 @@
 title: OpenFlexure Microscope 3D Files
 upload_type: other
 description: 'Design files for the OpenFlexure Microscope: A 3D-printed, customisable, open-source optical microscope with a precision moveable stage using flexure hinges.'
+license: CERN-OHL-1.2
 creators:
   - name: 'Bowman, Richard'
     affiliation: 'University of Bath'
