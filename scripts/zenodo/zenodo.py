@@ -11,12 +11,9 @@ import os
 import requests
 
 
-API_KEY_REAL = os.environ["ZENODO_API_KEY_REAL"]
-API_KEY_SANDBOX = os.environ["ZENODO_API_KEY_SANDBOX"]
-
-
 class Zenodo:
-    def __init__(self, use_sandbox=True):
+    def __init__(self, api_token, use_sandbox=True):
+        self._api_token = api_token
         self._use_sandbox = use_sandbox
         if use_sandbox:
             self.zenodo_url = "https://sandbox.zenodo.org/api/deposit/depositions"
@@ -29,9 +26,7 @@ class Zenodo:
         headers = {"Content-Type": "application/json"}
         r = requests.post(
             self.zenodo_url,
-            params={
-                "access_token": API_KEY_SANDBOX if self._use_sandbox else API_KEY_REAL
-            },
+            params={"access_token": self._api_token},
             json={},
             headers=headers,
         )
@@ -45,7 +40,7 @@ class Zenodo:
         headers = {"Content-Type": "application/json"}
         r = requests.put(
             self.zenodo_url + "/{}".format(deposition_id),
-            params={"access_token": API_KEY},
+            params={"access_token": self._api_token},
             data=json.dumps({"metadata": metadata}),
             headers=headers,
         )
@@ -60,7 +55,7 @@ class Zenodo:
         files = {"file": open(file_path, "rb")}
         r = requests.post(
             self.zenodo_url + "/{}/files".format(deposition_id),
-            params={"access_token": API_KEY},
+            params={"access_token": self._api_token},
             data=data,
             files=files,
         )
@@ -72,7 +67,7 @@ class Zenodo:
 
         r = requests.post(
             self.zenodo_url + "/{}/actions/publish".format(deposition_id),
-            params={"access_token": API_KEY},
+            params={"access_token": self._api_token},
         )
         print(r.status_code)
         print(r.json())
@@ -82,7 +77,7 @@ class Zenodo:
 
         r = requests.post(
             self.zenodo_url + "/{}/actions/newversion".format(deposition_id),
-            params={"access_token": API_KEY},
+            params={"access_token": self._api_token},
         )
         print(r.status_code)
         print(r.json())
@@ -93,7 +88,7 @@ class Zenodo:
 
         r = requests.get(
             self.zenodo_url + "/{}/files".format(deposition_id),
-            params={"access_token": API_KEY},
+            params={"access_token": self._api_token},
         )
         print(r.status_code)
         print(r.json())
@@ -103,6 +98,6 @@ class Zenodo:
                 requests.delete(
                     self.zenodo_url
                     + "/{}/files/{}".format(deposition_id, file_entry["id"]),
-                    params={"access_token": API_KEY},
+                    params={"access_token": self._api_token},
                 )
             )
