@@ -11,11 +11,13 @@ import os
 import requests
 
 
-API_KEY = os.environ["ZENODO_API_KEY"]
+API_KEY_REAL = os.environ["ZENODO_API_KEY_REAL"]
+API_KEY_SANDBOX = os.environ["ZENODO_API_KEY_SANDBOX"]
 
 
 class Zenodo:
     def __init__(self, use_sandbox=True):
+        self._use_sandbox = use_sandbox
         if use_sandbox:
             self.zenodo_url = "https://sandbox.zenodo.org/api/deposit/depositions"
         else:
@@ -26,7 +28,12 @@ class Zenodo:
 
         headers = {"Content-Type": "application/json"}
         r = requests.post(
-            self.zenodo_url, params={"access_token": API_KEY}, json={}, headers=headers
+            self.zenodo_url,
+            params={
+                "access_token": API_KEY_SANDBOX if self._use_sandbox else API_KEY_REAL
+            },
+            json={},
+            headers=headers,
         )
         print(r.status_code)
         print(r.json())
