@@ -34,12 +34,15 @@ def main():
     metadata = get_meta()
 
     zenodo = Zenodo(args.use_sandbox)
-    deposit_id = zenodo.create_new_deposit()
+    deposit = zenodo.create_new_deposit()
 
-    zenodo.set_metadata(deposit_id, metadata)
+    zenodo.set_metadata(deposit["id"], metadata)
 
     for path in args.paths:
-        zenodo.upload_file(deposit_id, path)
+        zenodo.upload_file(deposit["id"], path)
+
+    with open("zenodo.url", "w") as f:
+        f.write(deposit["links"]["latest_draft_html"])
 
 
 if __name__ == "__main__":

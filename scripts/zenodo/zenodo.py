@@ -30,7 +30,7 @@ class Zenodo:
         )
         print(r.status_code)
         print(r.json())
-        return r.json()["id"]
+        return r.json()
 
     def set_metadata(self, deposition_id, metadata):
         """ Sets the given metadata for the specified deposit. """
