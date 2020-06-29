@@ -50,8 +50,9 @@ def main():
     for path in args.paths:
         zenodo.upload_file(deposit["id"], path)
 
-    with open("zenodo.url", "w") as f:
-        f.write(deposit["links"]["latest_draft_html"])
+    link = deposit["links"]["latest_draft_html"]
+    with open("zenodo-link.html", "w") as f:
+        f.write(f'<a href="{link}">{link}</a>')
 
 
 if __name__ == "__main__":
