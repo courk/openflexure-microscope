@@ -595,7 +595,7 @@ openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"reflection_illumination"
 openscad(
     "motor_driver_case.stl",
     "motor_driver_case.scad",
-    select_stl_if={"motorised": True, "base": "feet"},
+    select_stl_if={"motorised": True, "base": "bucket"},
 )
 
 openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
