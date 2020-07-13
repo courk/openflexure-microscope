@@ -151,7 +151,7 @@ option_docs = [
     },
     {
         "key": "microscope_stand:h",
-        "description": "Height of the microscope bucket base stand in mm.",
+        "description": "Height of the microscope bucket base stand in mm.  The default 30mm height should be fine, unless you're using an infinity-corrected optics module in which case you should select 45mm, to allow it to protrude further below the bottom of the main body.",
         "advanced": True,
         "default": 30,
     },
