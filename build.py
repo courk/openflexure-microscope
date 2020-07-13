@@ -631,4 +631,4 @@ build_file.close()
 if generate_stl_options:
     json_generator.write()
 
-#run_build()
+run_build()
