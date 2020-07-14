@@ -151,7 +151,7 @@ option_docs = [
     },
     {
         "key": "microscope_stand:h",
-        "description": "Height of the microscope bucket base stand in mm.",
+        "description": "Height of the microscope bucket base stand in mm.  The default 30mm height should be fine, unless you're using an infinity-corrected optics module in which case you should select 45mm, to allow it to protrude further below the bottom of the main body.",
         "advanced": True,
         "default": 30,
     },
@@ -362,6 +362,9 @@ optics_versions = [
     ("m12", "m12_lens"),
 ] + [(camera, lens) for camera in cameras for lens in rms_lenses]
 
+# Generate a list of lenses to use elsewhere
+all_lenses = list(set([l for c, l in optics_versions]))
+
 for sample_z in sample_z_options:
     for (camera, lens) in optics_versions:
         beamsplitter_options = [True, False] if lens in rms_lenses else [False]
@@ -404,16 +407,23 @@ for stand_height in [30, 45]:
 
         openscad_only = {"beamsplitter": beamsplitter}
 
+        if stand_height==45:
+            compatible_lenses=["rms_infinity_f50d13"]
+        else:
+            compatible_lenses=[l for l in all_lenses if l!="rms_infinity_f50d13"]
+
         openscad(
             output,
             "microscope_stand.scad",
             openscad_only_parameters=openscad_only,
             file_local_parameters={"h": stand_height},
-            select_stl_if={
-                "pi_in_base": True,
-                "base": "bucket",
-                "reflection_illumination": beamsplitter,
-            },
+            select_stl_if=[ {
+                                "pi_in_base": True,
+                                "base": "bucket",
+                                "reflection_illumination": beamsplitter,
+                                "optics": optics
+                            }
+                            for optics in compatible_lenses ]
         )
 
 # Stand without pi
@@ -585,7 +595,7 @@ openscad("fl_cube.stl", "fl_cube.scad", select_stl_if={"reflection_illumination"
 openscad(
     "motor_driver_case.stl",
     "motor_driver_case.scad",
-    select_stl_if={"motorised": True, "base": "feet"},
+    select_stl_if={"motorised": True, "base": "bucket"},
 )
 
 openscad("small_gears.stl", "small_gears.scad", select_stl_if={"motorised": True})
