@@ -407,23 +407,25 @@ for stand_height in [30, 45]:
 
         openscad_only = {"beamsplitter": beamsplitter}
 
-        if stand_height==45:
-            compatible_lenses=["rms_infinity_f50d13"]
+        if stand_height == 45:
+            compatible_lenses = ["rms_infinity_f50d13"]
         else:
-            compatible_lenses=[l for l in all_lenses if l!="rms_infinity_f50d13"]
+            compatible_lenses = [l for l in all_lenses if l != "rms_infinity_f50d13"]
 
         openscad(
             output,
             "microscope_stand.scad",
             openscad_only_parameters=openscad_only,
             file_local_parameters={"h": stand_height},
-            select_stl_if=[ {
-                                "pi_in_base": True,
-                                "base": "bucket",
-                                "reflection_illumination": beamsplitter,
-                                "optics": optics
-                            }
-                            for optics in compatible_lenses ]
+            select_stl_if=[
+                {
+                    "pi_in_base": True,
+                    "base": "bucket",
+                    "reflection_illumination": beamsplitter,
+                    "optics": optics,
+                }
+                for optics in compatible_lenses
+            ],
         )
 
 # Stand without pi
@@ -459,7 +461,7 @@ for foot_height in [15, 26]:
             f"back_foot_tall.stl",
             "back_foot.scad",
             openscad_only_parameters=openscad_only_parameters,
-            select_stl_if=select_stl_if
+            select_stl_if=select_stl_if,
         )
     elif foot_height == 15:
         select_stl_if = [
@@ -480,7 +482,7 @@ for foot_height in [15, 26]:
             f"back_foot.stl",
             "back_foot.scad",
             openscad_only_parameters=openscad_only_parameters,
-            select_stl_if=select_stl_if[1]
+            select_stl_if=select_stl_if[1],
         )
     openscad(
         "feet{version}.stl".format(version=version_name),
