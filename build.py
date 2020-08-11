@@ -386,6 +386,9 @@ for sample_z in sample_z_options:
             if lens not in rms_lenses:
                 select_stl_if["riser"] = "no riser"
 
+            if lens == "rms_infinity_f50d13":
+                select_stl_if["microscope_stand:h"] = 45
+
             openscad(
                 output,
                 "optics.scad",
