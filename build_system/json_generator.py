@@ -2,8 +2,7 @@ import json
 import os
 import operator
 import pathlib
-from util import merge_dicts
-
+from .util import merge_dicts
 
 
 class JsonGenerator:
@@ -19,9 +18,9 @@ class JsonGenerator:
         self,
         output,
         input,
-        parameters,
-        file_local_parameters,
-        select_stl_if,
+        parameters=None,
+        file_local_parameters=None,
+        select_stl_if=None,
     ):
         """
         Register the stl and its parameters for JSON output.
@@ -36,6 +35,12 @@ class JsonGenerator:
             select_stl_if {dict}|{list} -- values of parameters not used by openscad but relevant to selecting this stl when making a specific variant.
                                            Using a list means or-ing the combinations listed.
         """
+
+        if parameters is None:
+            parameters = {}
+
+        if file_local_parameters is None:
+            file_local_parameters = {}
 
         if not isinstance(select_stl_if, list):
             ssif = [select_stl_if]
@@ -102,7 +107,10 @@ class JsonGenerator:
 
                 # make sure it's the same as the set of used options
                 if set(opts) != changeable_options[k]:
-                    raise Exception(f"Invalid sub-options in option_docs in '{k}'")
+                    raise Exception(
+                        "Options used does not equal documented options from option_docs, difference: "
+                        + str(set(opts).symmetric_difference(changeable_options[k]))
+                    )
 
                 # replace the set with the list so we take on the ordering from option_docs
                 changeable_options[k] = opts
