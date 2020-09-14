@@ -42,7 +42,9 @@ class JsonGenerator:
         if file_local_parameters is None:
             file_local_parameters = {}
 
-        if not isinstance(select_stl_if, list):
+        if select_stl_if is None:
+            ssif = [{}]
+        elif not isinstance(select_stl_if, list):
             ssif = [select_stl_if]
         else:
             ssif = select_stl_if
