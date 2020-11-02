@@ -491,7 +491,7 @@ openscad(
 for motor_driver_electronics in ["sangaboard", "arduino_nano"]:
     outputs = f"{build_dir}/motor_driver_case_{motor_driver_electronics}.stl"
     parameters = {"motor_driver_electronics": motor_driver_electronics}
-    
+
     ninja.build(
         outputs,
         rule="openscad",
@@ -697,6 +697,12 @@ openscad(
 )
 
 
+openscad(
+    "just_leg_test.stl",
+    "just_leg_test.scad",
+)
+
+
 ### prebuilt STL files from openflexure-microscope-extra
 
 if args.include_extra_files:
@@ -728,8 +734,6 @@ if args.include_extra_files:
             {"camera": "6ledcam", "optics": "6ledcam_lens", "riser": "no riser"},
         ],
     )
-
-    copy_stl("just_leg_test.stl")
 
 
 ###############
