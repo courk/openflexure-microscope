@@ -700,6 +700,7 @@ openscad(
 openscad(
     "just_leg_test.stl",
     "just_leg_test.scad",
+    openscad_only_parameters={"big_stage": False},
 )
 
 
