@@ -14,9 +14,11 @@ For up-to-date build instructions and STL files, please head to the [build a mic
 The editable instructions are MarkDown format, in the [docs folder](./docs/), and the latest release docs will be compiled into a web page linked from the [build a microscope page].
 
 ## Printing it yourself
-To build the microscope, go to the [build a microscope page] and check the instructions on printing.  Don't just print everything from the zip file download, as there are a number of different configurations possible - we're working on an automatic way to let you download just the right files.  The [assembly instructions](https://build.openflexure.org/openflexure-microscope/latest/docs) contain instructions on what parts to print and how to build it.
+Configure your microscope hardware and download the STL files through the [microscope STL configurator] page.  The [assembly instructions](https://build.openflexure.org/openflexure-microscope/latest/docs) contain instructions on print settings and putting it together.
 
 If you've built one, let us know - add yourself to the [wiki page of builds](https://gitlab.com/openflexure/openflexure-microscope/wikis/Assembly-Logs) or submit an [issue](https://gitlab.com/openflexure/openflexure-microscope/issues/new) marked as a build report.  This is a really helpful thing to do even if you don't suggest improvements or flag up problems.
+
+[microscope STL configurator]: https://microscope-stls.openflexure.org
 
 ## Come join us!
 Most of the development of this design has been done as part of various [research projects](http://www.bath.ac.uk/physics/contacts/academics/richard-bowman/index.html) - if you would like to join our research group at Bath, and you have funding or are interested in applying for it, do get in touch.  Check the University of Bath jobs site, or findaphd.com, to see if we are currently advertising any vacancies.  The team is bigger than Bath, though, and there are contibutors in Cambridge, Dar es Salaam, and beyond.
@@ -37,7 +39,7 @@ This project is open so that anyone can get involved, and you don't have to lear
 Things in need of attention are currently described in [issues](https://gitlab.com/openflexure/openflexure-microscope/issues/) so have a look there if you'd like to work on something but aren't sure what.
 
 ## Developing
-If you want to play with the OpenSCAD files or change the documentation, you should fork the repository.  You can edit the documentation online in GitLab, or clone the repository if you want to edit the OpenSCAD files.  NB you'll need to clone the whole repository as the OpenSCAD files are dependent on each other.  
+If you want to play with the OpenSCAD files or change the documentation, you should fork the repository.  You can edit the documentation online in GitLab, or clone the repository if you want to edit the OpenSCAD files.  NB you'll need to clone the whole repository as the OpenSCAD files are dependent on each other.
 
 ### Development environment
 We mostly use VSCode to edit the OpenSCAD files, and then use OpenSCAD with the editor hidden and the "automatic reload and compile" option ticked.  This is much nicer for a big multi-file project like the microscope than relying on OpenSCAD's built-in editor, and also works nicely with version control.  NB you can edit ``microscope_parameters.scad`` to change which options you build in the OpenSCAD window, but it's best not to commit changes to that file unless you need to change the default values.
@@ -46,7 +48,7 @@ We mostly use VSCode to edit the OpenSCAD files, and then use OpenSCAD with the 
 The build system is based on Python and Ninja, see [compiling](COMPILE.md) for more details.
 
 ### Release flow
-We use GitLab CI to manage builds and deployment. 
+We use GitLab CI to manage builds and deployment.
 
 The CI will build STL files that expire after 1 week when:
 * A build is manually triggered from GitLab web
