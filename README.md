@@ -19,9 +19,11 @@ For up-to-date build instructions, STL files, and pre-built Raspberry Pi SD imag
 The latest release of our assembly documentation can be found from the [build a microscope page] on our website. The editable instructions are Markdown format, in the [docs folder](./docs/) of this repository. If you have a problem accessing the images after cloning the repository see the section on LFS files below.
 
 ## Printing it yourself
-To build the microscope, go to the [build a microscope page] and check the instructions on printing.  Don't just print everything from the zip file download, as there are a number of different configurations possible - we're working on an automatic way to let you download just the right files.  The [assembly instructions](https://build.openflexure.org/openflexure-microscope/latest/docs) contain instructions on what parts to print and how to build it.
+Configure your microscope hardware and download the STL files through the [microscope STL configurator] page.  The [assembly instructions](https://build.openflexure.org/openflexure-microscope/latest/docs) contain instructions on print settings and putting it together.
 
 If you've built one, let us know. You can let us know on [our forum](https://openflexure.discourse.group/), add yourself to the [wiki page of builds](https://gitlab.com/openflexure/openflexure-microscope/wikis/Assembly-Logs), or submit an [issue](https://gitlab.com/openflexure/openflexure-microscope/issues/new) marked as a build report.  This is a really helpful for us even if you don't suggest improvements or flag up problems.
+
+[microscope STL configurator]: https://microscope-stls.openflexure.org
 
 ## Come join us!
 Most of the development of this design has been done as part of various [research projects](http://www.bath.ac.uk/physics/contacts/academics/richard-bowman/index.html) - if you would like to join our research group at Bath, and you have funding or are interested in applying for it, do get in touch.  Check the University of Bath jobs site, or findaphd.com, to see if we are currently advertising any vacancies.  The team is bigger than Bath, though, and there are contributors in Cambridge, Dar es Salaam, and beyond.
@@ -54,7 +56,7 @@ You can edit ``microscope_parameters.scad`` to change which options you build in
 The build system is based on Python and Ninja, see [compiling](COMPILE.md) for more details.
 
 ### Release flow
-We use GitLab CI to manage builds and deployment. 
+We use GitLab CI to manage builds and deployment.
 
 The CI will build STL files that will remain on GitLab for 1 week when:
 
