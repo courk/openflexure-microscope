@@ -578,7 +578,8 @@ for stage_size in stage_size_options:
             openscad(
                 output,
                 "camera_platform.scad",
-                parameters,
+                parameters=parameters,
+                select_stl_if=select_stl_if
             )
 
 
@@ -620,7 +621,7 @@ for tool in picamera_2_legacy_tools:
 output = "picamera_2_cover.stl"
 input = "cameras/picamera_2_cover.scad"
 parameters = {"camera": "picamera_2"}
-openscad(output, input, parameters)
+openscad(output, input, parameters, select_stl_if={"optics": set(rms_lenses)})
 
 
 #################
