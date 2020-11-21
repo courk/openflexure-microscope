@@ -280,7 +280,7 @@ module mounting_holes(){
     }
 }
 
-module microscope_stand(){
+module microscope_stand(local_h=box_h){
     // A stand for the microscope, with integrated Raspberry Pi
     difference(){
         union(){
