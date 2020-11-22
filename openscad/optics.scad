@@ -37,8 +37,7 @@ fl_cube_top = fl_cube_bottom + fl_cube_w + 2.7; //top of fluorescence cube
 fl_cube_top_w = fl_cube_w - 2.7;
 d = 0.05;
 $fn=24;
-beamsplitter = true;
-delta_stage =true;
+
 
 if(beamsplitter) echo(str("fl_cube_bottom: ", fl_cube_bottom, " for optics module: ", camera, "_", optics));
 
