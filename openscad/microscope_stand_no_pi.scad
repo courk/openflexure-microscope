@@ -6,7 +6,7 @@ h=15;
 module microscope_stand_no_pi(){
     difference(){
         union(){
-            bucket_base_with_microscope_top(h=h);
+            bucket_base_with_microscope_top(local_h=h);
         }
         
         mounting_holes();

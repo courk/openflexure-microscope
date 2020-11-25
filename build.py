@@ -19,7 +19,7 @@ stl_presets = [
             "motorised": True,
             "base": "bucket",
             "pi_in_base": True,
-            "microscope_stand:h": 30,
+            "microscope_stand:box_h": 30,
             "riser": "sample",
         },
     },
@@ -34,7 +34,7 @@ stl_presets = [
             "motorised": False,
             "base": "bucket",
             "pi_in_base": True,
-            "microscope_stand:h": 30,
+            "microscope_stand:box_h": 30,
             "riser": "no riser",
         },
     },
@@ -47,7 +47,7 @@ stl_presets = [
             "camera": "6ledcam",
             "motorised": False,
             "base": "feet",
-            "microscope_stand:h": 30,
+            "microscope_stand:box_h": 30,
             "riser": "no riser",
         },
     },
@@ -174,7 +174,7 @@ option_docs = [
         "description": "Use the normal motor gears instead of the thumbwheels with the hand-actuated version of the microscope.",
     },
     {
-        "key": "microscope_stand:h",
+        "key": "microscope_stand:box_h",
         "description": "Height of the microscope bucket base stand in mm.  The default 30mm height should be fine, unless you're using an infinity-corrected optics module in which case you should select 45mm, to allow it to protrude further below the bottom of the main body.",
         "advanced": True,
         "default": 30,
@@ -433,9 +433,9 @@ for sample_z in sample_z_options:
                 select_stl_if["riser"] = "no riser"
 
             if lens == "rms_infinity_f50d13":
-                select_stl_if["microscope_stand:h"] = 45
+                select_stl_if["microscope_stand:box_h"] = 45
             else:
-                select_stl_if["microscope_stand:h"] = 30
+                select_stl_if["microscope_stand:box_h"] = 30
 
             openscad(
                 output,
@@ -467,7 +467,7 @@ for stand_height in [30, 45]:
             output,
             "microscope_stand.scad",
             openscad_only_parameters=openscad_only,
-            file_local_parameters={"h": stand_height},
+            file_local_parameters={"box_h": stand_height},
             select_stl_if=[
                 {
                     "pi_in_base": True,
