@@ -26,13 +26,12 @@ use <dovetail.scad>;
 use <z_axis.scad>;
 include <microscope_parameters.scad>; // NB this defines "camera" and "optics"
 use <thorlabs_threads.scad>;
-
 use <cameras/camera.scad>; // this will define the 2 functions and 1 module for the camera mount, using the camera defined in the "camera" parameter.
 
-dt_bottom = -2; //where the dovetail starts (<0 to allow some play)
-camera_mount_top = dt_bottom - 3 - (optics=="rms_f50d13"?8:0) - (optics=="rms_infinity_f50d13"?20:0); //the 50mm tube lens requires the camera to stick out the bottom.
-bottom = camera_mount_top-camera_mount_height(); //nominal distance from PCB to microscope bottom
-fl_cube_bottom = bottom + camera_sensor_height() + 7.5; //bottom of the fluorescence filter cube (0 except for the RMS f=50mm modules where it's -8 or -20)
+dt_bottom = -2; //bottom of dovetail (<0 to allow some play)
+camera_mount_top_z = dt_bottom - 3 - (optics=="rms_f50d13"?8:0) - (optics=="rms_infinity_f50d13"?20:0); //the 50mm tube lens requires the camera to stick out the bottom.
+bottom = camera_mount_top_z-camera_mount_height(); //nominal distance from PCB to microscope bottom
+fl_cube_bottom = bottom + camera_sensor_height() + 6.5; //bottom of the fluorescence filter cube (0 except for the RMS f=50mm modules where it's -8 or -20)
 fl_cube_top = fl_cube_bottom + fl_cube_w + 2.7; //top of fluorescence cube
 fl_cube_top_w = fl_cube_w - 2.7;
 d = 0.05;
@@ -44,7 +43,7 @@ if(beamsplitter) echo(str("fl_cube_bottom: ", fl_cube_bottom, " for optics modul
 function fl_cube_width() = fl_cube_w;
 
 module fl_cube_cutout(taper=true){
-    fl_cube_cutout_w = fl_cube_w+2; //make the cutout a little bigger than the fl_cube
+    fl_cube_cutout_w = fl_cube_w+1; //make the cutout a little bigger than the fl_cube
     // A cut-out that enables a filter cube to be inserted.
     union(){
         sequential_hull(){
@@ -174,7 +173,7 @@ module camera_mount_body(
                 rotate(fl_cube_rotation){
                     translate([0,-2.5,0])fl_screw_holes(d = 2.5, h = 6);
                     hull(){
-                        translate([0,-fl_cube_w,fl_cube_bottom+fl_cube_w/2+3])cube([fl_cube_w+15,fl_cube_w,fl_cube_w+6],center=true);
+                        translate([0,-fl_cube_w,fl_cube_bottom+fl_cube_w/2+3.5])cube([fl_cube_w+15,fl_cube_w,fl_cube_w+7],center=true);
                         translate([0,-fl_cube_w-6,fl_cube_bottom++fl_cube_w/2+9])cube([fl_cube_w+20,fl_cube_w,fl_cube_w+6],center = true);
                     }
                 }
