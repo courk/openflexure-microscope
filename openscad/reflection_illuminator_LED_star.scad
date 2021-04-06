@@ -183,11 +183,8 @@ module slip_plate(w){
                 }
                     //mounting hole to optics module
                 translate([(fl_cube_w/2+3),0,(top_filter_cube)+slip_plate_thickness+2]){
-                    rotate([-90,60,0]){
-                        trylinder_selftap(nominal_d = 2.5,h= 6);
-                    }
-                }   
-            }
+                        cylinder_with_45deg_top(r = 2.5/2,h= 6, extra_height = 0);               }   
+                }
         }
     }
 }
