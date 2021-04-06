@@ -84,7 +84,7 @@ module optical_path(lens_aperture_r, lens_z){
     // a feathered cylindrical beam path.  Camera mount is now cut out
     // of the camera mount body already.
     union(){
-        translate([0,0,camera_mount_top-d]) lighttrap_cylinder(r1=5, r2=lens_aperture_r, h=lens_z-camera_mount_top+2*d); //beam path
+        translate([0,0,camera_mount_top_z-d]) lighttrap_cylinder(r1=5, r2=lens_aperture_r, h=lens_z-camera_mount_top_z+2*d); //beam path
         translate([0,0,lens_z]) cylinder(r=lens_aperture_r,h=2*d); //lens
     }
 }
@@ -109,7 +109,7 @@ module lens_gripper(lens_r=10,h=6,lens_h=3.5,base_r=-1,t=0.65,solid=false, flare
     trylinder_gripper(inner_r=lens_r, h=h, grip_h=lens_h, base_r=base_r, t=t, solid=solid, flare=flare);
 }
 
-module camera_mount_top(){
+module camera_mount_top_slice(){
     // A thin slice of the top of the camera mount
     linear_extrude(d) projection(cut=true) camera_mount();
 }
@@ -142,8 +142,8 @@ module camera_mount_body(
                 sequential_hull(){
                     //hull together the base and the tube
                     rotate(camera_mount_rotation)translate([0,0,camera_mount_top_z]) camera_mount_top_slice(); //Where the tube meets the camera
-                    translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=tiny()); //the bottom of the tube
-                    translate([0,0,body_top]) cylinder(r=body_r,h=tiny()); //the top of the tube
+                    translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=d); //the bottom of the tube
+                    translate([0,0,body_top]) cylinder(r=body_r,h=d); //the top of the tube
 
                     // allow for extra coordinates above this, if wanted.
                     // this should really be done with a for loop, but
@@ -159,19 +159,19 @@ module camera_mount_body(
                     hull(){
                         // all the things at the bottom
                         rotate(camera_mount_rotation)translate([0,0,camera_mount_top_z]) camera_mount_top_slice(); //Where the tube meets the camera
-                        translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=tiny()); //the bottom of the tube
-                        translate([0,0,dt_bottom]) objective_fitting_base(params); //the bottom of the dovetail
+                        translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=d); //the bottom of the tube
+                        translate([0,0,dt_bottom]) objective_fitting_base(); //the bottom of the dovetail
                     }
                     // the dovetail                        
-                    translate([0,0,dt_bottom]) objective_fitting_base(params); //the bottom of the dovetail
+                    translate([0,0,dt_bottom]) objective_fitting_base(); //the bottom of the dovetail
                     hull(){
-                        translate([0,0,dt_bottom]) objective_fitting_base(params); //the bottom of the dovetail
-                        translate([0,0,dt_top]) objective_fitting_base(params); //the top of the dovetail
+                        translate([0,0,dt_bottom]) objective_fitting_base(); //the bottom of the dovetail
+                        translate([0,0,dt_top]) objective_fitting_base(); //the top of the dovetail
                     }
                     hull(){
                         // the tube
-                        translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=tiny()); //the bottom of the tube
-                        translate([0,0,body_top]) cylinder(r=body_r,h=tiny()); //the top of the tube
+                        translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=d); //the bottom of the tube
+                        translate([0,0,body_top]) cylinder(r=body_r,h=d); //the top of the tube
                     }
                 }
             }
@@ -185,8 +185,8 @@ module camera_mount_body(
                             fl_screw_holes(d = 4, h =8); //the mounts for the fl cube screw holes
                         }
                     }
-                    translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=tiny()); //the bottom of the tube
-                    translate([0,0,body_top]) cylinder(r=body_r,h=tiny()); //the top of the tube
+                    translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=d); //the bottom of the tube
+                    translate([0,0,body_top]) cylinder(r=body_r,h=d); //the top of the tube
                 }
             }
         }
