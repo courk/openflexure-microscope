@@ -29,14 +29,18 @@ use <thorlabs_threads.scad>;
 use <cameras/camera.scad>; // this will define the 2 functions and 1 module for the camera mount, using the camera defined in the "camera" parameter.
 
 dt_bottom = -2; //bottom of dovetail (<0 to allow some play)
-camera_mount_top_z = dt_bottom - 3 - (optics=="rms_f50d13"?8:0) - (optics=="rms_infinity_f50d13"?20:0); //the 50mm tube lens requires the camera to stick out the bottom.
+camera_mount_top_z = dt_bottom - 3 - (optics=="rms_f50d13"?8:0) - (optics=="rms_infinity_f50d13"?20:0) - (optics=="rms_infinity_f50d13_rev"?48-1:0); //the 50mm tube lens requires the camera to stick out the bottom.
 bottom = camera_mount_top_z-camera_mount_height(); //nominal distance from PCB to microscope bottom
+
 fl_cube_bottom = bottom + camera_sensor_height() + 6; //bottom of the beamsplitter filter cube (0 except for the RMS f=50mm modules where it's -8 or -20)
+
 fl_cube_top = fl_cube_bottom + fl_cube_w + 2.7; //top of beamsplitter cube
 fl_cube_top_w = fl_cube_w - 2.7;
 d = 0.05;
 $fn=24;
 
+// TODO: make tweaking this automated
+beamsplitter_top_offset = sample_z - 12 + 6 - 2;
 
 if(beamsplitter) echo(str("fl_cube_bottom: ", fl_cube_bottom, " for optics module: ", camera, "_", optics));
 
@@ -57,24 +61,33 @@ module fl_cube_cutout(taper=true){
             translate([-fl_cube_w/2+2,-fl_cube_w/2-1,fl_cube_bottom]) cube([fl_cube_w-4,999,fl_cube_w]);
             translate([-fl_cube_w/2+4,-fl_cube_w/2,fl_cube_bottom]) cube([fl_cube_w-8,999,fl_cube_w+2]);
         }
-            
+
     }
 }
+
 module fl_cube_casing(){
     // A solid object, big enough to contain the beamsplitter cube cutout.
-    minkowski(){
-        difference(){
-            fl_cube_cutout();
-            translate([-999, fl_cube_w/2, -999]) cube(999*2);
+    fl_cube_cutout_w = fl_cube_w+1; //make the cutout a little bigger than the fl_cube
+    union()
+    {
+        minkowski(){
+            difference(){
+                fl_cube_cutout();
+                translate([-999, fl_cube_w/2, -999]) cube(999*2);
+            }
+            cylinder(r=1.6, h=0.5);
         }
-        cylinder(r=1.6, h=0.5);
+        if (beamsplitter_top)
+        {
+            translate([-fl_cube_cutout_w/2,-fl_cube_cutout_w/2-3,fl_cube_bottom+2]) cube([fl_cube_cutout_w,3,fl_cube_cutout_w*1.6]);
+        }
     }
 }
 
 module fl_screw_holes(d,h){
     reflect([1,0,0]){
         union(){
-            translate([fl_cube_w/2+3,0,fl_cube_bottom+fl_cube_w])rotate([90,0,0]) trylinder_selftap(d, h);
+            translate([fl_cube_w/2+4,0,fl_cube_bottom+fl_cube_w]) rotate([90,0,0]) cylinder(h = h, r = d/2);
         }
     }
 }
@@ -100,7 +113,16 @@ module optical_path_fl(lens_aperture_r, lens_z){
         }
     }
 }
-    
+
+module optical_path_fl_top(lens_aperture_r, lens_z){
+    // The cut-out part of a camera mount, with a space to slot in a filter cube.
+    rotation = delta_stage ? 120 : 180; // The angle that the fl module exits from (0* is the dovetail)
+    rotate(rotation)
+    {
+        translate([0, 0, beamsplitter_top_offset]) fl_cube_cutout(); //filter cube
+    }
+}
+
 module lens_gripper(lens_r=10,h=6,lens_h=3.5,base_r=-1,t=0.65,solid=false, flare=0.4){
     // This creates a tapering, distorted hollow cylinder suitable for
     // gripping a small cylindrical (or spherical) object
@@ -162,7 +184,7 @@ module camera_mount_body(
                         translate([0,0,dt_bottom]) cylinder(r=bottom_r,h=d); //the bottom of the tube
                         translate([0,0,dt_bottom]) objective_fitting_base(); //the bottom of the dovetail
                     }
-                    // the dovetail                        
+                    // the dovetail
                     translate([0,0,dt_bottom]) objective_fitting_base(); //the bottom of the dovetail
                     hull(){
                         translate([0,0,dt_bottom]) objective_fitting_base(); //the bottom of the dovetail
@@ -175,7 +197,7 @@ module camera_mount_body(
                     }
                 }
             }
-            if(beamsplitter){ 
+            if(beamsplitter){
                 // join together the top of the camera, the beamsplitter and the tube
                 hull(){
                     rotate(camera_mount_rotation)translate([0,0,camera_mount_top_z]) camera_mount_top_slice(); //Where the tube meets the camera
@@ -194,7 +216,7 @@ module camera_mount_body(
         // Mount for the nut that holds it on
         translate([0,0,-1]) objective_fitting_cutout();
         // screw holes  and faceplate for fl module
-        if(beamsplitter){ 
+        if(beamsplitter){
             rotate(fl_cube_rotation){
                 translate([0,-2.5,0])fl_screw_holes(d = 2.5, h = 6);
                 hull(){
@@ -222,11 +244,11 @@ module rms_mount_and_tube_lens_gripper(){
     }
 }
 
-module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20, 
+module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
     tube_lens_r=16/2+0.2, objective_parfocal_distance=35, tube_length=150, beamsplitter=false, gripper_t=1, dovetail=true){
     // This optics module takes an RMS objective and a tube length correction lens.
     // important parameters are below:
-        
+
     rms_r = 20/2; //radius of RMS thread, to be gripped by the mount
     //tube_lens_r (argument) is the radius of the tube lens
     //tube_lens_ffd (argument) is the front focal distance (from flat side to focus) - measure this, or take it from the lens spec. sheet
@@ -236,7 +258,7 @@ module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
     //sample_z (microscope_parameters.scad) // height of the sample above the bottom of the microscope (depends on size of microscope)
     dovetail_top = min(27, sample_z-objective_parfocal_distance-0.5); //height of the top of the dovetail, i.e. the position of the objective's "shoulder"
     //tube_length (argument) is the distance behind the objective's "shoulder" where the image is formed.  This should be infinity (safe to use 9999) for infinity-corrected lenses, or 150 for 160mm tube length objectives (the image is formed ~10mm from the end of the tube).
-    
+
     ///////////////// Lens position calculation //////////////////////////
     // calculate the position of the tube lens based on a thin-lens
     // approximation: the light is focussing from the objective shoulder
@@ -258,7 +280,6 @@ module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
     // that's the distance to the nominal "principal plane", in reality
     // we measure the front focal distance, and shift accordingly:
     tube_lens_z = bottom + camera_sensor_height() + dts - (tube_lens_f - tube_lens_ffd);
-        
     // having calculated where the lens should go, now make the mount:
     lens_assembly_z = tube_lens_z - pedestal_h; //height of lens assembly
     lens_assembly_base_r = rms_r+1; //outer size of the lens grippers
@@ -272,13 +293,13 @@ module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
             // camera cut-out and hole for the beam
             if(beamsplitter){
                 optical_path_fl(tube_lens_aperture, lens_assembly_z);
-            }else{
+            } else {
                 optical_path(tube_lens_aperture, lens_assembly_z);
             }
             // make sure the camera mount makes contact with the lens gripper, but
             // doesn't foul the inside of it
             translate([0,0,lens_assembly_z]) lens_gripper(lens_r=rms_r-d, lens_h=lens_assembly_h-2.5,h=lens_assembly_h, base_r=lens_assembly_base_r-d, solid=true); //same as the big gripper below
-            
+
         }
         // A threaded hole for the objective with a lens gripper for the tube lens
         translate([0,0,lens_assembly_z]){
@@ -286,14 +307,44 @@ module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
             radius=25.4*0.8/2-0.25; //Originally this was 9.75, is that a fudge factor, or allowance for the thread?;
             pitch=0.7056;
             difference(){
-                hull(){
-                    cylinder(r=lens_assembly_base_r,h=d,$fn=50);
-                    translate([0,0,lens_assembly_h-5]) cylinder(r=radius+1.2+0.44, h=5);
+                union()
+                {
+                    hull() {
+                        cylinder(r=lens_assembly_base_r,h=d,$fn=50);
+                        translate([0,0,lens_assembly_h-5]) cylinder(r=radius+1.2+0.44, h=5);
+
+                        if(beamsplitter_top){
+                            rotate([0, 0, 300]) translate([0, 0, beamsplitter_top_offset])
+                            {
+                                hull() {
+                                    fl_cube_casing(); //the box to fit the fl cube in
+                                    fl_screw_holes(d=5.6, h=8); //the mounts for the fl cube screw holes
+                                }
+                            }
+                        }
+                    }
+                }
+                if (beamsplitter_top)
+                {
+                    rotate(300) translate([0, 0, beamsplitter_top_offset]) {
+                        translate([0,-2.5,0])fl_screw_holes(d = 3.1, h = 6);
+                        hull(){
+                            translate([0,-fl_cube_w,fl_cube_bottom+fl_cube_w/2+3.5])cube([fl_cube_w+15,fl_cube_w,fl_cube_w+7],center=true);
+                            translate([0,-fl_cube_w-6,fl_cube_bottom++fl_cube_w/2+9])cube([fl_cube_w+20,fl_cube_w,fl_cube_w+6],center = true);
+                        }
+                    }
                 }
                 sequential_hull(){
                     cylinder(r=lens_assembly_base_r-1, h=2*d,center=true,$fn=50);
-                    translate([0,0,lens_assembly_h-5]) cylinder(r=radius+0.44,h=d,$fn=100);
+                    translate([0,0,6 + 2]) cylinder(r=lens_assembly_base_r-1, h=2*d,center=true,$fn=50);
+                    translate([0,0,8 + 2]) cylinder(r=lens_assembly_base_r-4, h=2*d,center=true,$fn=50);
+                    translate([0,0,30 + 2]) rotate([0, 0, 30]) notched_cylinder(r=lens_assembly_base_r-3.2, h=2*d,adjust=0.9);
+                    translate([0,0,lens_assembly_h-5]) cylinder(r=radius+0.44, h=d, $fn=100);
                     translate([0,0,999]) cylinder(r=radius+0.44,h=d,$fn=100);
+                }
+                if (beamsplitter_top)
+                {
+                    optical_path_fl_top(tube_lens_aperture, lens_assembly_z);
                 }
             }
             translate([0,0,lens_assembly_h-5]) inner_thread(radius=radius,threads_per_mm=pitch,thread_base_width = 0.60,thread_length=5);
@@ -310,18 +361,26 @@ module optics_module_rms(tube_lens_ffd=16.1, tube_lens_f=20,
     }
 }
 
+module notched_cylinder(r, h, adjust)
+{
+    difference()
+    {
+        cylinder(r=r+0.44,h=d,$fn=50);
+        translate([-(r+0.44) * (1 + adjust), 0, 0]) cube([(r+0.44) * 2, (r+0.44) * 2, 4 * h], center=true);
+    }
+}
 
 module rms_camera_tube(tube_length=150){
     // This optics module takes an RMS objective and a tube length correction lens.
     // important parameters are below:
-        
+
     rms_r = 20/2; //radius of RMS thread, to be gripped by the mount
     //tube_lens_r (argument) is the radius of the tube lens
     //tube_lens_ffd (argument) is the front focal distance (from flat side to focus) - measure this, or take it from the lens spec. sheet
     //tube_lens_f (argument) is the nominal focal length of the tube lens.
     //tube_length (argument) is the distance behind the objective's "shoulder" where the image is formed.  This should be 150 for 160mm tube length objectives (the image is formed ~10mm from the end of the tube).
-    
-    
+
+
     lens_assembly_z = bottom + tube_length - 10; //height of lens assembly
     lens_assembly_base_r = rms_r+1; //outer size of the lens grippers
     lens_assembly_h = 10; //the
@@ -336,7 +395,7 @@ module rms_camera_tube(tube_length=150){
             // make sure it makes contact with the lens gripper, but
             // doesn't foul the inside of it
             translate([0,0,lens_assembly_z]) lens_gripper(lens_r=rms_r-d, lens_h=lens_assembly_h-2.5,h=lens_assembly_h, base_r=lens_assembly_base_r-d, solid=true); //same as the big gripper below
-            
+
         }
         // A pair of nested lens grippers to hold the objective
         translate([0,0,lens_assembly_z]){
@@ -355,9 +414,9 @@ module optics_module_trylinder(
     lens_aperture = lens_r - 1.5; // clear aperture of the lens
     pedestal_h = 4; // extra height on the gripper, to allow it to flex
     dovetail_top = min(27, sample_z-parfocal_distance+lens_h-1); //height of the top of the dovetail
-    
+
     lens_z = sample_z - parfocal_distance; //axial position of lens
-        
+
     // having calculated where the lens should go, now make the mount:
     lens_assembly_z = lens_z - pedestal_h; //height of lens assembly
     lens_assembly_base_r = lens_r+1; //outer size of the lens grippers
@@ -410,12 +469,12 @@ module condenser(){
                 //dovetail
                 translate([0,condenser_clip_y,0]) mirror([0,1,0]) dovetail_m([condenser_clip_w,4,lens_z-pedestal_h]);
             }
-            
+
             //LED
             deformable_hole_trylinder(led_r,led_r+0.7,h=20, center=true);
             cylinder(r=led_r+1.0,h=2,center=true);
             translate([0,0,2-d]) cylinder(r1=led_r+1.0, r2=led_r,h=2,center=true);
-            
+
             //beam
             translate([0,0,5]) cylinder(r1=led_r,r2=aperture_r,h=lens_z-5);
         }
@@ -428,7 +487,7 @@ difference(){
     if(optics=="pilens"){
         // Optics module for picamera v2 lens, using trylinder
         optics_module_trylinder(
-            lens_r = 3, 
+            lens_r = 3,
             parfocal_distance = 6,
             lens_h = 2.5
         );
@@ -443,21 +502,21 @@ difference(){
     }else if(optics=="rms_f40d16"){
         // Optics module for RMS objective, using Comar 40mm singlet tube lens
         optics_module_rms(
-            tube_lens_ffd=38, 
-            tube_lens_f=40, 
-            tube_lens_r=16/2+0.1, 
+            tube_lens_ffd=38,
+            tube_lens_f=40,
+            tube_lens_r=16/2+0.1,
             objective_parfocal_distance=35,
             fluorescence=beamsplitter,
             gripper_t=0.65,
             tube_length=150
         );
         if(sample_z < 60 || objective_mount_y < 12) echo("Warning: RMS objectives won't fit in small microscope frames!");
-    }else if(optics=="rms_f50d13" || optics=="rms_infinity_f50d13"){
+    }else if(optics=="rms_f50d13" || optics=="rms_infinity_f50d13" || optics=="rms_infinity_f50d13_rev"){
         // Optics module for RMS objective using ThorLabs ac127-050-a doublet tube lens
         optics_module_rms(
-            tube_lens_ffd=47, 
-            tube_lens_f=50, 
-            tube_lens_r=12.7/2+0.1, 
+            tube_lens_ffd=47,
+            tube_lens_f=50,
+            tube_lens_r=12.7/2+0.1,
             objective_parfocal_distance=35,
             beamsplitter=beamsplitter,
             tube_length=(optics=="rms_f50d13" ? 150 : 99999) //use 150 for standard finite-conjugate objectives (cheap ones) or 9999 for infinity-corrected lenses (usually more expensive).
@@ -472,7 +531,7 @@ difference(){
         );
         if(objective_mount_y < 10) echo("Warning: M12 lenses won't fit in small frames");
     }
-    
+
     //picam_cover();
     //translate([0,objective_mount_y-7,0]) rotate([90,0,0]) cylinder(r=999,h=999,$fn=8);
     //mirror([0,0,1]) cylinder(r=999,h=999,$fn=8);
